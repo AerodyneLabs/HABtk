@@ -3,7 +3,6 @@ package com.aerodynelabs.habtk;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -12,7 +11,11 @@ import javax.swing.SwingUtilities;
 
 import org.noos.xing.mydoggy.ToolWindow;
 import org.noos.xing.mydoggy.ToolWindowAnchor;
+import org.noos.xing.mydoggy.ToolWindowType;
 import org.noos.xing.mydoggy.plaf.MyDoggyToolWindowManager;
+
+import com.aerodynelabs.habtk.ui.TerminalPanel;
+import com.aerodynelabs.habtk.ui.TrackingPanel;
 
 /**
  * The main class of HABtk
@@ -23,6 +26,7 @@ public class HABtk {
 	
 	private static final String VERSION = "0.01 Alpha";
 	private static JFrame window;
+	private static MyDoggyToolWindowManager windowManager;
 	
 	private static void setup() {
 		// Configure window
@@ -44,9 +48,12 @@ public class HABtk {
 		menuBar.add(fileMenu);
 		window.setJMenuBar(menuBar);
 		
-		MyDoggyToolWindowManager windowManager = new MyDoggyToolWindowManager();
-		windowManager.registerToolWindow("Test","Test Tool",null,new JButton("Test Tool"),ToolWindowAnchor.LEFT);
+		windowManager = new MyDoggyToolWindowManager();
+		windowManager.registerToolWindow("Log", "Log", null, new TerminalPanel(), ToolWindowAnchor.BOTTOM);
+		windowManager.registerToolWindow("Tracking", "Tracking", null, new TrackingPanel(), ToolWindowAnchor.LEFT);
 		for(ToolWindow win : windowManager.getToolWindows()) win.setAvailable(true);
+		windowManager.getToolWindow("Log").setType(ToolWindowType.SLIDING);
+		
 		window.getContentPane().add(windowManager);
 	}
 	
