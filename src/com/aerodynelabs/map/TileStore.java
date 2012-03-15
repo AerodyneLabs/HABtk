@@ -18,7 +18,7 @@ public class TileStore {
 		store.mkdirs();
 	}
 	
-	protected void put(Tile tile, BufferedImage image) {
+	protected synchronized void put(Tile tile, BufferedImage image) {
 		String name = TileServer.getTileName(tile);
 		File file = new File(store, name);
 		file.mkdirs();
@@ -29,7 +29,7 @@ public class TileStore {
 		}
 	}
 	
-	protected BufferedImage get(Tile tile) {
+	protected synchronized BufferedImage get(Tile tile) {
 		String name = TileServer.getTileName(tile);
 		File file = new File(store, name);
 		if(!file.exists()) return null;

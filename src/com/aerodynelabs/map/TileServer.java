@@ -1,6 +1,9 @@
 package com.aerodynelabs.map;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -24,6 +27,8 @@ public class TileServer extends Thread {
 	
 	private boolean alive;
 	
+	private static BufferedImage dTile;
+	
 	public TileServer(MapPanel client) {
 		this("http://tile.openstreetmap.org/", 18, client);
 	}
@@ -44,6 +49,15 @@ public class TileServer extends Thread {
 		queue = new ConcurrentLinkedQueue<Tile>();
 		alive = true;
 		this.start();
+		loadResources();
+	}
+	
+	private void loadResources() {
+		try {
+			dTile = ImageIO.read(new File("resources/loadingTile.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void close() {
@@ -86,13 +100,13 @@ public class TileServer extends Thread {
 		// TODO Downloading image tile
 		if(!OFFLINE) {
 			if(!queue.contains(tile)) {
-				System.out.println("Added " + tile);
+				//System.out.println("Added " + tile);
 				queue.add(tile);
 			}
 			this.notify();
 		}
 		
-		return image;
+		return dTile;
 	}
 	
 	protected int getMaxZoom() {
@@ -101,30 +115,30 @@ public class TileServer extends Thread {
 	
 	public void run() {
 		while(alive) {
-		while(!queue.isEmpty()) {
-			Tile tile = queue.poll();
-			System.out.println("Getting " + tile);
-			BufferedImage image = null;
+			while(!queue.isEmpty()) {
+				Tile tile = queue.poll();
+				//System.out.println("Getting " + tile);
+				BufferedImage image = null;
+				try {
+					image = ImageIO.read(new URL(getTileAddress(tile)));
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				if(image != null) {
+					store.put(tile, image);
+					client.updateNotify();
+				}
+			}
 			try {
-				image = ImageIO.read(new URL(getTileAddress(tile)));
-			} catch (MalformedURLException e) {
+				synchronized(this) {
+					// System.out.println("Waiting");
+					wait(1000);
+				}
+			} catch (InterruptedException e) {
 				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
-			if(image != null) {
-				store.put(tile, image);
-				client.updateNotify();
-			}
-		}
-		try {
-			synchronized(this) {
-				System.out.println("Waiting");
-				wait();
-			}
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 		}
 	}
 

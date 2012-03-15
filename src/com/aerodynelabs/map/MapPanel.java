@@ -1,7 +1,9 @@
 package com.aerodynelabs.map;
 
-import java.awt.Color;
+// TODO zoomIn/Out to mouse location
+
 import java.awt.Dimension;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -15,16 +17,19 @@ import javax.swing.JPanel;
 @SuppressWarnings("serial")
 public class MapPanel extends JPanel implements MouseListener, MouseMotionListener{
 	
-	private int x, y;
+	private static final String attribution1 = 
+			"Tiles courtesy of MapQuest.com\n";
+	private static final String attribution2 = 
+			"Map data \u00a9 OpenStreetMap contributors, CC-BY-SA";
+	
 	private double lat, lon;
 	private int zoom;
-	
 	private Point mouseDown;
 	
 	private TileServer server;
 	
 	public MapPanel() {
-		this(42.01, -93.57, 11, "http://tile.openstreetmap.org/", 18);
+		this(42.01, -93.57, 11, "http://otile1.mqcdn.com/tiles/1.0.0/osm/", 18);
 	}
 	
 	public MapPanel(double lat, double lon, int zoom) {
@@ -54,12 +59,10 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	}
 	
 	protected void zoomIn() {
-		System.out.println("Zoom In");
 		setZoom(zoom + 1);
 	}
 	
 	protected void zoomOut() {
-		System.out.println("Zoom Out");
 		setZoom(zoom - 1);
 	}
 	
@@ -104,7 +107,6 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		int width = this.getWidth();
 		int height = this.getHeight();
 		g.translate(width/2, height/2);
-		g.setColor(Color.BLACK);
 		
 		int sx = lon2tile(lon, zoom);
 		int sy = lat2tile(lat, zoom);
@@ -124,7 +126,12 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 			}
 		}
 		
-		g.drawOval(-4, -4, 9, 9);
+		FontMetrics metrics = super.getFontMetrics(super.getFont());
+		int x = metrics.stringWidth(attribution1);
+		int y = metrics.getHeight();
+		g.drawString(attribution1, width/2 - x - 10, height/2 - y - 10);
+		x = metrics.stringWidth(attribution2);
+		g.drawString(attribution2, width/2 - x - 10, height/2 - 10);
 	}
 	
 	@Override
@@ -133,14 +140,22 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		server.close();
 	}
 	
-	protected void translateMap(int x, int y) {
-		
+	protected void translateMap(int tx, int ty) {
+		int x0 = lon2tile(lon, zoom);
+		int y0 = lat2tile(lat, zoom);
+		double dLon = tile2lon(x0 + 1, zoom) - tile2lon(x0, zoom);
+		double dLat = tile2lat(y0 + 1, zoom) - tile2lat(y0, zoom);
+		double dx = -dLon / 256;
+		double dy = -dLat / 256;
+		setCenter(ty * dy + lat, tx * dx + lon);
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		int tx = e.getX() - mouseDown.x;
+		int ty = e.getY() - mouseDown.y;
+		mouseDown = e.getPoint();
+		translateMap(tx, ty);
 	}
 
 	@Override
@@ -180,7 +195,6 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	public void mouseReleased(MouseEvent e) {
 		// Not needed
 	}
-
 	
 	public void updateNotify() {
 		repaint();
