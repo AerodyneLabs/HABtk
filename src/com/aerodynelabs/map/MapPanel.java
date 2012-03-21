@@ -11,6 +11,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+import java.util.Collection;
+import java.util.Hashtable;
 
 import javax.swing.JPanel;
 
@@ -25,11 +27,12 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	private double lat, lon;
 	private int zoom;
 	private Point mouseDown;
+	private Hashtable<String, MapOverlay> overlays;
 	
 	private TileServer server;
 	
 	public MapPanel() {
-		this(42.01, -93.57, 11, "http://otile1.mqcdn.com/tiles/1.0.0/osm/", 18);
+		this(42.01, -93.57, 11, "http://tile.openstreetmap.org/", 18);
 	}
 	
 	public MapPanel(double lat, double lon, int zoom) {
@@ -43,10 +46,15 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	public MapPanel(double lat, double lon, int zoom, String url, int maxZoom) {
 		super.setPreferredSize(new Dimension(640, 480));
 		server = new TileServer(url, maxZoom, this);
+		overlays = new Hashtable<String, MapOverlay>();
 		setZoom(zoom);
 		setCenter(lat, lon);
 		addMouseListener(this);
 		addMouseMotionListener(this);
+	}
+	
+	public void addOverlay(String name, MapOverlay overlay) {
+		overlays.put(name, overlay);
 	}
 	
 	protected void setZoom(int zoom) {
@@ -54,7 +62,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		repaint();
 	}
 	
-	protected int getZoom() {
+	public int getZoom() {
 		return zoom;
 	}
 	
@@ -89,15 +97,51 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		return (int)Math.floor((lon + 180) / 360 * (1<<zoom));
 	}
 	
-	protected static int lon2pos(double lon, int zoom) {
+	public int getLatPos(double lat) {
+		return lat2pos(lat, zoom) - lat2pos(this.lat, zoom);
+	}
+	
+	public int getLonPos(double lon) {
+		return lon2pos(lon, zoom) - lon2pos(this.lon, zoom);
+	}
+	
+	public static int lon2pos(double lon, int zoom) {
 		double max = 256 * (1 << zoom);
 		return (int)Math.floor((lon + 180) / 360 * max);
 	}
 	
-	protected static int lat2pos(double lat, int zoom) {
+	public static int lat2pos(double lat, int zoom) {
 		double max = 256 * (1 << zoom);
 		double rlat = Math.toRadians(lat);
 		return (int)Math.floor((1 - Math.log(Math.tan(rlat) + 1 / Math.cos(rlat)) / Math.PI) / 2 * max);
+	}
+	
+	public double getNorthBound() {
+		int sy = lat2tile(lat, zoom);
+		double sLat = tile2lat(sy, zoom);
+		double dLat = (tile2lat(sy + 1, zoom) - sLat) / 256.0;
+		return lat - (dLat * (this.getHeight() / 2.0));
+	}
+	
+	public double getSouthBound() {
+		int sy = lat2tile(lat, zoom);
+		double sLat = tile2lat(sy, zoom);
+		double dLat = (tile2lat(sy + 1, zoom) - sLat) / 256.0;
+		return lat + (dLat * (this.getHeight() / 2.0));
+	}
+	
+	public double getEastBound() {
+		int sx = lon2tile(lon, zoom);
+		double sLon = tile2lon(sx, zoom);
+		double dLon = (tile2lon(sx + 1, zoom) - sLon) / 256.0;
+		return lon + (dLon * (this.getWidth() / 2.0));
+	}
+	
+	public double getWestBound() {
+		int sx = lon2tile(lon, zoom);
+		double sLon = tile2lon(sx, zoom);
+		double dLon = (tile2lon(sx + 1, zoom) - sLon) / 256.0;
+		return lon - (dLon * (this.getWidth() / 2.0));
 	}
 	
 	@Override
@@ -125,6 +169,9 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 				g.drawImage(tile, dx, dy, null);
 			}
 		}
+		
+		Collection<MapOverlay> c = overlays.values();
+		for(MapOverlay overlay : c) overlay.drawOverlay(this, g);
 		
 		FontMetrics metrics = super.getFontMetrics(super.getFont());
 		int x = metrics.stringWidth(attribution1);
