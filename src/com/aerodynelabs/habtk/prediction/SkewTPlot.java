@@ -21,22 +21,24 @@ public class SkewTPlot extends JPanel {
 	public SkewTPlot() {
 		super();
 		set = new XYSeriesCollection();
-		chart = ChartFactory.createXYLineChart("Atmosphere Profile", "Temperature (C)", "Altitude (m)", set, PlotOrientation.HORIZONTAL, false, true, false);
+		chart = ChartFactory.createXYLineChart("Atmosphere Profile", "Altitude (m)", "Temperature (C)", set, PlotOrientation.HORIZONTAL, false, true, false);
 		ChartPanel panel = new ChartPanel(chart);
 		panel.setPreferredSize(new Dimension(600, 400));
 		super.add(panel);
 	}
 	
 	public void setProfile(AtmosphereProfile profile) {
-		XYSeries data = new XYSeries("Temp");
+		XYSeries t = new XYSeries("Temp");
+		XYSeries dp = new XYSeries("Dex Point");
 		Iterator<AtmosphereState> itr = profile.data.iterator();
 		while(itr.hasNext()) {
 			AtmosphereState c = itr.next();
-			data.add(c.t, c.h);
+			t.add(c.h, c.t);
+			dp.add(c.h, c.dp);
 		}
 		set.removeAllSeries();
-		set.addSeries(data);
-		
+		set.addSeries(dp);
+		set.addSeries(t);
 	}
 
 }

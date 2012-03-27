@@ -102,6 +102,14 @@ public class GSDParser implements AtmosphereParser {
 						int dp = s.nextInt();
 						int dir = s.nextInt();
 						int spd = s.nextInt();
+						if(
+							p == 99999 ||
+							h == 99999 ||
+							t == 99999 ||
+							dp == 99999 ||
+							dir == 99999 ||
+							spd == 99999
+							) continue;
 						profile.addData(h, p * 10.0, t / 10.0, dp / 10.0, correctBearing(dir), spd * conversion);
 					} catch(Exception e) {
 						continue;
