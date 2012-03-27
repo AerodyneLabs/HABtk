@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.ListIterator;
@@ -34,19 +33,19 @@ public class MapOverlay {
 			g.setColor(Color.BLACK);
 			g.setStroke(new BasicStroke(2));
 			
-			ListIterator<Point2D.Double> iter = p.iterator();
+			ListIterator<MapPoint> iter = p.iterator();
 			if(!iter.hasNext()) continue;
-			Point2D.Double pp = iter.next();
-			Point2D.Double cp = null;
+			MapPoint pp = iter.next();
+			MapPoint cp = null;
 			while(iter.hasNext()) {
 				cp = iter.next();
-				g.drawLine(map.getLonPos(pp.x), map.getLatPos(pp.y),
-						map.getLonPos(cp.x), map.getLatPos(cp.y));
+				g.drawLine(map.getLonPos(pp.lon), map.getLatPos(pp.lat),
+						map.getLonPos(cp.lon), map.getLatPos(cp.lat));
 				pp = cp;
 			}
 			if(cp != null) {
 				g.setColor(Color.GREEN);
-				g.fillOval(map.getLonPos(cp.x)-3, map.getLatPos(cp.y)-3, 7, 7);
+				g.fillOval(map.getLonPos(cp.lon)-3, map.getLatPos(cp.lat)-3, 7, 7);
 			}
 		}
 	}

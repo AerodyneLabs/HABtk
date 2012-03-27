@@ -1,6 +1,5 @@
 package com.aerodynelabs.map;
 
-import java.awt.geom.Point2D;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
@@ -11,10 +10,10 @@ public class MapPath {
 	private double boundEast = 0.0;
 	private double boundWest = 0.0;
 	
-	private LinkedList<Point2D.Double> path;
+	private LinkedList<MapPoint> path;
 	
 	public MapPath() {
-		path = new LinkedList<Point2D.Double>();
+		path = new LinkedList<MapPoint>();
 	}
 	
 	public void add(double lat, double lon) {
@@ -31,7 +30,7 @@ public class MapPath {
 		}
 		
 		// Add to end of path
-		path.add(new Point2D.Double(lon, lat));
+		path.add(new MapPoint(lat, lon));
 	}
 	
 	public double getNorthBound() {
@@ -50,7 +49,7 @@ public class MapPath {
 		return boundWest;
 	}
 	
-	public LinkedList<Point2D.Double> getPath() {
+	public LinkedList<MapPoint> getPath() {
 		return path;
 	}
 	
@@ -63,7 +62,7 @@ public class MapPath {
 		return true;
 	}
 	
-	public ListIterator<Point2D.Double> iterator() {
+	public ListIterator<MapPoint> iterator() {
 		return path.listIterator();
 	}
 

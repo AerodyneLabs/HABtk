@@ -1,6 +1,6 @@
 package com.aerodynelabs.map;
 
-// TODO zoomIn/Out to mouse location
+//XXX zoomIn/Out to mouse location
 
 import java.awt.Dimension;
 import java.awt.FontMetrics;
