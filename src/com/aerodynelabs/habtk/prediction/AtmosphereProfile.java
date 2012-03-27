@@ -12,8 +12,8 @@ public class AtmosphereProfile {
 	protected double lon;
 	protected double resolution = 0.0;
 	
-	private ArrayList<AtmosphereState> data;
-	private ArrayList<AtmosphereState> roc;
+	protected ArrayList<AtmosphereState> data;
+	protected ArrayList<AtmosphereState> roc;
 	
 	public AtmosphereProfile() {
 		this(0, 0);
@@ -56,7 +56,7 @@ public class AtmosphereProfile {
 			double dd = next.dp - cur.dp;
 			double ds = next.ws - cur.ws;
 			double ddir = next.wd - cur.wd;
-			if(Math.abs(ddir) > 180) {
+			if(Math.abs(ddir) > 180) {	// TODO Test wind direction interpolation
 				if(ddir > 0) {
 					ddir = ddir - 360;
 				} else {
@@ -91,8 +91,35 @@ public class AtmosphereProfile {
 					dd.wd * dh + base.wd,
 					dd.ws * dh + base.ws);
 		}
+		
 		//TODO approximate for values above defined data
+		double hp = getGeopotential(alt);
+		base = next;
+		base.h = getGeopotential(base.h);
+		
+		
+		
 		return null;
+	}
+	
+	private double getGeopotential(double hg) {
+		double RE = 63567660;
+		return (hg * RE) / (RE + hg);
+	}
+	
+	private double getGeometric(double hp) {
+		double RE = 63567660;
+		return (hp * RE) / (RE - hp);
+	}
+	
+	public String toString() {
+		String ret = "Profile for " + lat + ", " + lon + " @ " + startTime + "\n";
+		Iterator<AtmosphereState> itr = data.iterator();
+		while(itr.hasNext()) {
+			ret += itr.next().toString() + "\n";
+		}
+		
+		return ret;
 	}
 
 }

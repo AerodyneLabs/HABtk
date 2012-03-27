@@ -5,14 +5,17 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Scanner;
+import java.util.TimeZone;
 
 public class GSDParser implements AtmosphereParser {
 
 	@Override
 	public AtmosphereProfile parseAtmosphere(File file) {
-		// TODO Parse GSD file
-		//ArrayList<String> data = new ArrayList<String>(50);
 		AtmosphereProfile profile = new AtmosphereProfile();
 		
 		BufferedReader reader;
@@ -24,66 +27,92 @@ public class GSDParser implements AtmosphereParser {
 		}
 		
 		String line;
+		Double conversion = 0.514444444;
+		int hour, day, year;
+		String month;
+		double lat, lon;
 		try {
 			while((line = reader.readLine()) != null) {
-				//data.add(line);
-				Scanner scanner = new Scanner(line);
-				String token = scanner.next();
+				if(line.equals("")) break;
+				Scanner s = new Scanner(line);
+				String token = s.next();
 				int type;
 				try {
 					type = Integer.parseInt(token);
 				} catch(NumberFormatException e) {
-					//e.printStackTrace();
+					// Date and time
+					int one, two;
+					try {
+						one = s.nextInt();
+						two = s.nextInt();
+						hour = one;
+						day = two;
+						month = s.next();
+						year = s.nextInt();
+					} catch(Exception e1) {
+						continue;
+					}
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-dd-MMM HH z");
+					try {
+						Date date = sdf.parse(year + "-" + day + "-" + month + " " + hour + " GMT");
+						Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+						cal.setTime(date);						
+						profile.startTime = (int)(cal.getTimeInMillis() / 1000);
+					} catch (ParseException e1) {
+						return null;
+					}
 					continue;
 				}
-				String sPressure, sAlt, sTemp, sDewPt, sDir, sSpeed;
 				switch(type) {
-					case 1:
-						//TODO parse station information
+				case 1:
+					// Lat and Lon
+					try {
+						s.next();
+						s.next();
+						lat = s.nextDouble();
+						lon = s.nextDouble();
+					} catch(Exception e) {
 						continue;
-					case 2:
+					}
+					profile.lat = lat;
+					profile.lon = lon;
+					continue;
+				case 3:
+					// Wind speed units
+					s.next();
+					s.next();
+					String unit = s.next();
+					if(unit.equals("kt")) {
+						conversion = 0.514444444;
+					} else if (unit.equals("m/s")) {
+						conversion = 1.0;
+					} else {
+						System.err.println("Unsupported wind speed unit!");
+						return null;
+					}
+					continue;
+				case 4:
+				case 5:
+				case 9:
+					// Atmosphere data line
+					try {
+						int p = s.nextInt();
+						int h = s.nextInt();
+						int t = s.nextInt();
+						int dp = s.nextInt();
+						int dir = s.nextInt();
+						int spd = s.nextInt();
+						profile.addData(h, p * 10.0, t / 10.0, dp / 10.0, correctBearing(dir), spd * conversion);
+					} catch(Exception e) {
 						continue;
-					case 3:
-						//TODO parse wind speed units
-						continue;
-					case 4:
-					case 5:
-						//TODO parse line
-						try {
-							sPressure	= scanner.next();
-							sAlt		= scanner.next();
-							sTemp		= scanner.next();
-							sDewPt		= scanner.next();
-							sDir		= scanner.next();
-							sSpeed		= scanner.next();
-						} catch(Exception e) {
-							//e.printStackTrace();
-							continue;
-						}
-						break;
-					case 9:
-						//TODO parse ground conditions
-						continue;
-					default:
-						continue;
-				}
-				double p, h, t, dp, dir, spd;
-				try {
-					p = Double.parseDouble(sPressure);
-					h = Double.parseDouble(sAlt);
-					t = Double.parseDouble(sTemp);
-					dp = Double.parseDouble(sDewPt);
-					dir = Double.parseDouble(sDir);
-					spd = Double.parseDouble(sSpeed);
-				} catch(NumberFormatException e) {
+					}
+					continue;
+				default:
 					continue;
 				}
-				double cDir = correctBearing(dir);
-				profile.addData(h, p, t, dp, cDir, spd);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			return null;
 		}
 		
 		return profile;

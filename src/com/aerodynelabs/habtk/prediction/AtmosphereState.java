@@ -24,5 +24,10 @@ public class AtmosphereState implements Comparable<AtmosphereState> {
 		if(h > x.h) return 1;
 		return 0;
 	}
+	
+	@Override
+	public String toString() {
+		return "@" + h +"m: " + p + "Pa, " + t + "C, " + dp + "C, " + ws + "m/s from " + wd + "deg";
+	}
 
 }
