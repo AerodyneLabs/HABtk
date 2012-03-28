@@ -1,7 +1,10 @@
 package com.aerodynelabs.habtk.prediction;
 
-public interface Predictor {
+public abstract class Predictor {
 	
 	//TODO Predictor interface
+	public Predictor() {
+		
+	}
 
 }

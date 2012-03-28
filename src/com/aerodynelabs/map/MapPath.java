@@ -1,6 +1,7 @@
 package com.aerodynelabs.map;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.ListIterator;
 
 public class MapPath {
@@ -14,6 +15,11 @@ public class MapPath {
 	
 	public MapPath() {
 		path = new LinkedList<MapPoint>();
+	}
+	
+	public MapPath(List<MapPoint> path) {
+		this();
+		this.path.addAll(path);
 	}
 	
 	public void add(double lat, double lon) {
@@ -31,6 +37,10 @@ public class MapPath {
 		
 		// Add to end of path
 		path.add(new MapPoint(lat, lon));
+	}
+	
+	public void addAll(List<MapPoint> path) {
+		this.path.addAll(path);
 	}
 	
 	public double getNorthBound() {
