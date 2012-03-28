@@ -32,11 +32,11 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	private TileServer server;
 	
 	public MapPanel() {
-		this(42.01, -93.57, 11, "http://tile.openstreetmap.org/", 18);
+		this(42.01, -93.57, 11, "http://otile1.mqcdn.com/tiles/1.0.0/osm/", 18);
 	}
 	
 	public MapPanel(double lat, double lon, int zoom) {
-		this(lat, lon, zoom, "http://tile.openstreetmap.org/", 18);
+		this(lat, lon, zoom, "http://otile1.mqcdn.com/tiles/1.0.0/osm/", 18);
 	}
 	
 	public MapPanel(double lat, double lon, int zoom, String url) {
@@ -55,6 +55,10 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	
 	public void addOverlay(String name, MapOverlay overlay) {
 		overlays.put(name, overlay);
+	}
+	
+	public void addOverlay(MapOverlay overlay) {
+		overlays.put(overlay.getName(), overlay);
 	}
 	
 	protected void setZoom(int zoom) {

@@ -11,17 +11,46 @@ import java.util.ListIterator;
 
 public class MapOverlay {
 	
+	private String name;
 	private Hashtable<String, MapPath> paths;
+	private boolean enabled = true;
+	private Color color = Color.BLACK;
 	
-	public MapOverlay() {
+	public MapOverlay(String name) {
+		this.name = name;
 		paths = new Hashtable<String, MapPath>();
+	}
+	
+	public String getName() {
+		return name;
 	}
 	
 	public void addPath(String name, MapPath path) {
 		paths.put(name, path);
 	}
 	
+	public void removePath(String name) {
+		paths.remove(name);
+	}
+	
+	public void setEnabled(boolean enable) {
+		enabled = enable;
+	}
+	
+	public boolean isEnabled() {
+		return enabled;
+	}
+	
+	public void setColor(Color c) {
+		color = c;
+	}
+	
+	public Color getColor() {
+		return color;
+	}
+	
 	public void drawOverlay(MapPanel map, Graphics g0) {
+		if(!enabled) return;
 		Collection<MapPath> c = paths.values();
 		for(MapPath p : c) {
 			if(!p.inBounds(map.getNorthBound(), map.getEastBound(),
@@ -30,7 +59,7 @@ public class MapOverlay {
 			Graphics2D g = (Graphics2D)g0.create();
 			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
-			g.setColor(Color.BLACK);
+			g.setColor(color);
 			g.setStroke(new BasicStroke(2));
 			
 			ListIterator<MapPoint> iter = p.iterator();
