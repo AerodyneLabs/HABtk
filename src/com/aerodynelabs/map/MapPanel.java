@@ -1,6 +1,6 @@
 package com.aerodynelabs.map;
 
-// TODO zoomIn/Out to mouse location
+//XXX zoomIn/Out to mouse location
 
 import java.awt.Dimension;
 import java.awt.FontMetrics;
@@ -27,7 +27,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	private double lat, lon;
 	private int zoom;
 	private Point mouseDown;
-	private Hashtable<String, MapOverlay> overlays;
+	protected Hashtable<String, MapOverlay> overlays;
 	
 	private TileServer server;
 	

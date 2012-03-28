@@ -8,7 +8,7 @@ import javax.imageio.ImageIO;
 
 public class TileStore {
 	
-	//TODO TileStore lifetime
+	//XXX TileStore lifetime
 	//private static final long LIFETIME = 1210000000l;
 	
 	private File store;

@@ -15,17 +15,6 @@ public class AtmosphereProfile {
 	protected ArrayList<AtmosphereState> data;
 	protected ArrayList<AtmosphereState> roc;
 	
-	private static double std[][] = {
-		{0.0, -6.5},
-		{11000, 0.0},
-		{20000, 1.0},
-		{32000, 2.8},
-		{47000, 0.0},
-		{51000, -2.8},
-		{71000, -2.0},
-		{84852, 0.0}
-	};
-	
 	public AtmosphereProfile() {
 		this(0, 0);
 	}
