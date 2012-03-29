@@ -86,7 +86,7 @@ public class MapSettingsPanel extends JPanel {
 	
 	public MapSettingsPanel(MapPanel map) {
 		super();
-		super.setPreferredSize(new Dimension(600, 100));
+		super.setPreferredSize(new Dimension(600, 75));
 		
 		this.map = map;
 		
