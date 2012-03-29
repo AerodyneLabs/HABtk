@@ -12,6 +12,7 @@ public class APRSPacket {
 	double latitude;
 	double longitude;
 	int altitude;
+	boolean validPos = true;
 	
 	public static final int SSID_DOT = 0;
 	public static final int SSID_AMBULENCE = 1;
@@ -51,7 +52,7 @@ public class APRSPacket {
 			latitude = latDeg + latMin / 60.0;
 			if(tmpLat.endsWith("S")) latitude = -latitude;
 		} else {
-			latitude = 0.0;
+			validPos = false;
 		}
 		
 		if(tmpLon != null) {
@@ -60,7 +61,7 @@ public class APRSPacket {
 			longitude = lonDeg + lonMin / 60.0;
 			if(tmpLon.endsWith("W")) longitude = -longitude;
 		} else {
-			longitude = 0.0;
+			validPos = false;
 		}
 		
 		if(tmpAlt != null) {
@@ -68,6 +69,13 @@ public class APRSPacket {
 		} else {
 			altitude = 0;
 		}
+	}
+	
+	public boolean isPosition() {
+		if(fromCall == null) return false;
+		if(validPos == false) return false;
+		//TODO test position packet validity
+		return true;
 	}
 	
 	public String getFrom() {

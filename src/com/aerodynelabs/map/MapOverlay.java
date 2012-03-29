@@ -2,6 +2,8 @@ package com.aerodynelabs.map;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -29,8 +31,20 @@ public class MapOverlay {
 		paths.put(name, path);
 	}
 	
+	public boolean hasPath(String name) {
+		return paths.containsKey(name);
+	}
+	
+	public MapPath getPath(String name) {
+		return paths.get(name);
+	}
+	
 	public void removePath(String name) {
 		paths.remove(name);
+	}
+	
+	public void appendPath(String name, MapPoint point) {
+		paths.get(name).add(point.lat, point.lon);
 	}
 	
 	public void setEnabled(boolean enable) {
@@ -74,7 +88,14 @@ public class MapOverlay {
 			}
 			if(cp != null) {
 				g.setColor(Color.GREEN);
-				g.fillOval(map.getLonPos(cp.lon)-3, map.getLatPos(cp.lat)-3, 7, 7);
+				int x = map.getLonPos(cp.lon);
+				int y = map.getLatPos(cp.lat);
+				g.fillOval(x-3, y-3, 7, 7);
+				g.setColor(Color.BLACK);
+				g.setFont(new Font("SansSerif", Font.PLAIN, 9));
+				FontMetrics metrics = g.getFontMetrics();
+				String name = p.getName();
+				if(name != null) g.drawString(name, x-(metrics.stringWidth(name)/2), y-(metrics.getHeight()/2));
 			}
 		}
 	}

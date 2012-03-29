@@ -98,6 +98,21 @@ public class APRSIS {
 		return msg;
 	}
 	
+	public void setFilter(String filter) {
+		write("#filter " + filter);
+	}
+	
+	public boolean write(String msg) {
+		try {
+			out.write(msg + "\r\n");
+			out.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+	
 	public String toString() {
 		return callsign + "@" + address + ":" + port + " Auth: " + code; 
 	}

@@ -6,6 +6,7 @@ import java.util.ListIterator;
 
 public class MapPath {
 	
+	private String name;
 	private double boundNorth = 0.0;
 	private double boundSouth = 0.0;
 	private double boundEast = 0.0;
@@ -17,9 +18,22 @@ public class MapPath {
 		path = new LinkedList<MapPoint>();
 	}
 	
+	public MapPath(String name) {
+		this();
+		this.name = name;
+	}
+	
 	public MapPath(List<MapPoint> path) {
 		this();
 		this.path.addAll(path);
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	public void add(double lat, double lon) {
