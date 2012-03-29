@@ -1,20 +1,101 @@
 package com.aerodynelabs.map;
 
-//TODO overlay color display
-//TODO allow overlay color select
-
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.AbstractCellEditor;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JColorChooser;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.border.Border;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 
 @SuppressWarnings("serial")
 public class MapSettingsPanel extends JPanel {
 	
 	private JTable table;
 	private MapPanel map;
+	
+	class ColorEditor extends AbstractCellEditor
+						implements TableCellEditor, ActionListener {
+		
+		JButton button;
+		JColorChooser chooser;
+		Color curColor;
+		JDialog dialog;
+
+		public ColorEditor() {
+			button = new JButton();
+			button.setActionCommand("edit");
+			button.addActionListener(this);
+			button.setBorderPainted(false);
+			
+			chooser = new JColorChooser();
+			dialog = JColorChooser.createDialog(button, "Pick a Color", true, chooser, this, null);
+		}
+		
+		@Override
+		public Object getCellEditorValue() {
+			return curColor;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if(e.getActionCommand().equals("edit")) {
+				button.setBackground(curColor);
+				chooser.setColor(curColor);
+				dialog.setVisible(true);
+				
+				fireEditingStopped();
+			} else {
+				curColor = chooser.getColor();
+			}
+		}
+
+		@Override
+		public Component getTableCellEditorComponent(JTable table, Object value,
+				boolean isSelected, int r, int c) {
+			curColor = (Color)value;
+			return button;
+		}
+		
+	}
+	
+	class ColorRenderer extends JLabel implements TableCellRenderer {
+		
+		Border selectedBorder = BorderFactory.createMatteBorder(2,5,2,5,
+                table.getSelectionBackground());
+		Border unselectedBorder;
+		
+		public ColorRenderer() {
+			setOpaque(true);
+		}
+
+		@Override
+		public Component getTableCellRendererComponent(JTable arg0,
+				Object color, boolean isSelected, boolean hasFocus, int r, int c) {
+			Color bg = (Color)color;
+			setBackground(bg);
+			if(isSelected) {
+				setBorder(BorderFactory.createMatteBorder(2, 5, 2, 5, bg));
+			} else {
+				setBorder(BorderFactory.createMatteBorder(2, 5, 2, 5, table.getBackground()));
+			}
+			return this;
+		}
+		
+	}
 	
 	class DataModel extends AbstractTableModel {
 
@@ -41,6 +122,7 @@ public class MapSettingsPanel extends JPanel {
 		@Override
 		public Class getColumnClass(int c) {
 			if(c == 0) return Boolean.class;
+			if(c == 2) return Color.class;
 			return String.class;
 		}
 
@@ -70,16 +152,12 @@ public class MapSettingsPanel extends JPanel {
 			MapOverlay overlay = map.overlays.get(keys[r]);
 			if(c == 0) {
 				overlay.setEnabled(o.equals(true));
-				return;
 			}
 			if(c == 2) {
-				
-				return;
+				overlay.setColor((Color)o);
 			}
 			
-			//FIXME force repaint on state change
-			//map.repaint();
-			//map.paintImmediately(0, 0, map.getWidth(), map.getHeight());
+			map.updateNotify();
 		}
 		
 	}
@@ -93,6 +171,8 @@ public class MapSettingsPanel extends JPanel {
 		BorderLayout layout = new BorderLayout();
 		super.setLayout(layout);
 		table = new JTable(new DataModel());
+		table.setDefaultRenderer(Color.class, new ColorRenderer());
+		table.setDefaultEditor(Color.class, new ColorEditor());
 		
 		JScrollPane scroll = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		super.add(scroll, BorderLayout.CENTER);
