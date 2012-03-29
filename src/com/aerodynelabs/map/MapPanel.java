@@ -3,6 +3,7 @@ package com.aerodynelabs.map;
 //XXX zoomIn/Out to mouse location
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -177,12 +178,14 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		Collection<MapOverlay> c = overlays.values();
 		for(MapOverlay overlay : c) overlay.drawOverlay(this, g);
 		
-		FontMetrics metrics = super.getFontMetrics(super.getFont());
+		Font font = new Font("SansSerif", Font.PLAIN, 10);
+		FontMetrics metrics = super.getFontMetrics(font);
+		g.setFont(font);
 		int x = metrics.stringWidth(attribution1);
 		int y = metrics.getHeight();
-		g.drawString(attribution1, width/2 - x - 10, height/2 - y - 10);
+		g.drawString(attribution1, width/2 - x - 5, height/2 - y - 5);
 		x = metrics.stringWidth(attribution2);
-		g.drawString(attribution2, width/2 - x - 10, height/2 - 10);
+		g.drawString(attribution2, width/2 - x - 5, height/2 - 5);
 	}
 	
 	@Override

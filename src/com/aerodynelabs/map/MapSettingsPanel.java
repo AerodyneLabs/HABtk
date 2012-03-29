@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.Border;
+import javax.swing.colorchooser.AbstractColorChooserPanel;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -42,6 +43,14 @@ public class MapSettingsPanel extends JPanel {
 			button.setBorderPainted(false);
 			
 			chooser = new JColorChooser();
+			chooser.setPreviewPanel(new JPanel());
+			
+			AbstractColorChooserPanel[] panels = chooser.getChooserPanels();
+			for(int i = 0; i < panels.length; i++) {
+				String name = panels[i].getClass().getName();
+				if(name != "javax.swing.colorchooser.DefaultSwatchChooserPanel") chooser.removeChooserPanel(panels[i]);
+			}
+			
 			dialog = JColorChooser.createDialog(button, "Pick a Color", true, chooser, this, null);
 		}
 		
