@@ -11,7 +11,7 @@ import javax.imageio.ImageIO;
 
 public class TileServer extends Thread {
 	
-	private static final int TILE_SIZE = 256;
+	//private static final int TILE_SIZE = 256;
 	
 	private String url;
 	private boolean OFFLINE = false;
@@ -26,6 +26,7 @@ public class TileServer extends Thread {
 	private boolean alive;
 	
 	private static BufferedImage dTile;
+	private static BufferedImage zTile;
 	
 	public TileServer(MapPanel client) {
 		this("http://tile.openstreetmap.org/", 18, client);
@@ -53,6 +54,7 @@ public class TileServer extends Thread {
 	private void loadResources() {
 		try {
 			dTile = ImageIO.read(new File("resources/loadingTile.png"));
+			zTile = ImageIO.read(new File("resources/zoomTile.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -73,9 +75,7 @@ public class TileServer extends Thread {
 	
 	protected synchronized BufferedImage getTile(int x, int y, int zoom) {
 		if(zoom > maxZoom) {
-			BufferedImage tile = new BufferedImage(TILE_SIZE, TILE_SIZE, BufferedImage.TYPE_INT_RGB);
-			//TODO
-			return tile;
+			return zTile;
 		}
 		
 		BufferedImage image = null;
@@ -95,7 +95,6 @@ public class TileServer extends Thread {
 			return image;
 		}
 		// Download
-		// TODO Downloading image tile
 		if(!OFFLINE) {
 			if(!queue.contains(tile)) {
 				//System.out.println("Added " + tile);

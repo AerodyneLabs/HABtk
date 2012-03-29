@@ -45,7 +45,7 @@ public class AtmosphereModel {
 		AtmosphereState s = start.getAtAltitude(alt);
 		AtmosphereState e = end.getAtAltitude(alt);
 		double x = (time - startTime) / (endTime - startTime);
-		//TODO
+		//TODO Atmosphere model
 		return null;
 	}
 

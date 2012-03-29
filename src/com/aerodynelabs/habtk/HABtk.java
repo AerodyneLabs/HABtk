@@ -20,6 +20,7 @@ import org.noos.xing.mydoggy.ToolWindowAnchor;
 import org.noos.xing.mydoggy.ToolWindowType;
 import org.noos.xing.mydoggy.plaf.MyDoggyToolWindowManager;
 
+import com.aerodynelabs.habtk.ui.AboutDialog;
 import com.aerodynelabs.habtk.ui.TerminalPanel;
 import com.aerodynelabs.habtk.ui.TrackingPanel;
 import com.aerodynelabs.map.MappingPanel;
@@ -95,7 +96,7 @@ public class HABtk {
 		JMenuItem helpAboutItem = new JMenuItem("About");
 		helpAboutItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//TODO help about action
+				new AboutDialog(window);
 			}
 		});
 		helpMenu.add(helpAboutItem);
@@ -125,6 +126,13 @@ public class HABtk {
 			}
 			
 			public void windowClosing(WindowEvent e) {
+				try {
+					FileOutputStream out = new FileOutputStream("workspace.xml");
+					windowManager.getPersistenceDelegate().save(out);
+					out.close();
+				} catch(Exception e1) {
+					e1.printStackTrace();
+				}
 				exit();
 			}
 		});
@@ -141,13 +149,6 @@ public class HABtk {
 	}
 	
 	private static void exit() {
-		try {
-			FileOutputStream out = new FileOutputStream("workspace.xml");
-			windowManager.getPersistenceDelegate().save(out);
-			out.close();
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
 		window.dispose();
 		System.exit(0);
 	}
