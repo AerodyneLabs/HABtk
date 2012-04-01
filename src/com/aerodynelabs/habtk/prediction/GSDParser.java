@@ -110,7 +110,7 @@ public class GSDParser implements AtmosphereParser {
 							dir == 99999 ||
 							spd == 99999
 							) continue;
-						profile.addData(h, p * 10.0, t / 10.0, dp / 10.0, correctBearing(dir), spd * conversion);
+						profile.addData(h, p * 10.0, t / 10.0, dp / 10.0, dir, spd * conversion);
 					} catch(Exception e) {
 						continue;
 					}
@@ -126,9 +126,11 @@ public class GSDParser implements AtmosphereParser {
 		return profile;
 	}
 	
-	private double correctBearing(double dir) {
-		//TODO correctBearing
+	// Not needed except for RUC which is unimplemented (so far)
+	/*
+	private static double correctBearing(double dir) {
 		return dir;
 	}
+	*/
 
 }

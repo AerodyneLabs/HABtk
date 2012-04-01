@@ -1,13 +1,15 @@
 package com.aerodynelabs.habtk.prediction;
 
+//XXX test atmosphere profile
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
 public class AtmosphereProfile {
 	
-	protected int startTime = 0;
-	protected int endTime;
+	protected long startTime = 0;
+	protected long endTime;
 	protected double lat;
 	protected double lon;
 	protected double resolution = 0.0;
@@ -31,13 +33,31 @@ public class AtmosphereProfile {
 		roc = new ArrayList<AtmosphereState>(10);
 	}
 	
-	public boolean isValid(int time) {
-		//TODO isValid
+	public void setCenter(double lat, double lon) {
+		this.lat = lat;
+		this.lon = lon;
+	}
+	
+	public double getLat() {
+		return lat;
+	}
+	
+	public double getLon() {
+		return lon;
+	}
+	
+	public boolean isValid(long time) {
+		if(time < startTime) return false;
+		if(time > endTime) return false;
 		return true;
 	}
 	
-	public boolean isValid(int time, double lat, double lon) {
-		//TODO isvalid
+	public boolean isValid(long time, double lat, double lon) {
+		if(time < startTime) return false;
+		if(time > endTime) return false;
+		if(resolution == 0.0) return true;
+		if(Math.abs(this.lat - lat) > resolution) return false;
+		if(Math.abs(this.lon - lon) > resolution) return false;
 		return true;
 	}
 	
@@ -56,7 +76,7 @@ public class AtmosphereProfile {
 			double dd = next.dp - cur.dp;
 			double ds = next.ws - cur.ws;
 			double ddir = next.wd - cur.wd;
-			if(Math.abs(ddir) > 180) {	// TODO Test wind direction interpolation
+			if(Math.abs(ddir) > 180) {
 				if(ddir > 0) {
 					ddir = ddir - 360;
 				} else {
@@ -106,6 +126,7 @@ public class AtmosphereProfile {
 		return (hg * RE) / (RE + hg);
 	}
 	
+	@SuppressWarnings("unused")
 	private double getGeometric(double hp) {
 		double RE = 63567660;
 		return (hp * RE) / (RE - hp);
@@ -117,7 +138,6 @@ public class AtmosphereProfile {
 		while(itr.hasNext()) {
 			ret += itr.next().toString() + "\n";
 		}
-		
 		return ret;
 	}
 

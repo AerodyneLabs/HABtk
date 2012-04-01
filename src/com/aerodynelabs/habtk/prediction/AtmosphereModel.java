@@ -1,5 +1,7 @@
 package com.aerodynelabs.habtk.prediction;
 
+//XXX test atmosphere model
+
 public class AtmosphereModel {
 	
 	protected int startTime;
@@ -32,21 +34,43 @@ public class AtmosphereModel {
 	}
 	
 	public boolean isValid(int time) {
-		//TODO isValid
+		if(time < startTime) return false;
+		if(time > endTime) return false;
 		return true;
 	}
 	
 	public boolean isValid(int time, double lat, double lon) {
-		//TODO isValid
+		if(time < startTime) return false;
+		if(time > endTime) return false;
+		if(resolution == 0.0) return true;
+		if(Math.abs(this.lat - lat) > resolution) return false;
+		if(Math.abs(this.lon - lon) > resolution) return false;
 		return true;
 	}
 	
 	public AtmosphereState getAtAltitude(int time, double alt) {
 		AtmosphereState s = start.getAtAltitude(alt);
 		AtmosphereState e = end.getAtAltitude(alt);
-		double x = (time - startTime) / (endTime - startTime);
-		//TODO Atmosphere model
-		return null;
+		
+		double tStep = endTime - startTime;
+		double deltaT = time - startTime;
+		double dt = deltaT / tStep;
+		
+		double p = (e.p - s.p) * dt + s.p;
+		double t = (e.t - s.t) * dt + s.t;
+		double d = (e.dp - s.dp) * dt + s.dp;
+		double spd = (e.ws - s.ws) * dt + s.ws;
+		double ddir = e.wd - s.wd;
+		if(Math.abs(ddir) > 180) {
+			if(ddir > 0) {
+				ddir = ddir - 360;
+			} else {
+				ddir = ddir + 360;
+			}
+		}
+		double dir = ddir * dt + s.wd;
+
+		return new AtmosphereState(alt, p, t, d, dir, spd);
 	}
 
 }

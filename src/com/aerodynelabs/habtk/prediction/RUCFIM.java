@@ -1,5 +1,4 @@
 package com.aerodynelabs.habtk.prediction;
-//TODO FIM constraints
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
