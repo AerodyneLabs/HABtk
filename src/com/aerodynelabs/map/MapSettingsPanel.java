@@ -108,7 +108,7 @@ public class MapSettingsPanel extends JPanel {
 	
 	class DataModel extends AbstractTableModel {
 
-		private String[] headers = {"Enable", "Name", "Color"};
+		private String[] headers = {"Enable", "Name", "Color", "History"};
 		
 		@Override
 		public int getColumnCount() {
@@ -124,6 +124,7 @@ public class MapSettingsPanel extends JPanel {
 		public boolean isCellEditable(int r, int c) {
 			if(c == 0) return true;
 			if(c == 2) return true;
+			if(c == 3) return true;
 			return false;
 		}
 		
@@ -132,6 +133,7 @@ public class MapSettingsPanel extends JPanel {
 		public Class getColumnClass(int c) {
 			if(c == 0) return Boolean.class;
 			if(c == 2) return Color.class;
+			if(c == 3) return Boolean.class;
 			return String.class;
 		}
 
@@ -151,6 +153,8 @@ public class MapSettingsPanel extends JPanel {
 					return overlay.getName();
 				case 2:
 					return overlay.getColor();
+				case 3:
+					return overlay.getDrawPaths();
 			}
 			return null;
 		}
@@ -159,12 +163,9 @@ public class MapSettingsPanel extends JPanel {
 		public void setValueAt(Object o, int r, int c) {
 			Object[] keys = map.overlays.keySet().toArray();
 			MapOverlay overlay = map.overlays.get(keys[r]);
-			if(c == 0) {
-				overlay.setEnabled(o.equals(true));
-			}
-			if(c == 2) {
-				overlay.setColor((Color)o);
-			}
+			if(c == 0) overlay.setEnabled(o.equals(true));
+			if(c == 2) overlay.setColor((Color)o);
+			if(c == 3) overlay.setDrawPaths(o.equals(true));
 			
 			map.updateNotify();
 		}

@@ -16,6 +16,7 @@ public class MapOverlay {
 	private String name;
 	private Hashtable<String, MapPath> paths;
 	private boolean enabled = true;
+	private boolean drawPaths = true;
 	private Color color = Color.BLACK;
 	
 	public MapOverlay(String name) {
@@ -55,6 +56,14 @@ public class MapOverlay {
 		return enabled;
 	}
 	
+	public void setDrawPaths(boolean draw) {
+		drawPaths = draw;
+	}
+	
+	public boolean getDrawPaths() {
+		return drawPaths;
+	}
+	
 	public void setColor(Color c) {
 		color = c;
 	}
@@ -75,18 +84,21 @@ public class MapOverlay {
                     RenderingHints.VALUE_ANTIALIAS_ON);
 			g.setColor(color);
 			g.setStroke(new BasicStroke(2));
-			
-			ListIterator<MapPoint> iter = p.iterator();
-			if(!iter.hasNext()) continue;
-			MapPoint pp = iter.next();
-			MapPoint cp = null;
-			while(iter.hasNext()) {
-				cp = iter.next();
-				g.drawLine(map.getLonPos(pp.lon), map.getLatPos(pp.lat),
-						map.getLonPos(cp.lon), map.getLatPos(cp.lat));
-				pp = cp;
+
+			if(drawPaths) {
+				ListIterator<MapPoint> iter = p.iterator();
+				if(!iter.hasNext()) continue;
+				MapPoint pp = iter.next();
+				MapPoint cp = null;
+				while(iter.hasNext()) {
+					cp = iter.next();
+					g.drawLine(map.getLonPos(pp.lon), map.getLatPos(pp.lat),
+							map.getLonPos(cp.lon), map.getLatPos(cp.lat));
+					pp = cp;
+				}
 			}
-			if(cp != null) {
+			if(p.getPath().getLast() != null) {
+				MapPoint cp = p.getPath().getLast();
 				g.setColor(Color.GREEN);
 				int x = map.getLonPos(cp.lon);
 				int y = map.getLatPos(cp.lat);

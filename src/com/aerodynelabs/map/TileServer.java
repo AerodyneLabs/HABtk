@@ -27,6 +27,7 @@ public class TileServer extends Thread {
 	
 	private static BufferedImage dTile;
 	private static BufferedImage zTile;
+	private static BufferedImage nTile;
 	
 	public TileServer(MapPanel client) {
 		this("http://tile.openstreetmap.org/", 18, client);
@@ -55,6 +56,7 @@ public class TileServer extends Thread {
 		try {
 			dTile = ImageIO.read(new File("resources/loadingTile.png"));
 			zTile = ImageIO.read(new File("resources/zoomTile.png"));
+			nTile = ImageIO.read(new File("resources/noTile.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -74,9 +76,13 @@ public class TileServer extends Thread {
 	}
 	
 	protected synchronized BufferedImage getTile(int x, int y, int zoom) {
-		if(zoom > maxZoom) {
-			return zTile;
-		}
+		if(zoom > maxZoom) return zTile;
+		if(
+			x < 0 ||
+			y < 0 ||
+			x > (1 << zoom) ||
+			y > (1 << zoom)
+			) return nTile;
 		
 		BufferedImage image = null;
 		Tile tile = new Tile(x, y, zoom);

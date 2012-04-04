@@ -89,6 +89,7 @@ public class HABtk {
 		helpUpdateItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//TODO help update action
+				new Updater();
 			}
 		});
 		helpMenu.add(helpUpdateItem);
@@ -126,13 +127,6 @@ public class HABtk {
 			}
 			
 			public void windowClosing(WindowEvent e) {
-				try {
-					FileOutputStream out = new FileOutputStream("workspace.xml");
-					windowManager.getPersistenceDelegate().save(out);
-					out.close();
-				} catch(Exception e1) {
-					e1.printStackTrace();
-				}
 				exit();
 			}
 		});
@@ -149,6 +143,13 @@ public class HABtk {
 	}
 	
 	private static void exit() {
+		try {
+			FileOutputStream out = new FileOutputStream("workspace.xml");
+			windowManager.getPersistenceDelegate().save(out);
+			out.close();
+		} catch(Exception e1) {
+			e1.printStackTrace();
+		}
 		window.dispose();
 		System.exit(0);
 	}
