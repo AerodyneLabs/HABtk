@@ -7,6 +7,10 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -33,6 +37,11 @@ import com.aerodynelabs.map.MappingPanel;
 public class HABtk {
 	
 	private static final String VERSION = "0.01 Alpha";
+	
+	private static final Logger debugLog = Logger.getLogger("Debug");
+	private static FileHandler logFile;
+	private static SimpleFormatter logFormatter;
+	
 	private static JFrame window;
 	private static MyDoggyToolWindowManager windowManager;
 	private static MappingPanel map;
@@ -122,7 +131,7 @@ public class HABtk {
 						in.close();
 					}
 				} catch(Exception e1) {
-					e1.printStackTrace();
+					debugLog.log(Level.SEVERE, "Exception", e);
 				}
 			}
 			
@@ -148,19 +157,53 @@ public class HABtk {
 			windowManager.getPersistenceDelegate().save(out);
 			out.close();
 		} catch(Exception e1) {
-			e1.printStackTrace();
+			debugLog.log(Level.SEVERE, "Exception", e1);
 		}
 		window.dispose();
 		System.exit(0);
 	}
+	
+	private static void setupLogger(int level) {
+		switch(level) {
+			case 0:
+				debugLog.setLevel(Level.ALL);
+				break;
+			case 1:
+				debugLog.setLevel(Level.SEVERE);
+				break;
+			case 2:
+				debugLog.setLevel(Level.WARNING);
+				break;
+			case 3:
+				debugLog.setLevel(Level.INFO);
+				break;
+			default:
+				debugLog.setLevel(Level.OFF);
+		}
+		
+		try {
+			logFile = new FileHandler("log.txt");
+		} catch(Exception e) {
+			debugLog.log(Level.SEVERE, "Exception", e);
+		}
+		logFormatter = new SimpleFormatter();
+		logFile.setFormatter(logFormatter);
+		debugLog.addHandler(logFile);
+	}
 
 	public static void main(String[] args) {
+		if(args.length == 0) {
+			setupLogger(9);
+		} else {
+			setupLogger(Integer.parseInt(args[0]));
+		}
+	
 		new HABtk();
 		try {
 			setup();
 			start();
 		} catch(Exception e) {
-			e.printStackTrace();
+			debugLog.log(Level.SEVERE, "Exception", e);
 		}
 	}
 
