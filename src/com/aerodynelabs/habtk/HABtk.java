@@ -24,6 +24,8 @@ import org.noos.xing.mydoggy.ToolWindowAnchor;
 import org.noos.xing.mydoggy.ToolWindowType;
 import org.noos.xing.mydoggy.plaf.MyDoggyToolWindowManager;
 
+import com.aerodynelabs.habtk.prediction.LatexPredictor;
+import com.aerodynelabs.habtk.prediction.Predictor;
 import com.aerodynelabs.habtk.ui.AboutDialog;
 import com.aerodynelabs.habtk.ui.TerminalPanel;
 import com.aerodynelabs.habtk.ui.TrackingPanel;
@@ -46,6 +48,8 @@ public class HABtk {
 	private static MyDoggyToolWindowManager windowManager;
 	private static MappingPanel map;
 	
+	private static Predictor flightPredictor = new LatexPredictor();
+	
 	private static void setup() {
 		// Configure window
 		window = new JFrame("HABtk - " + VERSION);
@@ -59,6 +63,27 @@ public class HABtk {
 		menuBar.add(fileMenu);
 		menuBar.add(helpMenu);
 		window.setJMenuBar(menuBar);
+		
+		JMenuItem fileNewFlightItem = new JMenuItem("New Flight");
+		fileNewFlightItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				flightPredictor = Predictor.create();
+				flightPredictor.save();
+				System.out.println(flightPredictor);
+			}
+		});
+		fileMenu.add(fileNewFlightItem);
+		
+		JMenuItem fileLoadFlightItem = new JMenuItem("Load Flight");
+		fileLoadFlightItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				flightPredictor = Predictor.load();
+				// TODO
+			}
+		});
+		fileMenu.add(fileLoadFlightItem);
+		
+		fileMenu.add(new JSeparator());
 		
 		JMenuItem fileSaveItem = new JMenuItem("Save Map");
 		fileSaveItem.addActionListener(new ActionListener() {

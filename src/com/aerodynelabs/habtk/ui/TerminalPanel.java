@@ -2,19 +2,19 @@ package com.aerodynelabs.habtk.ui;
 
 import java.awt.BorderLayout;
 
+import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
 
 @SuppressWarnings("serial")
 public class TerminalPanel extends JPanel {
 	
-	JTextPane terminal;
+	JEditorPane terminal;
 	
 	public TerminalPanel() {
 		super();
 		super.setLayout(new BorderLayout());
-		terminal = new JTextPane();
+		terminal = new JEditorPane();
 		terminal.setEditable(false);
 		
 		JScrollPane scrollPane = new JScrollPane(terminal,
