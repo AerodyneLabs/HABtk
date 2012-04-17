@@ -14,6 +14,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.aerodynelabs.map.MapPath;
 import com.aerodynelabs.map.MapPoint;
@@ -72,7 +73,14 @@ public abstract class Predictor {
 			Document doc = builder.parse(file);
 			doc.getDocumentElement().normalize();
 			
-			// TODO load flight xml
+			Element root = doc.getDocumentElement();
+			if(root.getNodeName().equals("balloonFlight") == false) return null;
+			if(root.getElementsByTagName("predictor").item(0).getTextContent().equals("Latex Predictor v1.0")) {
+				flight = new LatexPredictor();
+			}
+			
+			
+			if(flight.read(doc) == false) return null;
 		} catch(Exception e) {
 			e.printStackTrace();
 			return null;
@@ -109,7 +117,7 @@ public abstract class Predictor {
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document doc = builder.newDocument();
 			
-			// TODO save flight xml
+			write(doc);
 			
 			Transformer transformer = TransformerFactory.newInstance().newTransformer();
 			DOMSource src = new DOMSource(doc);
@@ -122,6 +130,8 @@ public abstract class Predictor {
 		return true;
 	}
 	
+	public abstract void write(Document doc);
+	public abstract boolean read(Document doc);
 	public abstract MapPoint predictStep(int s);
 	public abstract MapPath runPrediction();
 	public abstract void setAscending(boolean ascending);
