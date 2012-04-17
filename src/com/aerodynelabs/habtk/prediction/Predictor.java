@@ -15,6 +15,9 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 
+import com.aerodynelabs.map.MapPath;
+import com.aerodynelabs.map.MapPoint;
+
 public abstract class Predictor {
 	
 	private static Object[] options = {"Latex v1.0"};
@@ -31,12 +34,19 @@ public abstract class Predictor {
 		Predictor flight = null;
 		
 		String type = select();
+		if(type == null) return null;
 		if(type.equals(options[0])) {
 			flight = new LatexPredictor();
 		}
 		
-		return flight;
+		if(flight.setup()) {
+			return flight;
+		} else {
+			return null;
+		}
 	}
+	
+	public abstract boolean setup();
 	
 	public static Predictor load() {
 		JFileChooser chooser = new JFileChooser();
@@ -111,5 +121,11 @@ public abstract class Predictor {
 		
 		return true;
 	}
+	
+	public abstract MapPoint predictStep(int s);
+	public abstract MapPath runPrediction();
+	public abstract void setAscending(boolean ascending);
+	public abstract void setGroundLevel(double level);
+	public abstract void setStart(MapPoint start);
 
 }

@@ -68,7 +68,7 @@ public class HABtk {
 		fileNewFlightItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				flightPredictor = Predictor.create();
-				flightPredictor.save();
+				if(flightPredictor != null) flightPredictor.save();
 				System.out.println(flightPredictor);
 			}
 		});
