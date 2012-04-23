@@ -1,5 +1,5 @@
 //TODO Mic-E
-package com.aerodynelabs.habtk.connectors;
+package com.aerodynelabs.habtk.connectors.parsers;
 
 import java.util.Scanner;
 
@@ -37,38 +37,18 @@ public class APRSPacket {
 	}
 	
 	public APRSPacket(String pkt) {
-		packet = pkt;
-		Scanner scanner = new Scanner(packet);
-		fromCall = scanner.findInLine("[A-Za-z][A-Za-z0-9-]*");
-		toCall = scanner.findInLine("[A-Za-z][^:>/]*");
-		timestamp = scanner.findWithinHorizon("[0-9]{6}[z/h]", 0);
-		String tmpLat = scanner.findWithinHorizon("[0-9]{4}.[0-9]{2}[NS]", 0);
-		String tmpLon = scanner.findWithinHorizon("[0-9]{5}.[0-9]{2}[EW]", 0);
-		String tmpAlt = scanner.findWithinHorizon("A=[0-9]*", 0);
+		// Get data type ID
 		
-		if(tmpLat != null) {
-			int latDeg = Integer.parseInt(tmpLat.substring(0, 2));
-			double latMin = Double.parseDouble(tmpLat.substring(2,7));
-			latitude = latDeg + latMin / 60.0;
-			if(tmpLat.endsWith("S")) latitude = -latitude;
-		} else {
-			validPos = false;
-		}
+	}
+	
+	private boolean parsePosition() {
 		
-		if(tmpLon != null) {
-			int lonDeg = Integer.parseInt(tmpLon.substring(0, 3));
-			double lonMin = Double.parseDouble(tmpLon.substring(3, 8));
-			longitude = lonDeg + lonMin / 60.0;
-			if(tmpLon.endsWith("W")) longitude = -longitude;
-		} else {
-			validPos = false;
-		}
+		return true;
+	}
+	
+	private boolean parseMicPosition() {
 		
-		if(tmpAlt != null) {
-			altitude = Integer.parseInt(tmpAlt.substring(2));
-		} else {
-			altitude = 0;
-		}
+		return true;
 	}
 	
 	public boolean isPosition() {
