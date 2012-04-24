@@ -1,7 +1,5 @@
 package com.aerodynelabs.habtk.atmosphere;
 
-//XXX test atmosphere profile
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -16,6 +14,10 @@ public class AtmosphereProfile {
 	
 	protected ArrayList<AtmosphereState> data;
 	protected ArrayList<AtmosphereState> roc;
+	
+	private static final double R = 8.31432;
+	private static final double MW = 0.0289644;
+	private static final double G = 9.080665;
 	
 	public AtmosphereProfile() {
 		this(0, 0);
@@ -91,12 +93,13 @@ public class AtmosphereProfile {
 	public AtmosphereState getAtAltitude(double alt) {
 		Iterator<AtmosphereState> itr = data.iterator();
 		AtmosphereState base = itr.next();
+		if(alt < base.h) return null;
 		AtmosphereState next = null;
-		int i = 0;
+		int i = -1;
 		while(itr.hasNext()) {
 			next = itr.next();
 			i++;
-			if(alt > next.h) {
+			if(alt >= next.h) {
 				base = next;
 				continue;
 			}
@@ -111,16 +114,72 @@ public class AtmosphereProfile {
 					dd.wd * dh + base.wd,
 					dd.ws * dh + base.ws);
 		}
+
+		//XXX Add wind speed extrapolation
+		//XXX Add dew point extrapolation
+		double Hb = base.h;
+		double Tb = base.t + 273.15;
+		double Pb = base.p;
+		System.out.println(Hb + "m " + Tb + "C " + Pb +"Pa");
 		
-		double hp = getGeopotential(alt);
-		base = next;
-		base.h = getGeopotential(base.h);
-		//TODO approximate for values above defined data
+		if(Hb < 11000) {
+			if(alt < 11000) {
+				double T = Tb - (0.0065 * (alt - Hb));
+				double P = Pb * Math.pow((Tb - (0.0065*(alt - Hb)))/Tb, -(G * MW)/(R * -0.0065));
+				return new AtmosphereState(alt, P, T - 273.15, base.dp, base.wd, base.ws);
+			}
+			double T = Tb - (0.0065 * (11000 - Hb));
+			double P = Pb * Math.pow((Tb - (0.0065*(11000 - Hb)))/Tb, -(G * MW)/(R * -0.0065));
+			Hb = 11000;
+			Tb = T;
+			Pb = P;
+			System.out.println(Hb + "m " + Tb + "C " + Pb +"Pa");
+		}
+		if(Hb < 20000) {
+			if(alt < 20000) {
+				double T = Tb;
+				double P = Pb * Math.exp(-(G*MW*(alt - Hb))/(R*Tb));
+				return new AtmosphereState(alt, P, T - 273.15, base.dp, base.wd, base.ws);
+			}
+			double T = Tb;
+			double P = Pb * Math.exp(-(G*MW*(20000 - Hb))/(R*Tb));
+			Hb = 20000;
+			Tb = T;
+			Pb = P;
+			System.out.println(Hb + "m " + Tb + "C " + Pb +"Pa");
+		}
+		if(Hb < 32000) {
+			if(alt < 32000) {
+				double T = Tb + (0.001 * (alt - Hb));
+				double P = Pb * Math.pow((Tb + (0.001*(alt - Hb)))/Tb, -(G * MW)/(R * 0.001));
+				return new AtmosphereState(alt, P, T - 273.15, base.dp, base.wd, base.ws);
+			}
+			double T = Tb + (0.001 * (32000 - Hb));
+			double P = Pb * Math.pow((Tb + (0.001*(32000 - Hb)))/Tb, -(G * MW)/(R * 0.001));
+			Hb = 32000;
+			Tb = T;
+			Pb = P;
+			System.out.println(Hb + "m " + Tb + "C " + Pb +"Pa");
+		}
+		if(Hb < 47000) {
+			if(alt < 47000) {
+				double T = Tb + (0.0028 * (alt - Hb));
+				double P = Pb * Math.pow((Tb + (0.0028*(alt - Hb)))/Tb, -(G * MW)/(R * 0.0028));
+				return new AtmosphereState(alt, P, T - 273.15, base.dp, base.wd, base.ws);
+			}
+			double T = Tb + (0.0028 * (47000 - Hb));
+			double P = Pb * Math.pow((Tb + (0.0028*(47000 - Hb)))/Tb, -(G * MW)/(R * 0.0028));
+			Hb = 47000;
+			Tb = T;
+			Pb = P;
+			System.out.println(Hb + "m " + Tb + "C " + Pb +"Pa");
+		}
 		
 		
 		return null;
 	}
 	
+	@SuppressWarnings("unused")
 	private double getGeopotential(double hg) {
 		double RE = 63567660;
 		return (hg * RE) / (RE + hg);
