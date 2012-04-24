@@ -132,7 +132,6 @@ public abstract class Predictor {
 	
 	public abstract void write(Document doc);
 	public abstract boolean read(Document doc);
-	public abstract MapPoint predictStep(int s);
 	public abstract MapPath runPrediction();
 	public abstract void setAscending(boolean ascending);
 	public abstract void setGroundLevel(double level);

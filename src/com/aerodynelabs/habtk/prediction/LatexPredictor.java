@@ -5,11 +5,13 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -20,6 +22,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.aerodynelabs.habtk.atmosphere.AtmosphereProfile;
+import com.aerodynelabs.habtk.atmosphere.GSDParser;
+import com.aerodynelabs.habtk.atmosphere.RUCGFS;
 import com.aerodynelabs.map.MapPath;
 import com.aerodynelabs.map.MapPoint;
 
@@ -32,6 +36,21 @@ public class LatexPredictor extends Predictor {
 	
 	private double payloadMass, balloonLift;
 	private double parachuteArea, parachuteDrag;
+	private double balloonMass, balloonDrag, burstRad;
+	
+	private static final String balloons[] = {"Kaymont 200", "Kaymont 300", "Kaymont 350", "Kaymont 600", "Kaymont 800", "Kaymont 1000", "Kaymont 1200", "Kaymont 1500", "Kaymont 2000", "Kaymont 3000"};
+	private static final double balloonData[][] = {
+		{0.2,	1.524,	0.25},	// Kaymont 200
+		{0.3,	1.981,	0.25},	// Kaymont 300
+		{0.35,	2.134,	0.25},	// Kaymont 350
+		{0.6,	3.048,	0.3},	// Kaymont 600
+		{0.8,	3.505,	0.3},	// Kaymont 800
+		{1.0,	3.962,	0.3},	// Kaymont 1000
+		{1.2,	4.267,	0.25},	// Kaymont 1200
+		{1.5,	4.724,	0.25},	// Kaymont 1500
+		{2.0,	5.334,	0.25},	// Kaymont 2000
+		{3.0,	6.553,	0.25},	// Kaymont 3000
+	};
 	
 	private AtmosphereProfile atmo;
 	
@@ -41,6 +60,7 @@ public class LatexPredictor extends Predictor {
 		boolean accepted = false;
 		JTextField fStartLat, fStartLon, fStartAlt, fStartTime;
 		JTextField fMass, fLift, fArea, fDrag;
+		JComboBox fBalloon;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		
 		public SetupDialog() {
@@ -92,37 +112,45 @@ public class LatexPredictor extends Predictor {
 			layout.putConstraint(SpringLayout.WEST, fStartAlt, 6, SpringLayout.EAST, lStartAlt);
 			layout.putConstraint(SpringLayout.EAST, fStartAlt, -6, SpringLayout.EAST, pane);
 			
-			JLabel lMass = new JLabel("Payload Mass (kg):");
-			fMass = new JTextField();
-			layout.putConstraint(SpringLayout.NORTH, fMass, 6, SpringLayout.SOUTH, fStartAlt);
-			layout.putConstraint(SpringLayout.BASELINE, lMass, 0, SpringLayout.BASELINE, fMass);
-			layout.putConstraint(SpringLayout.WEST, lMass, 6, SpringLayout.WEST, pane);
-			layout.putConstraint(SpringLayout.WEST, fMass, 6, SpringLayout.EAST, lMass);
-			layout.putConstraint(SpringLayout.EAST, fMass, -6, SpringLayout.EAST, pane);
+			JLabel lBalloon = new JLabel("Balloon:");
+			fBalloon = new JComboBox(balloons);
+			layout.putConstraint(SpringLayout.NORTH, fBalloon, 6, SpringLayout.SOUTH, fStartAlt);
+			layout.putConstraint(SpringLayout.BASELINE, lBalloon, 0, SpringLayout.BASELINE, fBalloon);
+			layout.putConstraint(SpringLayout.WEST, lBalloon, 6, SpringLayout.WEST, pane);
+			layout.putConstraint(SpringLayout.WEST, fBalloon, 6, SpringLayout.EAST, lBalloon);
+			layout.putConstraint(SpringLayout.EAST, fBalloon, -6, SpringLayout.EAST, pane);
 			
 			JLabel lLift = new JLabel("Neck Lift (kg):");
 			fLift = new JTextField();
-			layout.putConstraint(SpringLayout.NORTH, fLift, 6, SpringLayout.SOUTH, fMass);
+			layout.putConstraint(SpringLayout.NORTH, fLift, 6, SpringLayout.SOUTH, fBalloon);
 			layout.putConstraint(SpringLayout.BASELINE, lLift, 0, SpringLayout.BASELINE, fLift);
 			layout.putConstraint(SpringLayout.WEST, lLift, 6, SpringLayout.WEST, pane);
 			layout.putConstraint(SpringLayout.WEST, fLift, 6, SpringLayout.EAST, lLift);
 			layout.putConstraint(SpringLayout.EAST, fLift, -6, SpringLayout.EAST, pane);
 			
-			JLabel lDrag = new JLabel("Drag Coef:");
-			fDrag = new JTextField();
-			layout.putConstraint(SpringLayout.NORTH, fDrag, 6, SpringLayout.SOUTH, fLift);
-			layout.putConstraint(SpringLayout.BASELINE, lDrag, 0, SpringLayout.BASELINE, fDrag);
-			layout.putConstraint(SpringLayout.WEST, lDrag, 6, SpringLayout.WEST, pane);
-			layout.putConstraint(SpringLayout.WEST, fDrag, 6, SpringLayout.EAST, lDrag);
-			layout.putConstraint(SpringLayout.EAST, fDrag, -6, SpringLayout.EAST, pane);
+			JLabel lMass = new JLabel("Payload Mass (kg):");
+			fMass = new JTextField();
+			layout.putConstraint(SpringLayout.NORTH, fMass, 6, SpringLayout.SOUTH, fLift);
+			layout.putConstraint(SpringLayout.BASELINE, lMass, 0, SpringLayout.BASELINE, fMass);
+			layout.putConstraint(SpringLayout.WEST, lMass, 6, SpringLayout.WEST, pane);
+			layout.putConstraint(SpringLayout.WEST, fMass, 6, SpringLayout.EAST, lMass);
+			layout.putConstraint(SpringLayout.EAST, fMass, -6, SpringLayout.EAST, pane);
 			
 			JLabel lArea = new JLabel("Chute Area (m^2):");
 			fArea = new JTextField();
-			layout.putConstraint(SpringLayout.NORTH, fArea, 6, SpringLayout.SOUTH, fDrag);
+			layout.putConstraint(SpringLayout.NORTH, fArea, 6, SpringLayout.SOUTH, fMass);
 			layout.putConstraint(SpringLayout.BASELINE, lArea, 0, SpringLayout.BASELINE, fArea);
 			layout.putConstraint(SpringLayout.WEST, lArea, 6, SpringLayout.WEST, pane);
 			layout.putConstraint(SpringLayout.WEST, fArea, 6, SpringLayout.EAST, lArea);
 			layout.putConstraint(SpringLayout.EAST, fArea, -6, SpringLayout.EAST, pane);
+			
+			JLabel lDrag = new JLabel("Chute Cd:");
+			fDrag = new JTextField();
+			layout.putConstraint(SpringLayout.NORTH, fDrag, 6, SpringLayout.SOUTH, fArea);
+			layout.putConstraint(SpringLayout.BASELINE, lDrag, 0, SpringLayout.BASELINE, fDrag);
+			layout.putConstraint(SpringLayout.WEST, lDrag, 6, SpringLayout.WEST, pane);
+			layout.putConstraint(SpringLayout.WEST, fDrag, 6, SpringLayout.EAST, lDrag);
+			layout.putConstraint(SpringLayout.EAST, fDrag, -6, SpringLayout.EAST, pane);
 			
 			JButton cancel = new JButton("Cancel");
 			cancel.addActionListener(new ActionListener() {
@@ -145,6 +173,10 @@ public class LatexPredictor extends Predictor {
 						balloonLift = Double.parseDouble(fLift.getText());
 						parachuteArea = Double.parseDouble(fArea.getText());
 						parachuteDrag = Double.parseDouble(fDrag.getText());
+						double bDat[] = balloonData[fBalloon.getSelectedIndex()];
+						balloonMass = bDat[0];
+						burstRad = bDat[1];
+						balloonDrag = bDat[2];
 					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
@@ -153,8 +185,8 @@ public class LatexPredictor extends Predictor {
 			});
 			layout.putConstraint(SpringLayout.EAST, cancel, -6, SpringLayout.EAST, pane);
 			layout.putConstraint(SpringLayout.EAST, ok, -6, SpringLayout.WEST, cancel);
-			layout.putConstraint(SpringLayout.NORTH, cancel, 6, SpringLayout.SOUTH, fArea);
-			layout.putConstraint(SpringLayout.NORTH, ok, 6, SpringLayout.SOUTH, fArea);
+			layout.putConstraint(SpringLayout.NORTH, cancel, 6, SpringLayout.SOUTH, fDrag);
+			layout.putConstraint(SpringLayout.NORTH, ok, 6, SpringLayout.SOUTH, fDrag);
 			layout.putConstraint(SpringLayout.SOUTH, cancel, -6, SpringLayout.SOUTH, pane);
 			layout.putConstraint(SpringLayout.SOUTH, pane, 6, SpringLayout.SOUTH, ok);
 			
@@ -167,6 +199,8 @@ public class LatexPredictor extends Predictor {
 			add(fStartLon);
 			add(lStartAlt);
 			add(fStartAlt);
+			add(lBalloon);
+			add(fBalloon);
 			add(lMass);
 			add(fMass);
 			add(lLift);
@@ -218,6 +252,18 @@ public class LatexPredictor extends Predictor {
 		lift.appendChild(doc.createTextNode(Double.toString(this.balloonLift)));
 		root.appendChild(lift);
 		
+		Element radius = doc.createElement("burstRadius");
+		radius.appendChild(doc.createTextNode(Double.toString(this.burstRad)));
+		root.appendChild(radius);
+		
+		Element bMass = doc.createElement("balloonMass");
+		bMass.appendChild(doc.createTextNode(Double.toString(this.balloonMass)));
+		root.appendChild(bMass);
+		
+		Element bDrag = doc.createElement("balloonDrag");
+		bDrag.appendChild(doc.createTextNode(Double.toString(this.balloonDrag)));
+		root.appendChild(bDrag);
+		
 		Element mass = doc.createElement("payloadMass");
 		mass.appendChild(doc.createTextNode(Double.toString(this.payloadMass)));
 		root.appendChild(mass);
@@ -242,6 +288,9 @@ public class LatexPredictor extends Predictor {
 			payloadMass = Double.parseDouble(root.getElementsByTagName("payloadMass").item(0).getTextContent());
 			parachuteDrag = Double.parseDouble(root.getElementsByTagName("parachuteDrag").item(0).getTextContent());
 			parachuteArea = Double.parseDouble(root.getElementsByTagName("parachuteArea").item(0).getTextContent());
+			burstRad = Double.parseDouble(root.getElementsByTagName("burstRadius").item(0).getTextContent());
+			balloonMass = Double.parseDouble(root.getElementsByTagName("balloonMass").item(0).getTextContent());
+			balloonDrag = Double.parseDouble(root.getElementsByTagName("balloonDrag").item(0).getTextContent());
 		} catch(Exception e) {
 			e.printStackTrace();
 			return false;
@@ -263,20 +312,39 @@ public class LatexPredictor extends Predictor {
 				"Latex Predictor v1.0\n" +
 				startLat + ", " + startLon + " from " + startAlt +
 				" @ " + startTime + "\n" +
+				balloonMass + "kg balloon, " + balloonDrag + " drag, " + burstRad + "m burst radius\n" +
 				balloonLift + "kg lift, " + payloadMass + "kg mass\n" +
 				parachuteArea + "m2 parachute, " + parachuteDrag + " drag";
 		
 		return ret;
 	}
 	
-	public MapPoint predictStep(int s) {
-		// TODO
-		return null;
-	}
-	
 	public MapPath runPrediction() {
 		// TODO
-		return null;
+		// Create output variable
+		MapPath path = new MapPath();
+		
+		// Get atmosphere profile
+		File wind = new RUCGFS().getAtmosphere((int)startTime, startLat, startLon);
+		atmo = new GSDParser().parseAtmosphere(wind);
+		if(atmo == null) return null;
+		
+		// Initial conditions
+		double cLat = startLat;
+		double cLon = startLon;
+		double cAlt = startAlt;
+		
+		
+		// Calculate ascent
+		while(isAscending) {
+			
+		}
+		// Calculate descent
+		while(cAlt > groundLevel){
+			
+		}
+		
+		return path;
 	}
 
 	@Override

@@ -1,5 +1,10 @@
 package com.aerodynelabs.map;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -88,6 +93,24 @@ public class MapPath {
 	
 	public ListIterator<MapPoint> iterator() {
 		return path.listIterator();
+	}
+	
+	public boolean export(File file) {
+		//TODO
+		PrintWriter out;
+		try {
+			out = new PrintWriter(new BufferedWriter(new FileWriter(file)));
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		
+		ListIterator<MapPoint> itr = path.listIterator();
+		while(itr.hasNext()) {
+			out.println(itr.next());
+		}
+		
+		return true;
 	}
 
 }

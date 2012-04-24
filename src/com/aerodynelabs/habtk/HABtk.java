@@ -27,6 +27,7 @@ import org.noos.xing.mydoggy.plaf.MyDoggyToolWindowManager;
 import com.aerodynelabs.habtk.prediction.LatexPredictor;
 import com.aerodynelabs.habtk.prediction.Predictor;
 import com.aerodynelabs.habtk.ui.AboutDialog;
+import com.aerodynelabs.habtk.ui.PredictionPanel;
 import com.aerodynelabs.habtk.ui.TerminalPanel;
 import com.aerodynelabs.habtk.ui.TrackingPanel;
 import com.aerodynelabs.map.MappingPanel;
@@ -140,6 +141,7 @@ public class HABtk {
 		windowManager = new MyDoggyToolWindowManager();
 		windowManager.registerToolWindow("Log", "Log", null, new TerminalPanel(), ToolWindowAnchor.BOTTOM);
 		windowManager.registerToolWindow("Tracking", "Tracking", null, new TrackingPanel(), ToolWindowAnchor.LEFT);
+		windowManager.registerToolWindow("Prediction", "Prediction", null, new PredictionPanel(), ToolWindowAnchor.LEFT);
 		windowManager.registerToolWindow("Map", "Map", null, map, ToolWindowAnchor.RIGHT);
 		for(ToolWindow win : windowManager.getToolWindows()) win.setAvailable(true);
 		windowManager.getToolWindow("Log").setType(ToolWindowType.SLIDING);
