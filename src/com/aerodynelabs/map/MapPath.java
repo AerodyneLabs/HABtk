@@ -180,6 +180,7 @@ public class MapPath {
 		while(itr.hasNext()) {
 			out.println(itr.next());
 		}
+		out.flush();
 		
 		return true;
 	}
