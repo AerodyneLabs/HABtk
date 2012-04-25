@@ -15,7 +15,6 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
@@ -85,8 +84,6 @@ public class LatexPredictor extends Predictor {
 			JButton bStartTime = new JButton("Calendar");
 			bStartTime.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					// TODO calendar JCommon DateChooserPanel
-					//JOptionPane.showMessageDialog(null, "Date picker not implemented yet!");
 					DateTimePicker picker = new DateTimePicker(DateTimePicker.DATETIME);
 					if(!picker.wasAccepted()) return;
 					Date date = picker.getValue();

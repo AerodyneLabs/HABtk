@@ -1,7 +1,5 @@
 package com.aerodynelabs.habtk.connectors.parsers;
 
-import java.util.Scanner;
-
 public class APRSPacket {
 	
 	String packet;
