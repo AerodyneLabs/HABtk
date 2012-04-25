@@ -1,4 +1,3 @@
-//TODO Mic-E
 package com.aerodynelabs.habtk.connectors.parsers;
 
 import java.util.Scanner;
@@ -38,16 +37,16 @@ public class APRSPacket {
 	
 	public APRSPacket(String pkt) {
 		// Get data type ID
-		
+		//TODO detect type of aprs packet
 	}
 	
 	private boolean parsePosition() {
-		
+		//TODO parse standard aprs packet
 		return true;
 	}
 	
 	private boolean parseMicPosition() {
-		
+		//TODO parse mic-e packet
 		return true;
 	}
 	

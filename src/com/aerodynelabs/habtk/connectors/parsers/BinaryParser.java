@@ -8,13 +8,13 @@ public class BinaryParser implements Parser {
 
 	@Override
 	public BalloonPacket parsePacket(String pkt) {
-		// TODO Auto-generated method stub
+		// parse binary packet
 		return null;
 	}
 
 	@Override
 	public String findPacket() {
-		// TODO Auto-generated method stub
+		// TODO find binary packet
 		return null;
 	}
 

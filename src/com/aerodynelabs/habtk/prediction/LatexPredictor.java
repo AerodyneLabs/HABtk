@@ -329,7 +329,6 @@ public class LatexPredictor extends Predictor {
 	
 	public MapPath runPrediction() {
 		double tStep = 30.0;
-		// TODO
 		// Create output variable
 		MapPath path = new MapPath();
 		

@@ -21,7 +21,7 @@ public class PredictionPanel extends JPanel {
 		JButton run = new JButton("Run");
 		run.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// TODO
+				// TODO run predictions
 			}
 		});
 		layout.putConstraint(SpringLayout.SOUTH, this, 6, SpringLayout.SOUTH, run);
