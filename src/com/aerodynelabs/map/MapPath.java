@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -21,9 +22,11 @@ public class MapPath {
 	private long endTime = 0;
 	
 	private LinkedList<MapPoint> path;
+	private ArrayList<MapPoint> markers;
 	
 	public MapPath() {
 		path = new LinkedList<MapPoint>();
+		markers = new ArrayList<MapPoint>();
 	}
 	
 	public MapPath(String name) {
@@ -34,6 +37,22 @@ public class MapPath {
 	public MapPath(List<MapPoint> path) {
 		this();
 		this.path.addAll(path);
+	}
+	
+	public void addMarker(MapPoint mark) {
+		markers.add(mark);
+	}
+	
+	public void addMarker(String name, double lat, double lon) {
+		markers.add(new MapPoint(lat, lon, 0, 0, name));
+	}
+	
+	public MapPoint getFirst() {
+		return path.getFirst();
+	}
+	
+	public MapPoint getLast() {
+		return path.getLast();
 	}
 	
 	public String getName() {
@@ -48,6 +67,18 @@ public class MapPath {
 		return maxAlt;
 	}
 	
+	public long getStartTime() {
+		return startTime;
+	}
+	
+	public long getEndTime() {
+		return endTime;
+	}
+	
+	public long getElapsedTime() {
+		return endTime - startTime;
+	}
+	
 	private void updateBounds(double lat, double lon) {
 		if(lat > boundNorth) {
 			boundNorth = lat;
@@ -59,6 +90,11 @@ public class MapPath {
 		} else if(lon < boundWest) {
 			boundWest = lon;
 		}
+	}
+	
+	public void add(MapPoint point) {
+		updateBounds(point.getLatitude(), point.getLongitude());
+		path.add(point);
 	}
 	
 	public void add(double lat, double lon) {
@@ -102,6 +138,10 @@ public class MapPath {
 	
 	public LinkedList<MapPoint> getPath() {
 		return path;
+	}
+	
+	public List<MapPoint> getMarkers() {
+		return markers;
 	}
 	
 	public boolean inBounds(double north, double east, double south, double west) {

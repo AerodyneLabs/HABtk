@@ -97,6 +97,19 @@ public class MapOverlay {
 					pp = cp;
 				}
 			}
+			ListIterator<MapPoint> iter = p.getMarkers().listIterator();
+			while(iter.hasNext()) {
+				MapPoint mark = iter.next();
+				int x = map.getLonPos(mark.getLongitude());
+				int y = map.getLatPos(mark.getLatitude());
+				g.setColor(Color.GREEN);
+				g.fillOval(x-3, y-3, 7, 7);
+				g.setColor(Color.BLACK);
+				g.setFont(new Font("SansSerif", Font.PLAIN, 9));
+				FontMetrics metrics = g.getFontMetrics();
+				String name = mark.getName();
+				if(name != null) g.drawString(name, x-(metrics.stringWidth(name)/2), y-(metrics.getHeight()/2));
+			}
 			if(p.getPath().getLast() != null) {
 				MapPoint cp = p.getPath().getLast();
 				g.setColor(Color.GREEN);

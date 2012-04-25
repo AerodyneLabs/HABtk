@@ -349,7 +349,6 @@ public class LatexPredictor extends Predictor {
 		double radius = Math.pow((3.0*volume)/(4*Math.PI), 1.0/3.0);
 		double area = Math.PI*Math.pow(radius, 2.0);
 		double ascentRate = Math.pow(((balloonLift - payloadMass) * 9.81) / (0.5 * rho * balloonDrag * area), 1.0/2.0);
-//		System.out.println(directGeodesic(new Point2D.Double(-93.6, 42), 100 * Math.PI / 180.0, 1000));
 		
 		// Calculate ascent
 		while(isAscending) {
@@ -378,8 +377,8 @@ public class LatexPredictor extends Predictor {
 			// Store
 			path.add(cLat, cLon, cAlt, startTime + Math.round(eTime));
 		}
+		path.addMarker(new MapPoint(cLat, cLon, cAlt, startTime + Math.round(eTime), "Burst"));
 		// Calculate descent
-		System.out.println("Burst Alt: " + cAlt + " m");
 		while(cAlt > groundLevel) {
 			AtmosphereState state = atmo.getAtAltitude(cAlt);
 			double windX = state.getWindSpeed() * Math.sin(Math.toRadians(state.getWindDirection() + 180.0));
@@ -401,11 +400,6 @@ public class LatexPredictor extends Predictor {
 			path.add(cLat, cLon, cAlt, startTime + Math.round(eTime));
 		}
 		
-		System.out.println(dX + ", " + dY);
-		double range = Math.pow(Math.pow(dX, 2.0) + Math.pow(dY, 2.0), 0.5);
-		double bearing = Math.atan(dX / dY) + Math.PI;
-		System.out.println(Math.toDegrees(bearing) + " degrees for " + range/1000 + " km");
-		System.out.println(eTime + " seconds");
 		return path;
 	}
 	
