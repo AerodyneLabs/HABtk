@@ -55,6 +55,16 @@ public class MapPath {
 		return path.getLast();
 	}
 	
+	public double getDistance() {
+		double dLat = Math.toRadians(path.getLast().getLatitude() - path.getFirst().getLatitude());
+		double dLon = Math.toRadians(path.getLast().getLongitude() - path.getFirst().getLongitude());
+		double sLat = Math.toRadians(path.getFirst().getLatitude());
+		double fLat = Math.toRadians(path.getLast().getLatitude());
+		double a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(sLat) * Math.cos(fLat);
+		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+		return c * 6371000;
+	}
+	
 	public String getName() {
 		return name;
 	}
