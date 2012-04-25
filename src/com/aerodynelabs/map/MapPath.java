@@ -16,6 +16,9 @@ public class MapPath {
 	private double boundSouth = 0.0;
 	private double boundEast = 0.0;
 	private double boundWest = 0.0;
+	private double maxAlt = 0.0;
+	private long startTime = 0;
+	private long endTime = 0;
 	
 	private LinkedList<MapPoint> path;
 	
@@ -41,6 +44,10 @@ public class MapPath {
 		this.name = name;
 	}
 	
+	public double getMaxAlt() {
+		return maxAlt;
+	}
+	
 	private void updateBounds(double lat, double lon) {
 		if(lat > boundNorth) {
 			boundNorth = lat;
@@ -56,18 +63,20 @@ public class MapPath {
 	
 	public void add(double lat, double lon) {
 		updateBounds(lat, lon);
-		
-		// Add to end of path
 		path.add(new MapPoint(lat, lon));
 	}
 	
 	public void add(double lat, double lon, double alt) {
 		updateBounds(lat, lon);
+		if(alt > maxAlt) maxAlt = alt;
 		path.add(new MapPoint(lat, lon, alt));
 	}
 	
 	public void add(double lat, double lon, double alt, long time) {
 		updateBounds(lat, lon);
+		if(alt > maxAlt) maxAlt = alt;
+		if(time < startTime || startTime == 0) startTime = time;
+		if(time > endTime) endTime = time;
 		path.add(new MapPoint(lat, lon, alt, time));
 	}
 	
