@@ -26,6 +26,7 @@ import com.aerodynelabs.habtk.atmosphere.AtmosphereProfile;
 import com.aerodynelabs.habtk.atmosphere.AtmosphereState;
 import com.aerodynelabs.habtk.atmosphere.GSDParser;
 import com.aerodynelabs.habtk.atmosphere.RUCGFS;
+import com.aerodynelabs.habtk.ui.DateTimePicker;
 import com.aerodynelabs.map.MapPath;
 import com.aerodynelabs.map.MapPoint;
 
@@ -85,7 +86,11 @@ public class LatexPredictor extends Predictor {
 			bStartTime.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					// TODO calendar JCommon DateChooserPanel
-					JOptionPane.showMessageDialog(null, "Date picker not implemented yet!");
+					//JOptionPane.showMessageDialog(null, "Date picker not implemented yet!");
+					DateTimePicker picker = new DateTimePicker(DateTimePicker.DATETIME);
+					if(!picker.wasAccepted()) return;
+					Date date = picker.getValue();
+					if(date != null) fStartTime.setText(sdf.format(date));
 				}
 			});
 			layout.putConstraint(SpringLayout.WEST, lStartTime, 6, SpringLayout.WEST, pane);
