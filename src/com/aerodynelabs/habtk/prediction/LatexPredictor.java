@@ -405,7 +405,7 @@ public class LatexPredictor extends Predictor {
 		System.out.println(dX + ", " + dY);
 		double range = Math.pow(Math.pow(dX, 2.0) + Math.pow(dY, 2.0), 0.5);
 		double bearing = Math.atan(dX / dY) + Math.PI;
-		System.out.println(Math.toDegrees(bearing) + " degrees for " + range + " meters");
+		System.out.println(Math.toDegrees(bearing) + " degrees for " + range/1000 + " km");
 		System.out.println(eTime + " seconds");
 		return path;
 	}
