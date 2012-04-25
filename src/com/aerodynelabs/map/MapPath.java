@@ -41,8 +41,7 @@ public class MapPath {
 		this.name = name;
 	}
 	
-	public void add(double lat, double lon) {
-		// Update path bounds
+	private void updateBounds(double lat, double lon) {
 		if(lat > boundNorth) {
 			boundNorth = lat;
 		} else if(lat < boundSouth) {
@@ -53,9 +52,23 @@ public class MapPath {
 		} else if(lon < boundWest) {
 			boundWest = lon;
 		}
+	}
+	
+	public void add(double lat, double lon) {
+		updateBounds(lat, lon);
 		
 		// Add to end of path
 		path.add(new MapPoint(lat, lon));
+	}
+	
+	public void add(double lat, double lon, double alt) {
+		updateBounds(lat, lon);
+		path.add(new MapPoint(lat, lon, alt));
+	}
+	
+	public void add(double lat, double lon, double alt, long time) {
+		updateBounds(lat, lon);
+		path.add(new MapPoint(lat, lon, alt, time));
 	}
 	
 	public void addAll(List<MapPoint> path) {

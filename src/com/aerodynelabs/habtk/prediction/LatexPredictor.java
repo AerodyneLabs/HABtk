@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Point2D;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -22,6 +23,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.aerodynelabs.habtk.atmosphere.AtmosphereProfile;
+import com.aerodynelabs.habtk.atmosphere.AtmosphereState;
 import com.aerodynelabs.habtk.atmosphere.GSDParser;
 import com.aerodynelabs.habtk.atmosphere.RUCGFS;
 import com.aerodynelabs.map.MapPath;
@@ -37,6 +39,12 @@ public class LatexPredictor extends Predictor {
 	private double payloadMass, balloonLift;
 	private double parachuteArea, parachuteDrag;
 	private double balloonMass, balloonDrag, burstRad;
+	
+	private static final double rhog = 0.1762;	// kg/m^3 (Helium)
+	private static final double rho = 1.276;	// kg/m^3 (Air)
+	private static final double R = 8.31432;
+	private static final double MWGas = 0.004002602;
+	private static final double MWAir = 0.0289644;
 	
 	private static final String balloons[] = {"Kaymont 200", "Kaymont 300", "Kaymont 350", "Kaymont 600", "Kaymont 800", "Kaymont 1000", "Kaymont 1200", "Kaymont 1500", "Kaymont 2000", "Kaymont 3000"};
 	private static final double balloonData[][] = {
@@ -320,6 +328,7 @@ public class LatexPredictor extends Predictor {
 	}
 	
 	public MapPath runPrediction() {
+		double tStep = 30.0;
 		// TODO
 		// Create output variable
 		MapPath path = new MapPath();
@@ -333,18 +342,81 @@ public class LatexPredictor extends Predictor {
 		double cLat = startLat;
 		double cLon = startLon;
 		double cAlt = startAlt;
+		double eTime = 0.0;
+		double dX = 0.0;
+		double dY = 0.0;
 		
+		double volume = (balloonLift + balloonMass) / (rho - rhog);
+		double radius = Math.pow((3.0*volume)/(4*Math.PI), 1.0/3.0);
+		double area = Math.PI*Math.pow(radius, 2.0);
+		double ascentRate = Math.pow(((balloonLift - payloadMass) * 9.81) / (0.5 * rho * balloonDrag * area), 1.0/2.0);
+//		System.out.println(directGeodesic(new Point2D.Double(-93.6, 42), 100 * Math.PI / 180.0, 1000));
 		
 		// Calculate ascent
 		while(isAscending) {
+			// Solve for motion
+			AtmosphereState state = atmo.getAtAltitude(cAlt);
+			double windX = state.getWindSpeed() * Math.sin(Math.toRadians(state.getWindDirection() + 180.0));
+			double windY = state.getWindSpeed() * Math.cos(Math.toRadians(state.getWindDirection() + 180.0));
+			dX += windX * tStep;
+			dY += windY * tStep;
+			cAlt += ascentRate * tStep;
+			eTime += tStep;
 			
+			// Check for burst
+			double cRhoG = (state.getPressure() * MWGas) / (R * (state.getTemperature() + 273.15));
+			double cRhoA = (state.getPressure() * MWAir) / (R * (state.getTemperature() + 273.15));
+			double cV = (balloonLift + balloonMass) / (cRhoA - cRhoG);
+			double cR = Math.pow((3.0 * cV) / (4.0 * Math.PI), 1.0 / 3.0);
+			if(cR >= burstRad) isAscending = false;
+			
+			// Convert to lat/lon
+			double range = Math.pow(Math.pow(dX, 2.0) + Math.pow(dY, 2.0), 0.5);
+			double bearing = Math.atan(dX/ dY) + Math.PI;
+			Point2D.Double cPos = directGeodesic(new Point2D.Double(startLon, startLat), bearing, range);
+			cLat = cPos.y;
+			cLon = cPos.x;
+			// Store
+			path.add(cLat, cLon, cAlt, startTime + Math.round(eTime));
 		}
 		// Calculate descent
-		while(cAlt > groundLevel){
+		System.out.println("Burst Alt: " + cAlt + " m");
+		while(cAlt > groundLevel) {
+			AtmosphereState state = atmo.getAtAltitude(cAlt);
+			double windX = state.getWindSpeed() * Math.sin(Math.toRadians(state.getWindDirection() + 180.0));
+			double windY = state.getWindSpeed() * Math.cos(Math.toRadians(state.getWindDirection() + 180.0));
+			dX += windX * tStep;
+			dY += windY * tStep;
+			double cRhoA = (state.getPressure() * MWAir) / (R * (state.getTemperature() + 273.15));
+			double descentRate = Math.sqrt((payloadMass * 9.81) / (0.5 * cRhoA * parachuteArea * parachuteDrag));
+			cAlt -= descentRate * tStep;
+			eTime += tStep;
 			
+			// Convert to lat/lon
+			double range = Math.pow(Math.pow(dX, 2.0) + Math.pow(dY, 2.0), 0.5);
+			double bearing = Math.atan(dX / dY) + Math.PI;
+			Point2D.Double cPos = directGeodesic(new Point2D.Double(startLon, startLat), bearing, range);
+			cLat = cPos.y;
+			cLon = cPos.x;
+			// Store
+			path.add(cLat, cLon, cAlt, startTime + Math.round(eTime));
 		}
 		
+		System.out.println(dX + ", " + dY);
+		double range = Math.pow(Math.pow(dX, 2.0) + Math.pow(dY, 2.0), 0.5);
+		double bearing = Math.atan(dX / dY) + Math.PI;
+		System.out.println(Math.toDegrees(bearing) + " degrees for " + range + " meters");
+		System.out.println(eTime + " seconds");
 		return path;
+	}
+	
+	private Point2D.Double directGeodesic(Point2D.Double start, double bearing, double range) {
+		double radDist = range / 6367500;
+		double lat1 = Math.toRadians(start.y);
+		double lon1 = Math.toRadians(start.x);
+		double lat2 = Math.asin( Math.sin(lat1)*Math.cos(radDist) + Math.cos(lat1)*Math.sin(radDist)*Math.cos(bearing) );
+		double lon2 = lon1 + Math.atan2(Math.sin(bearing)*Math.sin(radDist)*Math.cos(lat1), Math.cos(radDist)-Math.sin(lat1)*Math.sin(lat2));
+		return new Point2D.Double(Math.toDegrees(lon2), Math.toDegrees(lat2));
 	}
 
 	@Override

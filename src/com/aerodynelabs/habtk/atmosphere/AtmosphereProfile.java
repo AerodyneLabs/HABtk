@@ -120,7 +120,6 @@ public class AtmosphereProfile {
 		double Hb = base.h;
 		double Tb = base.t + 273.15;
 		double Pb = base.p;
-		System.out.println(Hb + "m " + Tb + "C " + Pb +"Pa");
 		
 		if(Hb < 11000) {
 			if(alt < 11000) {

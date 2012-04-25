@@ -2,12 +2,12 @@ package com.aerodynelabs.habtk.atmosphere;
 
 public class AtmosphereState implements Comparable<AtmosphereState> {
 	
-	double 	h;
-	double	p;
-	double	t;
-	double	dp;
-	double	wd;
-	double	ws;
+	protected double 	h;
+	protected double	p;
+	protected double	t;
+	protected double	dp;
+	protected double	wd;
+	protected double	ws;
 	
 	public AtmosphereState(double altitude, double pressure, double temperature, double dewPoint, double windDirection, double windSpeed) {
 		h = altitude;
@@ -16,6 +16,30 @@ public class AtmosphereState implements Comparable<AtmosphereState> {
 		dp = dewPoint;
 		wd = windDirection;
 		ws = windSpeed;
+	}
+	
+	public double getAltitude() {
+		return h;
+	}
+	
+	public double getPressure() {
+		return p;
+	}
+	
+	public double getTemperature() {
+		return t;
+	}
+	
+	public double getDewPoint() {
+		return dp;
+	}
+	
+	public double getWindSpeed() {
+		return ws;
+	}
+	
+	public double getWindDirection() {
+		return wd;
 	}
 	
 	@Override
