@@ -8,7 +8,7 @@ public class BinaryParser implements Parser {
 
 	@Override
 	public BalloonPacket parsePacket(String pkt) {
-		// parse binary packet
+		// TODO parse binary packet
 		return null;
 	}
 
