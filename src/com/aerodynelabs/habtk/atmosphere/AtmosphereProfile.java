@@ -132,7 +132,6 @@ public class AtmosphereProfile {
 			Hb = 11000;
 			Tb = T;
 			Pb = P;
-			System.out.println(Hb + "m " + Tb + "C " + Pb +"Pa");
 		}
 		if(Hb < 20000) {
 			if(alt < 20000) {
@@ -145,7 +144,6 @@ public class AtmosphereProfile {
 			Hb = 20000;
 			Tb = T;
 			Pb = P;
-			System.out.println(Hb + "m " + Tb + "C " + Pb +"Pa");
 		}
 		if(Hb < 32000) {
 			if(alt < 32000) {
@@ -158,7 +156,6 @@ public class AtmosphereProfile {
 			Hb = 32000;
 			Tb = T;
 			Pb = P;
-			System.out.println(Hb + "m " + Tb + "C " + Pb +"Pa");
 		}
 		if(Hb < 47000) {
 			if(alt < 47000) {
@@ -171,7 +168,6 @@ public class AtmosphereProfile {
 			Hb = 47000;
 			Tb = T;
 			Pb = P;
-			System.out.println(Hb + "m " + Tb + "C " + Pb +"Pa");
 		}
 		
 		

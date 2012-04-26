@@ -96,7 +96,6 @@ public class KML {
 			MapPoint p = itr.next();
 			points += p.getLongitude() + "," + p.getLatitude() + "," + p.getAltitude() + "\n";
 		}
-		System.out.println(points);
 		coords.appendChild(doc.createTextNode(points));
 		lineString.appendChild(coords);
 	}
