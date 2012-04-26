@@ -25,18 +25,18 @@ public class FlightListPanel extends JPanel {
 
 		@Override
 		public int getColumnCount() {
-			return 0;
+			return headers.length;
 		}
 
 		@Override
 		public int getRowCount() {
-			// TODO getRowCount
-			return 0;
+			return flights.size();
 		}
 
 		@Override
-		public Object getValueAt(int arg0, int arg1) {
+		public Object getValueAt(int row, int col) {
 			// TODO getValueAt
+			
 			return null;
 		}
 		
