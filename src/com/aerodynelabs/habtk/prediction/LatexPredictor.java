@@ -431,5 +431,41 @@ public class LatexPredictor extends Predictor {
 		startTime = start.getTime();
 		startAlt = start.getAltitude();
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o == this) return true;
+		if(o == null) return false;
+		if(!(o instanceof LatexPredictor)) return false;
+		LatexPredictor obj = (LatexPredictor)o;
+		if(
+			startTime == obj.startTime &&
+			startLat == obj.startLat &&
+			startLon == obj.startLon &&
+			startAlt == obj.startAlt &&
+			groundLevel == obj.groundLevel &&
+			isAscending == obj.isAscending &&
+			payloadMass == obj.payloadMass &&
+			balloonLift == obj.balloonLift &&
+			parachuteArea == obj.parachuteArea &&
+			parachuteDrag == obj.parachuteDrag &&
+			balloonMass == obj.balloonMass &&
+			balloonDrag == obj.balloonDrag &&
+			burstRad == obj.burstRad
+			) return true;
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		int hash = 1;
+		hash = hash * 31 + (new Long(startTime)).hashCode();
+		hash = hash * 31 + (new Double(startLat)).hashCode();
+		hash = hash * 31 + (new Double(startLon)).hashCode();
+		hash = hash * 31 + (new Double(startAlt)).hashCode();
+		hash = hash * 31 + (new Double(balloonMass)).hashCode();
+		hash = hash * 31 + (new Double(balloonLift)).hashCode();
+		return hash;
+	}
 
 }
