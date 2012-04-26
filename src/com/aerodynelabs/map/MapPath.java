@@ -184,5 +184,15 @@ public class MapPath {
 		
 		return true;
 	}
+	
+	public boolean exportKML(File file) {
+		KML kml = new KML();
+		kml.addPath(path, name);
+		ListIterator<MapPoint> itr = markers.listIterator();
+		while(itr.hasNext()) {
+			kml.addMark(itr.next());
+		}
+		return kml.writeFile(file);
+	}
 
 }
