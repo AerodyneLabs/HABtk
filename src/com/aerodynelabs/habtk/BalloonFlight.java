@@ -14,7 +14,10 @@ public class BalloonFlight {
 	private Vector<MapPath> predictions;
 	
 	public BalloonFlight() {
-		
+	}
+	
+	public BalloonFlight(Predictor predictor) {
+		this.predictor = predictor;
 	}
 	
 	public void setPredictor(Predictor pred) {

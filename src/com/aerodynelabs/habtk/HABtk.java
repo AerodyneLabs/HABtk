@@ -49,7 +49,7 @@ public class HABtk {
 	private static MyDoggyToolWindowManager windowManager;
 	private static MappingPanel map;
 	
-	private static Predictor flightPredictor = new LatexPredictor();
+	private static BalloonFlight flight = new BalloonFlight();
 	
 	private static void setup() {
 		// Configure window
@@ -68,8 +68,9 @@ public class HABtk {
 		JMenuItem fileNewFlightItem = new JMenuItem("New Flight");
 		fileNewFlightItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				flightPredictor = Predictor.create();
+				Predictor flightPredictor = Predictor.create();
 				if(flightPredictor != null) flightPredictor.save();
+				flight.setPredictor(flightPredictor);
 			}
 		});
 		fileMenu.add(fileNewFlightItem);
@@ -77,8 +78,8 @@ public class HABtk {
 		JMenuItem fileLoadFlightItem = new JMenuItem("Load Flight");
 		fileLoadFlightItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				flightPredictor = Predictor.load();
-				System.out.println(flightPredictor);
+				Predictor flightPredictor = Predictor.load();
+				flight.setPredictor(flightPredictor);
 			}
 		});
 		fileMenu.add(fileLoadFlightItem);
