@@ -1,3 +1,5 @@
+// XXX Add sanity checks to new flight dialog
+
 package com.aerodynelabs.habtk.prediction;
 
 import java.awt.Container;
@@ -80,7 +82,12 @@ public class LatexPredictor extends Predictor {
 			
 			sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
 			JLabel lStartTime = new JLabel("Launch Time UTC:");
-			fStartTime = new JTextField(sdf.format(new Date()), 12);
+			fStartTime = new JTextField(12);
+			if(startTime > 0) {
+				fStartTime.setText(sdf.format(new Date(startTime)));
+			} else {
+				fStartTime.setText(sdf.format(new Date()));
+			}
 			JButton bStartTime = new JButton("Calendar");
 			bStartTime.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -100,9 +107,19 @@ public class LatexPredictor extends Predictor {
 			layout.putConstraint(SpringLayout.SOUTH, bStartTime, 0, SpringLayout.SOUTH, fStartTime);
 			
 			JLabel lStartLat = new JLabel("Start Latitude:");
-			fStartLat = new JTextField("42.0000", 10);
+			fStartLat = new JTextField(10);
+			if(startLat != 0.0d) {
+				fStartLat.setText(Double.toString(startLat));
+			} else {
+				fStartLat.setText("42.0000");
+			}
 			JLabel lStartLon = new JLabel("Start Longitude:");
-			fStartLon = new JTextField("-93.6350", 10);
+			fStartLon = new JTextField(10);
+			if(startLon != 0.0d) {
+				fStartLon.setText(Double.toString(startLon));
+			} else {
+				fStartLon.setText("-93.6350");
+			}
 			layout.putConstraint(SpringLayout.NORTH, lStartLat, 6, SpringLayout.SOUTH, fStartTime);
 			layout.putConstraint(SpringLayout.NORTH, lStartLon, 6, SpringLayout.SOUTH, fStartTime);
 			layout.putConstraint(SpringLayout.WEST, lStartLat, 6, SpringLayout.WEST, pane);
@@ -115,13 +132,19 @@ public class LatexPredictor extends Predictor {
 			layout.putConstraint(SpringLayout.EAST, pane, 6, SpringLayout.EAST, fStartLon);
 			
 			JLabel lStartAlt = new JLabel("Start Altitude (m):");
-			fStartAlt = new JTextField("297.5", 10);
+			fStartAlt = new JTextField(10);
+			if(startAlt > 0) {
+				fStartAlt.setText(Double.toString(startAlt));
+			} else {
+				fStartAlt.setText("297.5");
+			}
 			layout.putConstraint(SpringLayout.NORTH, fStartAlt, 6, SpringLayout.SOUTH, fStartLat);
 			layout.putConstraint(SpringLayout.BASELINE, lStartAlt, 0, SpringLayout.BASELINE, fStartAlt);
 			layout.putConstraint(SpringLayout.WEST, lStartAlt, 6, SpringLayout.WEST, pane);
 			layout.putConstraint(SpringLayout.WEST, fStartAlt, 6, SpringLayout.EAST, lStartAlt);
 			layout.putConstraint(SpringLayout.EAST, fStartAlt, -6, SpringLayout.EAST, pane);
 			
+			// TODO save and load balloon name
 			JLabel lBalloon = new JLabel("Balloon:");
 			fBalloon = new JComboBox(balloons);
 			layout.putConstraint(SpringLayout.NORTH, fBalloon, 6, SpringLayout.SOUTH, fStartAlt);
@@ -132,6 +155,7 @@ public class LatexPredictor extends Predictor {
 			
 			JLabel lLift = new JLabel("Neck Lift (kg):");
 			fLift = new JTextField();
+			if(balloonLift > 0) fLift.setText(Double.toString(balloonLift));
 			layout.putConstraint(SpringLayout.NORTH, fLift, 6, SpringLayout.SOUTH, fBalloon);
 			layout.putConstraint(SpringLayout.BASELINE, lLift, 0, SpringLayout.BASELINE, fLift);
 			layout.putConstraint(SpringLayout.WEST, lLift, 6, SpringLayout.WEST, pane);
@@ -140,6 +164,7 @@ public class LatexPredictor extends Predictor {
 			
 			JLabel lMass = new JLabel("Payload Mass (kg):");
 			fMass = new JTextField();
+			if(payloadMass > 0) fMass.setText(Double.toString(payloadMass));
 			layout.putConstraint(SpringLayout.NORTH, fMass, 6, SpringLayout.SOUTH, fLift);
 			layout.putConstraint(SpringLayout.BASELINE, lMass, 0, SpringLayout.BASELINE, fMass);
 			layout.putConstraint(SpringLayout.WEST, lMass, 6, SpringLayout.WEST, pane);
@@ -148,6 +173,7 @@ public class LatexPredictor extends Predictor {
 			
 			JLabel lArea = new JLabel("Chute Area (m^2):");
 			fArea = new JTextField();
+			if(parachuteArea > 0) fArea.setText(Double.toString(parachuteArea));
 			layout.putConstraint(SpringLayout.NORTH, fArea, 6, SpringLayout.SOUTH, fMass);
 			layout.putConstraint(SpringLayout.BASELINE, lArea, 0, SpringLayout.BASELINE, fArea);
 			layout.putConstraint(SpringLayout.WEST, lArea, 6, SpringLayout.WEST, pane);
@@ -156,6 +182,7 @@ public class LatexPredictor extends Predictor {
 			
 			JLabel lDrag = new JLabel("Chute Cd:");
 			fDrag = new JTextField();
+			if(parachuteDrag > 0) fArea.setText(Double.toString(parachuteArea));
 			layout.putConstraint(SpringLayout.NORTH, fDrag, 6, SpringLayout.SOUTH, fArea);
 			layout.putConstraint(SpringLayout.BASELINE, lDrag, 0, SpringLayout.BASELINE, fDrag);
 			layout.putConstraint(SpringLayout.WEST, lDrag, 6, SpringLayout.WEST, pane);
@@ -172,7 +199,6 @@ public class LatexPredictor extends Predictor {
 			JButton ok = new JButton("Ok");
 			ok.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					accepted = true;
 					try {
 						startLat = Double.parseDouble(fStartLat.getText());
 						startLon = Double.parseDouble(fStartLon.getText());
@@ -189,7 +215,9 @@ public class LatexPredictor extends Predictor {
 						balloonDrag = bDat[2];
 					} catch (Exception e1) {
 						e1.printStackTrace();
+						accepted = false;
 					}
+					accepted = true;
 					dispose();
 				}
 			});
