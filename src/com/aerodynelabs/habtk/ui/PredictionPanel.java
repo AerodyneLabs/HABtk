@@ -44,21 +44,27 @@ public class PredictionPanel extends JPanel {
 		JButton bNew = new JButton("New");
 		bNew.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				baseFlight = Predictor.create();
-				fFlight.setText(baseFlight.toString());
+				Predictor pred = Predictor.create();
+				if(pred != null) {
+					baseFlight = pred; 
+					fFlight.setText(baseFlight.toString());
+				}
 			}
 		});
 		JButton bLoad = new JButton("Open");
 		bLoad.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Predictor pred = Predictor.load();
-				if(pred != null) baseFlight = pred;
-				fFlight.setText(baseFlight.toString());
+				if(pred != null) {
+					baseFlight = pred;
+					fFlight.setText(baseFlight.toString());
+				}
 			}
 		});
 		JButton bEdit = new JButton("Edit");
 		bEdit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if(baseFlight == null) return;
 				if(baseFlight.setup()) fFlight.setText(baseFlight.toString());
 			}
 		});

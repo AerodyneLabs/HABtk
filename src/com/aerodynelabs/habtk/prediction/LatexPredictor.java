@@ -33,6 +33,8 @@ import com.aerodynelabs.map.MapPoint;
 
 public class LatexPredictor extends Predictor {
 	
+	private static String balloonName = null;
+	
 	private long startTime;
 	private double startLat, startLon, startAlt;
 	private double groundLevel;
@@ -144,9 +146,11 @@ public class LatexPredictor extends Predictor {
 			layout.putConstraint(SpringLayout.WEST, fStartAlt, 6, SpringLayout.EAST, lStartAlt);
 			layout.putConstraint(SpringLayout.EAST, fStartAlt, -6, SpringLayout.EAST, pane);
 			
-			// TODO save and load balloon name
 			JLabel lBalloon = new JLabel("Balloon:");
 			fBalloon = new JComboBox(balloons);
+			if(balloonName != null) {
+				fBalloon.setSelectedItem(balloonName);
+			}
 			layout.putConstraint(SpringLayout.NORTH, fBalloon, 6, SpringLayout.SOUTH, fStartAlt);
 			layout.putConstraint(SpringLayout.BASELINE, lBalloon, 0, SpringLayout.BASELINE, fBalloon);
 			layout.putConstraint(SpringLayout.WEST, lBalloon, 6, SpringLayout.WEST, pane);
@@ -182,7 +186,7 @@ public class LatexPredictor extends Predictor {
 			
 			JLabel lDrag = new JLabel("Chute Cd:");
 			fDrag = new JTextField();
-			if(parachuteDrag > 0) fArea.setText(Double.toString(parachuteArea));
+			if(parachuteDrag > 0) fDrag.setText(Double.toString(parachuteDrag));
 			layout.putConstraint(SpringLayout.NORTH, fDrag, 6, SpringLayout.SOUTH, fArea);
 			layout.putConstraint(SpringLayout.BASELINE, lDrag, 0, SpringLayout.BASELINE, fDrag);
 			layout.putConstraint(SpringLayout.WEST, lDrag, 6, SpringLayout.WEST, pane);
@@ -209,6 +213,7 @@ public class LatexPredictor extends Predictor {
 						balloonLift = Double.parseDouble(fLift.getText());
 						parachuteArea = Double.parseDouble(fArea.getText());
 						parachuteDrag = Double.parseDouble(fDrag.getText());
+						balloonName = balloons[fBalloon.getSelectedIndex()];
 						double bDat[] = balloonData[fBalloon.getSelectedIndex()];
 						balloonMass = bDat[0];
 						burstRad = bDat[1];
@@ -347,12 +352,7 @@ public class LatexPredictor extends Predictor {
 	
 	public String toString() {
 		String ret =
-				"Latex Predictor v1.0\n" +
-				startLat + ", " + startLon + " from " + startAlt +
-				" @ " + startTime + "\n" +
-				balloonMass + "kg balloon, " + balloonDrag + " drag, " + burstRad + "m burst radius\n" +
-				balloonLift + "kg lift, " + payloadMass + "kg mass\n" +
-				parachuteArea + "m2 parachute, " + parachuteDrag + " drag";
+				balloonName + ": " + balloonLift + "kg neck lift";
 		
 		return ret;
 	}
