@@ -1,6 +1,8 @@
 syntax: glob
 bin/
 *~
+*.swp
+*.lck
 tiles
 wind
 tests
