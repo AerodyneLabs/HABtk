@@ -24,7 +24,7 @@ import org.noos.xing.mydoggy.ToolWindowAnchor;
 import org.noos.xing.mydoggy.ToolWindowType;
 import org.noos.xing.mydoggy.plaf.MyDoggyToolWindowManager;
 
-import com.aerodynelabs.habtk.prediction.LatexPredictor;
+import com.aerodynelabs.habtk.help.HelpWindow;
 import com.aerodynelabs.habtk.prediction.Predictor;
 import com.aerodynelabs.habtk.ui.AboutDialog;
 import com.aerodynelabs.habtk.ui.PredictionPanel;
@@ -115,7 +115,7 @@ public class HABtk {
 		JMenuItem helpHelpItem = new JMenuItem("Help Contents");
 		helpHelpItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//TODO help contents action
+				HelpWindow.showHelp();
 			}
 		});
 		helpMenu.add(helpHelpItem);
