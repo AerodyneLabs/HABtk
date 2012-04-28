@@ -400,7 +400,7 @@ public class LatexPredictor extends Predictor {
 			
 			// Convert to lat/lon
 			double range = Math.pow(Math.pow(dX, 2.0) + Math.pow(dY, 2.0), 0.5);
-			double bearing = Math.atan(dX/ dY) + Math.PI;
+			double bearing = Math.atan(dX / dY);
 			Point2D.Double cPos = directGeodesic(new Point2D.Double(startLon, startLat), bearing, range);
 			cLat = cPos.y;
 			cLon = cPos.x;
@@ -422,7 +422,7 @@ public class LatexPredictor extends Predictor {
 			
 			// Convert to lat/lon
 			double range = Math.pow(Math.pow(dX, 2.0) + Math.pow(dY, 2.0), 0.5);
-			double bearing = Math.atan(dX / dY) + Math.PI;
+			double bearing = Math.atan(dX / dY);
 			Point2D.Double cPos = directGeodesic(new Point2D.Double(startLon, startLat), bearing, range);
 			cLat = cPos.y;
 			cLon = cPos.x;
