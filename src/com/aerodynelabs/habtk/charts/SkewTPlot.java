@@ -1,4 +1,4 @@
-package com.aerodynelabs.habtk.atmosphere;
+package com.aerodynelabs.habtk.charts;
 
 import java.awt.Dimension;
 import java.util.Iterator;
@@ -11,6 +11,9 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+
+import com.aerodynelabs.habtk.atmosphere.AtmosphereProfile;
+import com.aerodynelabs.habtk.atmosphere.AtmosphereState;
 
 
 @SuppressWarnings("serial")
@@ -31,11 +34,11 @@ public class SkewTPlot extends JPanel {
 	public void setProfile(AtmosphereProfile profile) {
 		XYSeries t = new XYSeries("Temp");
 		XYSeries dp = new XYSeries("Dex Point");
-		Iterator<AtmosphereState> itr = profile.data.iterator();
+		Iterator<AtmosphereState> itr = profile.iterator();
 		while(itr.hasNext()) {
 			AtmosphereState c = itr.next();
-			t.add(c.h, c.t);
-			dp.add(c.h, c.dp);
+			t.add(c.getAltitude(), c.getTemperature());
+			dp.add(c.getAltitude(), c.getDewPoint());
 		}
 		set.removeAllSeries();
 		set.addSeries(dp);

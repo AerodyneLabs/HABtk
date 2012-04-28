@@ -63,6 +63,10 @@ public class AtmosphereProfile {
 		return true;
 	}
 	
+	public Iterator<AtmosphereState> iterator() {
+		return data.iterator();
+	}
+	
 	public void addData(double altitude, double pressure, double temperature, double dewPoint, double windDirection, double windSpeed) {
 		data.add(new AtmosphereState(altitude, pressure, temperature, dewPoint, windDirection, windSpeed));
 		Collections.sort(data);
