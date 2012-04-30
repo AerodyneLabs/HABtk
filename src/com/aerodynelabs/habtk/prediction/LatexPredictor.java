@@ -496,4 +496,9 @@ public class LatexPredictor extends Predictor {
 		return hash;
 	}
 
+	@Override
+	public MapPoint getStart() {
+		return new MapPoint(startLat, startLon, startAlt);
+	}
+
 }

@@ -19,10 +19,12 @@ import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
 
+import org.noos.xing.mydoggy.ContentManager;
 import org.noos.xing.mydoggy.ToolWindow;
 import org.noos.xing.mydoggy.ToolWindowAnchor;
 import org.noos.xing.mydoggy.ToolWindowType;
 import org.noos.xing.mydoggy.plaf.MyDoggyToolWindowManager;
+import org.noos.xing.mydoggy.plaf.ui.content.MyDoggyMultiSplitContentManagerUI;
 
 import com.aerodynelabs.habtk.help.HelpWindow;
 import com.aerodynelabs.habtk.prediction.Predictor;
@@ -30,7 +32,6 @@ import com.aerodynelabs.habtk.ui.AboutDialog;
 import com.aerodynelabs.habtk.ui.PredictionPanel;
 import com.aerodynelabs.habtk.ui.TerminalPanel;
 import com.aerodynelabs.habtk.ui.TrackingPanel;
-import com.aerodynelabs.map.MappingPanel;
 
 /**
  * The main class of HABtk
@@ -47,7 +48,8 @@ public class HABtk {
 	
 	private static JFrame window;
 	private static MyDoggyToolWindowManager windowManager;
-	private static MappingPanel map;
+	private static ContentManager contentManager;
+//	private static MappingPanel map;
 	
 	private static BalloonFlight flight = new BalloonFlight();
 	
@@ -137,16 +139,20 @@ public class HABtk {
 		});
 		helpMenu.add(helpAboutItem);
 		
-		map = new MappingPanel();
+//		map = new MappingPanel();
 		
 		windowManager = new MyDoggyToolWindowManager();
+		contentManager = windowManager.getContentManager();
+		contentManager.setContentManagerUI(new MyDoggyMultiSplitContentManagerUI());
+		
 		windowManager.registerToolWindow("Log", "Log", null, new TerminalPanel(), ToolWindowAnchor.BOTTOM);
 		windowManager.registerToolWindow("Tracking", "Tracking", null, new TrackingPanel(), ToolWindowAnchor.LEFT);
-		windowManager.registerToolWindow("Prediction", "Prediction", null, new PredictionPanel(), ToolWindowAnchor.LEFT);
-		windowManager.registerToolWindow("Map", "Map", null, map, ToolWindowAnchor.RIGHT);
+		windowManager.registerToolWindow("Prediction", "Prediction", null, new PredictionPanel(windowManager), ToolWindowAnchor.LEFT);
+//		windowManager.registerToolWindow("Map", "Map", null, map, ToolWindowAnchor.RIGHT);
+//		contentManager.addContent("Map", "Map", null, map, "Map Panel");
 		for(ToolWindow win : windowManager.getToolWindows()) win.setAvailable(true);
 		windowManager.getToolWindow("Log").setType(ToolWindowType.SLIDING);
-		windowManager.getToolWindow("Map").setActive(true);
+//		windowManager.getToolWindow("Map").setActive(true);
 		
 		window.addWindowListener(new WindowAdapter() {
 			public void windowOpened(WindowEvent e) {

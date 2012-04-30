@@ -136,6 +136,7 @@ public abstract class Predictor {
 	public abstract void setAscending(boolean ascending);
 	public abstract void setGroundLevel(double level);
 	public abstract void setStart(MapPoint start);
+	public abstract MapPoint getStart();
 	public abstract boolean equals(Object o);
 	public abstract int hashCode();
 

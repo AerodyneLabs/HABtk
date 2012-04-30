@@ -14,24 +14,32 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SpringLayout;
 
+import org.noos.xing.mydoggy.ContentManager;
+import org.noos.xing.mydoggy.ToolWindowManager;
+
 import com.aerodynelabs.habtk.prediction.Predictor;
+import com.aerodynelabs.map.MapPanel;
+import com.aerodynelabs.map.MapPoint;
 
 @SuppressWarnings("serial")
 public class PredictionPanel extends JPanel {
 	
-	JTextField fFlight;
-	JTextField fStart;
-	JTextField fStop;
-	JSpinner fStep;
-	JSpinner fDays;
+	private JTextField fFlight;
+	private JTextField fStart;
+	private JTextField fStop;
+	private JSpinner fStep;
+	private JSpinner fDays;
 	
-	Predictor baseFlight;
+	private final ToolWindowManager twm;
+	private Predictor baseFlight;
 	
 	private SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
 	
-	public PredictionPanel() {
+	public PredictionPanel(ToolWindowManager windowManager) {
 		super();
+		twm = windowManager;
+		
 		SpringLayout layout = new SpringLayout();
 		setLayout(layout);
 		dateTimeFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -147,6 +155,12 @@ public class PredictionPanel extends JPanel {
 		run.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// TODO run predictions
+				MapPoint startPoint = baseFlight.getStart();
+				MapPanel map = new MapPanel(startPoint.getLatitude(), startPoint.getLongitude(), 9);
+				FlightListPanel list = new FlightListPanel();
+				ContentManager manager = twm.getContentManager();
+				manager.addContent("Prediction Map", "Prediction Map", null, map, "Map Panel");
+				manager.addContent("Prediction List", "Prediction List", null, list, "Prediction List");
 			}
 		});
 		layout.putConstraint(SpringLayout.NORTH, run, 6, SpringLayout.SOUTH, fDays);
