@@ -13,8 +13,8 @@ import com.aerodynelabs.map.MapPath;
 @SuppressWarnings("serial")
 public class ElevationPlot extends JPanel {
 	
-	JFreeChart chart;
-	ElevationTimeSeriesCollection dataset;
+	private JFreeChart chart;
+	private ElevationTimeSeriesCollection dataset;
 	
 	public ElevationPlot() {
 		super();
