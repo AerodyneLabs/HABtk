@@ -1,13 +1,19 @@
 package com.aerodynelabs.habtk.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 import java.util.Vector;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableModel;
 
 import com.aerodynelabs.habtk.prediction.Predictor;
 import com.aerodynelabs.map.MapOverlay;
@@ -18,9 +24,56 @@ import com.aerodynelabs.map.MapPath;
 public class FlightListPanel extends JPanel {
 	
 	private JTable table;
+	private TableModel model;
 	private Vector<Flight> flights = new Vector<Flight>();
 	
 	private MapPanel map;
+	
+	private int lastColor = 0;
+	private static final Color colors[] = {
+		new Color(0,	0,	63),
+		new Color(0,	0,	127),
+		new Color(0,	0,	191),
+		new Color(0,	0,	255),
+		new Color(0,	63,	0),
+		new Color(0,	127,	0),
+		new Color(0,	191,	0),
+		new Color(0,	255,	0),
+		new Color(63,	0,	0),
+		new Color(127,	0,	0),
+		new Color(191,	0,	0),
+		new Color(255,	0,	0)
+	};
+	
+	static class DateTimeRenderer extends DefaultTableCellRenderer {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		
+		public DateTimeRenderer() {
+			super();
+			sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+		}
+		
+		@Override
+		public void setValue(Object value) {
+			setText((value == null) ? "" : sdf.format(value));
+		}
+		
+	}
+	
+	static class ElapsedTimeRenderer extends DefaultTableCellRenderer {
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+		
+		public ElapsedTimeRenderer() {
+			super();
+			sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+		}
+		
+		@Override
+		public void setValue(Object value) {
+			setText((value == null) ? "" : sdf.format(value));
+		}
+		
+	}
 	
 	class Flight {
 		
@@ -44,7 +97,8 @@ public class FlightListPanel extends JPanel {
 				"Balloon",
 				"Lift",
 				"Time Aloft",
-				"Distance"
+				"Distance",
+				"Altitude"
 		};
 
 		@Override
@@ -75,8 +129,6 @@ public class FlightListPanel extends JPanel {
 				return Double.class;
 			case 4:
 				return Date.class;
-			case 5:
-				return Double.class;
 			}
 			return String.class;
 		}
@@ -93,15 +145,17 @@ public class FlightListPanel extends JPanel {
 			case 0:		// Enabled
 				return flight.overlay.isEnabled();
 			case 1:		// Launch Time
-				return flight.path.getStartTime();
+				return flight.path.getStartTime() * 1000;
 			case 2:		// Balloon
 				return flight.flight.getTypeName();
 			case 3:		// Lift
 				return flight.flight.getLift();
 			case 4:		// Time aloft
-				return flight.path.getElapsedTime();
+				return flight.path.getElapsedTime() * 1000;
 			case 5:		// Distance
-				return flight.path.getDistance();
+				return Double.toString(Math.round(flight.path.getDistance() / 100) / 10) + " km";
+			case 6:		// Altitude
+				return Long.toString(Math.round(flight.path.getMaxAlt()) / 1000) + " km";
 			}
 			return null;
 		}
@@ -123,15 +177,22 @@ public class FlightListPanel extends JPanel {
 		
 		this.map = map;
 		
-		table = new JTable(new DataModel());
+		model = new DataModel();
+		table = new JTable(model);
+		table.getColumnModel().getColumn(1).setCellRenderer(new DateTimeRenderer());
+		table.getColumnModel().getColumn(4).setCellRenderer(new ElapsedTimeRenderer());
 		JScrollPane scroller = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		add(scroller, BorderLayout.CENTER);
 	}
 	
 	public void addFlight(Predictor flight, MapPath path) {
 		MapOverlay overlay = new MapOverlay("Prediction " + flights.size()+1);
-		flights.add(new Flight(flight, path, overlay));
-		repaint();
+		overlay.addPath("Prediction", path);
+		overlay.setColor(colors[lastColor++]);
+		if(lastColor >= colors.length) lastColor = 0;
+		map.addOverlay(overlay);
+		flights.add(0, new Flight(flight, path, overlay));
+		table.tableChanged(new TableModelEvent(model));
 		map.updateNotify();
 	}
 

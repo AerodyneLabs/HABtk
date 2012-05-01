@@ -19,7 +19,7 @@ import org.w3c.dom.Element;
 import com.aerodynelabs.map.MapPath;
 import com.aerodynelabs.map.MapPoint;
 
-public abstract class Predictor {
+public abstract class Predictor implements Cloneable {
 	
 	private static Object[] options = {"Latex v1.0"};
 	
@@ -129,6 +129,9 @@ public abstract class Predictor {
 		
 		return true;
 	}
+	
+	@Override
+	public abstract Predictor clone();
 	
 	public abstract void write(Document doc);
 	public abstract boolean read(Document doc);

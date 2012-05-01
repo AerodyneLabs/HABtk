@@ -9,6 +9,7 @@ import java.util.TimeZone;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
@@ -31,12 +32,16 @@ public class PredictionPanel extends JPanel {
 	private JSpinner fStep;
 	private JSpinner fDays;
 	private JButton cancel, run;
+	private JProgressBar progress;
 	
 	private final ToolWindowManager twm;
 	private Predictor baseFlight;
 	
 	private MapPanel map;
 	private FlightListPanel list;
+	
+	private int nTasks = 0;
+	private int cTasks = 0;
 	
 	private SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
@@ -149,6 +154,15 @@ public class PredictionPanel extends JPanel {
 		add(lDays);
 		add(fDays);
 		
+		progress = new JProgressBar();
+		progress.setStringPainted(true);
+		progress.setMaximum(nTasks + 1);
+		progress.setValue(cTasks + 1);
+		layout.putConstraint(SpringLayout.NORTH, progress, 6, SpringLayout.SOUTH, fDays);
+		layout.putConstraint(SpringLayout.WEST, progress, 6, SpringLayout.WEST, this);
+		layout.putConstraint(SpringLayout.EAST, progress, -6, SpringLayout.EAST, this);
+		add(progress);
+		
 		cancel = new JButton("Cancel");
 		cancel.setEnabled(false);
 		cancel.addActionListener(new ActionListener() {
@@ -174,12 +188,11 @@ public class PredictionPanel extends JPanel {
 					list = new FlightListPanel(map);
 					twm.getContentManager().addContent("Prediction List", "Prediction List", null, list, "Prediction List");
 				}
-				//MapPath path = baseFlight.runPrediction();
-				MapPath path = new MapPath();
-				list.addFlight(baseFlight, path);
+				MapPath path = baseFlight.runPrediction();
+				list.addFlight(baseFlight.clone(), path);
 			}
 		});
-		layout.putConstraint(SpringLayout.NORTH, run, 6, SpringLayout.SOUTH, fDays);
+		layout.putConstraint(SpringLayout.NORTH, run, 6, SpringLayout.SOUTH, progress);
 		layout.putConstraint(SpringLayout.NORTH, cancel, 0, SpringLayout.NORTH, run);
 		layout.putConstraint(SpringLayout.EAST, run, -6, SpringLayout.EAST, this);
 		layout.putConstraint(SpringLayout.EAST, cancel, -6, SpringLayout.WEST, run);

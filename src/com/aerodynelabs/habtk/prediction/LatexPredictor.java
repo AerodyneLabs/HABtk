@@ -33,7 +33,7 @@ import com.aerodynelabs.map.MapPoint;
 
 public class LatexPredictor extends Predictor {
 	
-	private static String balloonName = null;
+	private String balloonName = null;
 	
 	private long startTime;
 	private double startLat, startLon, startAlt;
@@ -64,8 +64,6 @@ public class LatexPredictor extends Predictor {
 		{3.0,	6.553,	0.25},	// Kaymont 3000
 	};
 	
-	private AtmosphereProfile atmo;
-	
 	@SuppressWarnings("serial")
 	class SetupDialog extends JDialog {
 		
@@ -86,7 +84,7 @@ public class LatexPredictor extends Predictor {
 			JLabel lStartTime = new JLabel("Launch Time UTC:");
 			fStartTime = new JTextField(12);
 			if(startTime > 0) {
-				fStartTime.setText(sdf.format(new Date(startTime)));
+				fStartTime.setText(sdf.format(new Date(startTime * 1000)));
 			} else {
 				fStartTime.setText(sdf.format(new Date()));
 			}
@@ -364,10 +362,11 @@ public class LatexPredictor extends Predictor {
 		
 		// Get atmosphere profile
 		File wind = new RUCGFS().getAtmosphere((int)startTime, startLat, startLon);
-		atmo = new GSDParser().parseAtmosphere(wind);
+		AtmosphereProfile atmo = new GSDParser().parseAtmosphere(wind);
 		if(atmo == null) return null;
 		
 		// Initial conditions
+		boolean curAscending = isAscending;
 		double cLat = startLat;
 		double cLon = startLon;
 		double cAlt = startAlt;
@@ -381,7 +380,7 @@ public class LatexPredictor extends Predictor {
 		double ascentRate = Math.pow(((balloonLift - payloadMass) * 9.81) / (0.5 * rho * balloonDrag * area), 1.0/2.0);
 		
 		// Calculate ascent
-		while(isAscending) {
+		while(curAscending) {
 			// Solve for motion
 			AtmosphereState state = atmo.getAtAltitude(cAlt);
 			double windX = state.getWindSpeed() * Math.sin(Math.toRadians(state.getWindDirection() + 180.0));
@@ -396,7 +395,7 @@ public class LatexPredictor extends Predictor {
 			double cRhoA = (state.getPressure() * MWAir) / (R * (state.getTemperature() + 273.15));
 			double cV = (balloonLift + balloonMass) / (cRhoA - cRhoG);
 			double cR = Math.pow((3.0 * cV) / (4.0 * Math.PI), 1.0 / 3.0);
-			if(cR >= burstRad) isAscending = false;
+			if(cR >= burstRad) curAscending = false;
 			
 			// Convert to lat/lon
 			double range = Math.pow(Math.pow(dX, 2.0) + Math.pow(dY, 2.0), 0.5);
@@ -509,6 +508,26 @@ public class LatexPredictor extends Predictor {
 	@Override
 	public double getLift() {
 		return balloonLift;
+	}
+
+	@Override
+	public Predictor clone() {
+		LatexPredictor clone = new LatexPredictor();
+		clone.balloonDrag = new Double(balloonDrag).doubleValue();
+		clone.balloonLift = new Double(balloonLift).doubleValue();
+		clone.balloonMass = new Double(balloonMass).doubleValue();
+		clone.balloonName = new String(balloonName);
+		clone.burstRad = new Double(burstRad).doubleValue();
+		clone.groundLevel = new Double(groundLevel).doubleValue();
+		clone.isAscending = new Boolean(isAscending).booleanValue();
+		clone.parachuteArea = new Double(parachuteArea).doubleValue();
+		clone.parachuteDrag = new Double(parachuteDrag).doubleValue();
+		clone.payloadMass = new Double(payloadMass).doubleValue();
+		clone.startAlt = new Double(startAlt).doubleValue();
+		clone.startLat = new Double(startLat).doubleValue();
+		clone.startLon = new Double(startLon).doubleValue();
+		clone.startTime = new Long(startTime).longValue();
+		return clone;
 	}
 
 }
