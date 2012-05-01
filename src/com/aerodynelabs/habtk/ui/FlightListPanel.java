@@ -31,17 +31,17 @@ public class FlightListPanel extends JPanel {
 	
 	private int lastColor = 0;
 	private static final Color colors[] = {
-		new Color(0,	0,	63),
+//		new Color(0,	0,	63),
 		new Color(0,	0,	127),
-		new Color(0,	0,	191),
+//		new Color(0,	0,	191),
 		new Color(0,	0,	255),
-		new Color(0,	63,	0),
+//		new Color(0,	63,	0),
 		new Color(0,	127,	0),
-		new Color(0,	191,	0),
+//		new Color(0,	191,	0),
 		new Color(0,	255,	0),
-		new Color(63,	0,	0),
+//		new Color(63,	0,	0),
 		new Color(127,	0,	0),
-		new Color(191,	0,	0),
+//		new Color(191,	0,	0),
 		new Color(255,	0,	0)
 	};
 	
@@ -153,9 +153,9 @@ public class FlightListPanel extends JPanel {
 			case 4:		// Time aloft
 				return flight.path.getElapsedTime() * 1000;
 			case 5:		// Distance
-				return Double.toString(Math.round(flight.path.getDistance() / 100) / 10) + " km";
+				return Double.toString(Math.floor(flight.path.getDistance()/10 + 0.5) / 100) + " km";
 			case 6:		// Altitude
-				return Long.toString(Math.round(flight.path.getMaxAlt()) / 1000) + " km";
+				return Double.toString(Math.floor(flight.path.getMaxAlt()) / 1000) + " km";
 			}
 			return null;
 		}
@@ -181,6 +181,9 @@ public class FlightListPanel extends JPanel {
 		table = new JTable(model);
 		table.getColumnModel().getColumn(1).setCellRenderer(new DateTimeRenderer());
 		table.getColumnModel().getColumn(4).setCellRenderer(new ElapsedTimeRenderer());
+		
+		
+		
 		JScrollPane scroller = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		add(scroller, BorderLayout.CENTER);
 	}

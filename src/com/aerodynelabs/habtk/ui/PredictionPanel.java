@@ -15,7 +15,6 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SpringLayout;
 
-import org.noos.xing.mydoggy.ContentManager;
 import org.noos.xing.mydoggy.ToolWindowManager;
 
 import com.aerodynelabs.habtk.prediction.Predictor;
