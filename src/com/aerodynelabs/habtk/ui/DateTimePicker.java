@@ -91,11 +91,13 @@ public class DateTimePicker extends JDialog {
 		ok.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				accepted = true;
-				Date date = calendarWidget.getDate();
-				value.setTime(date);
-				value.set(Calendar.HOUR_OF_DAY, ((Number)hour.getValue()).intValue());
-				value.set(Calendar.MINUTE, ((Number)minute.getValue()).intValue());
-				//value.set(Calendar.SECOND, ((Number)second.getValue()).intValue());
+				Calendar date = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+				date.setTime(calendarWidget.getDate());
+				value.set(date.get(Calendar.YEAR),
+						date.get(Calendar.MONTH),
+						date.get(Calendar.DAY_OF_MONTH)-1,
+						((Number)hour.getValue()).intValue(),
+						((Number)minute.getValue()).intValue());
 				dispose();
 			}
 		});

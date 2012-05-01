@@ -21,7 +21,7 @@ public class RUCGFS implements AtmosphereSource {
 		double rlon = (lon / 0.5) * 0.5;
 		String address = "http://rucsoundings.noaa.gov/get_soundings.cgi?data_source=GFS;airport=" +
 				rlat + "," + rlon + ";hydrometeors=false&startSecs=" +startTime +
-				"&endSecs=" + (time+1);
+				"&endSecs=" + (startTime+1);
 		
 		URL url;
 		InputStream is = null;

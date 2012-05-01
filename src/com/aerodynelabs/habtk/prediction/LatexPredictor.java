@@ -501,4 +501,14 @@ public class LatexPredictor extends Predictor {
 		return new MapPoint(startLat, startLon, startAlt);
 	}
 
+	@Override
+	public String getTypeName() {
+		return balloonName;
+	}
+
+	@Override
+	public double getLift() {
+		return balloonLift;
+	}
+
 }

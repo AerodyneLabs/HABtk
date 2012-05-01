@@ -56,6 +56,7 @@ public class MapPath {
 	}
 	
 	public double getDistance() {
+		try {
 		double dLat = Math.toRadians(path.getLast().getLatitude() - path.getFirst().getLatitude());
 		double dLon = Math.toRadians(path.getLast().getLongitude() - path.getFirst().getLongitude());
 		double sLat = Math.toRadians(path.getFirst().getLatitude());
@@ -63,6 +64,9 @@ public class MapPath {
 		double a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(sLat) * Math.cos(fLat);
 		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 		return c * 6371000;
+		} catch(Exception e) {
+			return 0.0d;
+		}
 	}
 	
 	public String getName() {

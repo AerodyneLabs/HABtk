@@ -19,6 +19,7 @@ import org.noos.xing.mydoggy.ToolWindowManager;
 
 import com.aerodynelabs.habtk.prediction.Predictor;
 import com.aerodynelabs.map.MapPanel;
+import com.aerodynelabs.map.MapPath;
 import com.aerodynelabs.map.MapPoint;
 
 @SuppressWarnings("serial")
@@ -29,9 +30,13 @@ public class PredictionPanel extends JPanel {
 	private JTextField fStop;
 	private JSpinner fStep;
 	private JSpinner fDays;
+	private JButton cancel, run;
 	
 	private final ToolWindowManager twm;
 	private Predictor baseFlight;
+	
+	private MapPanel map;
+	private FlightListPanel list;
 	
 	private SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
@@ -144,23 +149,34 @@ public class PredictionPanel extends JPanel {
 		add(lDays);
 		add(fDays);
 		
-		JButton cancel = new JButton("Cancel");
+		cancel = new JButton("Cancel");
 		cancel.setEnabled(false);
 		cancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// TODO cancel predictions
+				run.setEnabled(true);
+				cancel.setEnabled(false);
 			}
 		});
-		JButton run = new JButton("Run");
+		
+		run = new JButton("Run");
 		run.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// TODO run predictions
-				MapPoint startPoint = baseFlight.getStart();
-				MapPanel map = new MapPanel(startPoint.getLatitude(), startPoint.getLongitude(), 9);
-				FlightListPanel list = new FlightListPanel();
-				ContentManager manager = twm.getContentManager();
-				manager.addContent("Prediction Map", "Prediction Map", null, map, "Map Panel");
-				manager.addContent("Prediction List", "Prediction List", null, list, "Prediction List");
+				cancel.setEnabled(true);
+				run.setEnabled(false);
+				if(map == null) {
+					MapPoint startPoint = baseFlight.getStart();
+					map = new MapPanel(startPoint.getLatitude(), startPoint.getLongitude(), 9);
+					twm.getContentManager().addContent("Prediction Map", "Prediction Map", null, map, "Map Panel");
+				}
+				if(list == null) {
+					list = new FlightListPanel(map);
+					twm.getContentManager().addContent("Prediction List", "Prediction List", null, list, "Prediction List");
+				}
+				//MapPath path = baseFlight.runPrediction();
+				MapPath path = new MapPath();
+				list.addFlight(baseFlight, path);
 			}
 		});
 		layout.putConstraint(SpringLayout.NORTH, run, 6, SpringLayout.SOUTH, fDays);
