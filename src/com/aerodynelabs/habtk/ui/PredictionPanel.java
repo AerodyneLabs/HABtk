@@ -3,17 +3,20 @@ package com.aerodynelabs.habtk.ui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SpringLayout;
+import javax.swing.SwingWorker;
 
 import org.noos.xing.mydoggy.ToolWindowManager;
 
@@ -106,6 +109,14 @@ public class PredictionPanel extends JPanel {
 		JLabel lStart = new JLabel("Start Time:");
 		fStart = new JTextField(dateTimeFormat.format(now));
 		JButton bStart = new JButton("Pick");
+		bStart.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				DateTimePicker picker = new DateTimePicker(DateTimePicker.DATETIME);
+				if(!picker.wasAccepted()) return;
+				Date date = picker.getValue();
+				if(date != null) fStart.setText(dateTimeFormat.format(date));
+			}
+		});
 		layout.putConstraint(SpringLayout.NORTH, fStart, 6, SpringLayout.SOUTH, bNew);
 		layout.putConstraint(SpringLayout.BASELINE, lStart, 0, SpringLayout.BASELINE, fStart);
 		layout.putConstraint(SpringLayout.NORTH, bStart, 0, SpringLayout.NORTH, fStart);
@@ -121,6 +132,14 @@ public class PredictionPanel extends JPanel {
 		JLabel lStop = new JLabel("Stop Time:");
 		fStop = new JTextField(timeFormat.format(new Date(now.getTime() + 6*60*60*1000)));
 		JButton bStop = new JButton("Pick");
+		bStop.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				DateTimePicker picker = new DateTimePicker(DateTimePicker.TIME);
+				if(!picker.wasAccepted()) return;
+				Date date = picker.getValue();
+				if(date != null) fStop.setText(timeFormat.format(date));
+			}
+		});
 		layout.putConstraint(SpringLayout.NORTH, fStop, 6, SpringLayout.SOUTH, fStart);
 		layout.putConstraint(SpringLayout.BASELINE, lStop, 0, SpringLayout.BASELINE, fStop);
 		layout.putConstraint(SpringLayout.NORTH, bStop, 0, SpringLayout.NORTH, fStop);
@@ -175,9 +194,11 @@ public class PredictionPanel extends JPanel {
 		run = new JButton("Run");
 		run.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// TODO run predictions
+				// Update button states
 				cancel.setEnabled(true);
 				run.setEnabled(false);
+				
+				// Create main content if needed
 				if(map == null) {
 					MapPoint startPoint = baseFlight.getStart();
 					map = new MapPanel(startPoint.getLatitude(), startPoint.getLongitude(), 9);
@@ -187,8 +208,60 @@ public class PredictionPanel extends JPanel {
 					list = new FlightListPanel(map);
 					twm.getContentManager().addContent("Prediction List", "Prediction List", null, list, "Prediction List");
 				}
-				MapPath path = baseFlight.runPrediction();
-				list.addFlight(baseFlight.clone(), path);
+				
+				// Retrieve fields
+				Date tempStart;
+				Date endOfDay;
+				int increment, nDays;
+				try {
+					tempStart = dateTimeFormat.parse(fStart.getText());
+					endOfDay = timeFormat.parse(fStop.getText());
+					increment = ((SpinnerNumberModel)fStep.getModel()).getNumber().intValue();
+					nDays = ((SpinnerNumberModel)fDays.getModel()).getNumber().intValue();
+				} catch (Exception e1) {
+					e1.printStackTrace();
+					return;
+				}
+				
+				// Get Model End
+				Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+				int modelRun = (cal.get(Calendar.HOUR_OF_DAY) / 12) * 12;
+				cal.set(Calendar.HOUR_OF_DAY, modelRun);
+				cal.set(Calendar.MINUTE, 0);
+				cal.set(Calendar.SECOND, 0);
+				cal.set(Calendar.MILLISECOND, 0);
+				cal.add(Calendar.DAY_OF_YEAR, 8);
+				Date modelEnd = cal.getTime();
+				
+				// Get start/end times
+				Calendar start = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+				start.setTime(tempStart);
+				cal.setTime(tempStart);
+				Calendar dayEnd = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+				dayEnd.setTime(endOfDay);
+				dayEnd.set(Calendar.YEAR, cal.get(Calendar.YEAR));
+				dayEnd.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR));
+				Calendar stop = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+				stop.setTime(dayEnd.getTime());
+				stop.add(Calendar.DAY_OF_YEAR, nDays - 1);
+				if( cal.before(Calendar.getInstance( TimeZone.getTimeZone("GMT") )) ) cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+				
+				while(cal.before(stop)) {
+					if(cal.getTime().after(modelEnd)) {
+						JOptionPane.showMessageDialog(null, "Prediction timeframe exceeds model timeframe.", "Weather Model Error", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					System.out.println(cal.getTime());
+					PredictionTask task = new PredictionTask(baseFlight, cal.getTime());
+					progress.setMaximum((++nTasks) + 1);
+					task.execute();
+					cal.add(Calendar.HOUR_OF_DAY, increment);
+					if(cal.after(dayEnd)) {
+						dayEnd.add(Calendar.DAY_OF_YEAR, 1);
+						start.add(Calendar.DAY_OF_YEAR, 1);
+						cal.setTime(start.getTime());
+					}
+				}
 			}
 		});
 		layout.putConstraint(SpringLayout.NORTH, run, 6, SpringLayout.SOUTH, progress);
@@ -197,6 +270,39 @@ public class PredictionPanel extends JPanel {
 		layout.putConstraint(SpringLayout.EAST, cancel, -6, SpringLayout.WEST, run);
 		add(cancel);
 		add(run);
+	}
+	
+	class PredictionTask extends SwingWorker<Void, Void> {
+		
+		private Predictor predictor;
+		private MapPath path;
+		
+		public PredictionTask(Predictor flight, Date startTime) {
+			super();
+			predictor = flight.clone();
+			predictor.setStartTime(startTime.getTime() / 1000);
+		}
+
+		@Override
+		protected Void doInBackground() throws Exception {
+			path = predictor.runPrediction();
+			return null;
+		}
+		
+		@Override
+		public void done() {
+			list.addFlight(predictor, path);
+			++cTasks;
+			if(cTasks == nTasks) {
+				cTasks = 0;
+				nTasks = 0;
+				progress.setMaximum(nTasks + 1);
+				cancel.setEnabled(false);
+				run.setEnabled(true);
+			}
+			progress.setValue(cTasks + 1);
+		}
+		
 	}
 
 }

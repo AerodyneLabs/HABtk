@@ -530,4 +530,9 @@ public class LatexPredictor extends Predictor {
 		return clone;
 	}
 
+	@Override
+	public void setStartTime(long time) {
+		startTime = time;
+	}
+
 }

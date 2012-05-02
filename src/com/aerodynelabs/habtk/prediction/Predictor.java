@@ -139,6 +139,7 @@ public abstract class Predictor implements Cloneable {
 	public abstract void setAscending(boolean ascending);
 	public abstract void setGroundLevel(double level);
 	public abstract void setStart(MapPoint start);
+	public abstract void setStartTime(long time);
 	public abstract MapPoint getStart();
 	public abstract String getTypeName();
 	public abstract double getLift();
