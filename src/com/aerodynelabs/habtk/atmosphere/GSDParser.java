@@ -12,8 +12,17 @@ import java.util.Date;
 import java.util.Scanner;
 import java.util.TimeZone;
 
+/**
+ * A class to parse NOAA GSD formatted soundings.
+ * 
+ * @author Ethan Harstad
+ *
+ */
 public class GSDParser implements AtmosphereParser {
 
+	/**
+	 * Parse the given file and return a profile.
+	 */
 	@Override
 	public AtmosphereProfile parseAtmosphere(File file) {
 		AtmosphereProfile profile = new AtmosphereProfile();

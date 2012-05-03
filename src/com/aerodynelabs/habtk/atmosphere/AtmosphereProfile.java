@@ -4,6 +4,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
+/**
+ * A collection of AtmosphereState representing the atmosphere at a fixed time.
+ * Allows interpolation between the stored values and extrapolation beyond them 
+ * according to the 1976 International Standard Atmosphere.
+ * 
+ * @author Ethan Harstad
+ */
 public class AtmosphereProfile {
 	
 	protected long startTime = 0;
@@ -19,14 +26,26 @@ public class AtmosphereProfile {
 	private static final double MW = 0.0289644;
 	private static final double G = 9.080665;
 	
+	/**
+	 * Creates an atmosphere profile that has no associated time or location information.
+	 */
 	public AtmosphereProfile() {
 		this(0, 0);
 	}
 	
+	/**
+	 * Creates an atmosphere profile starting at the given time and ending three hours later with no associated location.
+	 * @param startTime Time in seconds
+	 */
 	public AtmosphereProfile(int startTime) {
 		this(startTime, startTime + 10800);
 	}
 	
+	/**
+	 * Creates an atmosphere profile representing the time between start and end with no associated location.
+	 * @param startTime	Start time in seconds
+	 * @param endTime	End time in seconds
+	 */
 	public AtmosphereProfile(int startTime, int endTime) {
 		this.startTime = startTime;
 		this.endTime = endTime;
@@ -35,25 +54,63 @@ public class AtmosphereProfile {
 		roc = new ArrayList<AtmosphereState>(10);
 	}
 	
+	/**
+	 * Associates the given location with the atmosphere profile.
+	 * @param lat Latitude in signed degrees
+	 * @param lon Longitude in signed degrees
+	 */
 	public void setCenter(double lat, double lon) {
 		this.lat = lat;
 		this.lon = lon;
+		resolution = 0.5;
 	}
 	
+	/**
+	 * Associates the given location and resolution with the profile.
+	 * @param lat
+	 * @param lon
+	 * @param resolution
+	 */
+	public void setCenter(double lat, double lon, double resolution) {
+		this.lat = lat;
+		this.lon = lon;
+		this.resolution = resolution;
+	}
+	
+	/**
+	 * Get the associated latitude.
+	 * @return
+	 */
 	public double getLat() {
 		return lat;
 	}
 	
+	/**
+	 * Get the associated longitude
+	 * @return
+	 */
 	public double getLon() {
 		return lon;
 	}
 	
+	/**
+	 * Test if the given time is within this profiles timeframe.
+	 * @param time
+	 * @return
+	 */
 	public boolean isValid(long time) {
 		if(time < startTime) return false;
 		if(time > endTime) return false;
 		return true;
 	}
 	
+	/**
+	 * Test if the given time and location are within this profiles defined values.
+	 * @param time
+	 * @param lat
+	 * @param lon
+	 * @return
+	 */
 	public boolean isValid(long time, double lat, double lon) {
 		if(time < startTime) return false;
 		if(time > endTime) return false;
@@ -63,18 +120,35 @@ public class AtmosphereProfile {
 		return true;
 	}
 	
+	/**
+	 * Get an iterator over the stored AtmosphereState objects.
+	 * @return
+	 */
 	public Iterator<AtmosphereState> iterator() {
 		return data.iterator();
 	}
 	
+	/**
+	 * Add a state to the profile
+	 * @param altitude
+	 * @param pressure
+	 * @param temperature
+	 * @param dewPoint
+	 * @param windDirection
+	 * @param windSpeed
+	 */
 	public void addData(double altitude, double pressure, double temperature, double dewPoint, double windDirection, double windSpeed) {
+		// Add the state
 		data.add(new AtmosphereState(altitude, pressure, temperature, dewPoint, windDirection, windSpeed));
+		// Sort with ascending altitude
 		Collections.sort(data);
 		
-		roc.clear();
+		// Compute new rates of change
+		roc.clear();	// Start over
 		Iterator<AtmosphereState> itr = data.iterator();
 		AtmosphereState cur = itr.next();
-		while(itr.hasNext()) {
+		while(itr.hasNext()) {	// Iterate over the data points
+			// Compute changes between this and previous data points
 			AtmosphereState next = itr.next();
 			double dh = next.h - cur.h;
 			double dp = next.p - cur.p;
@@ -82,32 +156,40 @@ public class AtmosphereProfile {
 			double dd = next.dp - cur.dp;
 			double ds = next.ws - cur.ws;
 			double ddir = next.wd - cur.wd;
-			if(Math.abs(ddir) > 180) {
+			if(Math.abs(ddir) > 180) {	// Adjust for wind direction wrapping
 				if(ddir > 0) {
 					ddir = ddir - 360;
 				} else {
 					ddir = ddir + 360;
 				}
 			}
+			// Store the rate of change data
 			roc.add(new AtmosphereState(dh, dp/dh, dt/dh, dd/dh, ddir/dh, ds/dh));
+			// Step to next data point
 			cur = next;
 		}
 	}
 	
+	/**
+	 * Get the state of the atmosphere at the given altitude.
+	 * @param alt
+	 * @return
+	 */
 	public AtmosphereState getAtAltitude(double alt) {
 		Iterator<AtmosphereState> itr = data.iterator();
 		AtmosphereState base = itr.next();
 		if(alt < base.h) return null;
 		AtmosphereState next = null;
 		int i = -1;
-		while(itr.hasNext()) {
+		while(itr.hasNext()) {	// Iterate over data points
 			next = itr.next();
 			i++;
-			if(alt >= next.h) {
+			if(alt >= next.h) {	// Find highest base altitude
 				base = next;
 				continue;
 			}
 			
+			// Interpolate values
 			AtmosphereState dd = roc.get(i);
 			double dh = alt - base.h;
 			return new AtmosphereState(
@@ -119,6 +201,8 @@ public class AtmosphereProfile {
 					dd.ws * dh + base.ws);
 		}
 
+		// Interpolation could not be found
+		// Standard atmosphere extrapolation
 		//XXX Add wind speed extrapolation
 		//XXX Add dew point extrapolation
 		double Hb = base.h;
@@ -174,7 +258,7 @@ public class AtmosphereProfile {
 			Pb = P;
 		}
 		
-		
+		// Could not extrapolate
 		return null;
 	}
 	
@@ -190,6 +274,9 @@ public class AtmosphereProfile {
 		return (hp * RE) / (RE - hp);
 	}
 	
+	/**
+	 * Get a human readable representation of this profile.
+	 */
 	public String toString() {
 		String ret = "Profile for " + lat + ", " + lon + " @ " + startTime + "\n";
 		Iterator<AtmosphereState> itr = data.iterator();

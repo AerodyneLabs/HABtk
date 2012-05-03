@@ -11,14 +11,22 @@ import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-
+/**
+ * A class to retrieve a FIM model from http://rucsoundings.noaa.gov
+ * 
+ * @author Ethan Harstad
+ *
+ */
 public class RUCFIM implements AtmosphereSource {
 
 	@Override
 	public File getAtmosphere(int time, double lat, double lon) {
+		// Only valid every 3 hours
 		int startTime = (time / 10800) * 10800;
+		// Only valid at 0.5 degree resolution
 		double rlat = (lat / 0.5) * 0.5;
 		double rlon = (lon / 0.5) * 0.5;
+		// Construct address
 		String address = "http://rucsoundings.noaa.gov/get_soundings.cgi?data_source=FIM;airport=" +
 				rlat + "," + rlon + ";hydrometeors=false&startSecs=" +startTime +
 				"&endSecs=" + (startTime+1);

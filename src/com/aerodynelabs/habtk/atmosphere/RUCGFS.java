@@ -11,7 +11,12 @@ import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-
+/**
+ * A class to retrieve GFS soundings from http://rucsoundings.noaa.gov
+ * 
+ * @author Ethan Harstad
+ *
+ */
 public class RUCGFS implements AtmosphereSource {
 
 	@Override

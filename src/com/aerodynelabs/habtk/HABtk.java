@@ -57,6 +57,9 @@ public class HABtk {
 	
 	private static BalloonFlight flight = new BalloonFlight();
 	
+	/**
+	 * Create GUI Components
+	 */
 	private static void setup() {
 		// Configure window
 		window = new JFrame("HABtk - " + VERSION);
@@ -189,14 +192,9 @@ public class HABtk {
 		window.setExtendedState(JFrame.MAXIMIZED_BOTH);
 	}
 	
-	private static void start() {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				window.setVisible(true);
-			}
-		});
-	}
-	
+	/**
+	 * Save state and exit
+	 */
 	private static void exit() {
 		try {
 			FileOutputStream out = new FileOutputStream("workspace.xml");
@@ -209,6 +207,10 @@ public class HABtk {
 		System.exit(0);
 	}
 	
+	/**
+	 * Create a global logger
+	 * @param level Severity threshold
+	 */
 	private static void setupLogger(int level) {
 		switch(level) {
 			case 0:
@@ -237,6 +239,10 @@ public class HABtk {
 		debugLog.addHandler(logFile);
 	}
 
+	/**
+	 * Main method
+	 * @param args Command line arguments
+	 */
 	public static void main(String[] args) {
 		if(args.length == 0) {
 			setupLogger(9);
@@ -254,14 +260,13 @@ public class HABtk {
 					try {
 						UIManager.setLookAndFeel(new SubstanceTwilightLookAndFeel());
 					} catch (UnsupportedLookAndFeelException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					setup();
+					
+					window.setVisible(true);
 				}
 			});
-			
-			start();
 		} catch(Exception e) {
 			debugLog.log(Level.SEVERE, "Exception", e);
 		}

@@ -2,6 +2,12 @@ package com.aerodynelabs.habtk.atmosphere;
 
 //XXX test atmosphere model
 
+/**
+ * A representation of the atmosphere that interpolates between two atmosphere profiles.
+ * 
+ * @author Ethan Harstad
+ *
+ */
 public class AtmosphereModel {
 	
 	protected int startTime;
