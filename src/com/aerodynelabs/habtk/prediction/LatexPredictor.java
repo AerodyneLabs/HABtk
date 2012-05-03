@@ -32,6 +32,17 @@ import com.aerodynelabs.habtk.ui.DateTimePicker;
 import com.aerodynelabs.map.MapPath;
 import com.aerodynelabs.map.MapPoint;
 
+/**
+ * A basic prediction for standard latex balloons.
+ * Assumptions:
+ * - Single wind definition
+ * - Constant ascent rate
+ * - Constant drag coefficient
+ * - Balloon velocity = Wind velocity
+ * 
+ * @author Ethan Harstad
+ *
+ */
 public class LatexPredictor extends Predictor {
 	
 	private String balloonName = null;
@@ -40,6 +51,7 @@ public class LatexPredictor extends Predictor {
 	private double startLat, startLon, startAlt;
 	private double groundLevel;
 	private boolean isAscending = true;
+	private double tStep = 30;
 	
 	private double payloadMass, balloonLift;
 	private double parachuteArea, parachuteDrag;
@@ -65,6 +77,9 @@ public class LatexPredictor extends Predictor {
 		{3.0,	6.553,	0.25},	// Kaymont 3000
 	};
 	
+	/**
+	 * Dialog to chose prediction settings
+	 */
 	@SuppressWarnings("serial")
 	class SetupDialog extends JDialog {
 		
@@ -271,6 +286,9 @@ public class LatexPredictor extends Predictor {
 		
 	}
 	
+	/**
+	 * Write settings to XML document
+	 */
 	public void write(Document doc) {
 		Element root = doc.createElement("balloonFlight");
 		doc.appendChild(root);
@@ -324,6 +342,9 @@ public class LatexPredictor extends Predictor {
 		root.appendChild(area);
 	}
 	
+	/**
+	 * Read settings from XML document
+	 */
 	public boolean read(Document doc) {
 		try {
 			Element root = doc.getDocumentElement();
@@ -345,10 +366,23 @@ public class LatexPredictor extends Predictor {
 		return true;
 	}
 	
-	public LatexPredictor() {
-		
+	/**
+	 * Default constructor
+	 */
+	public LatexPredictor() {	
 	}
 	
+	/**
+	 * Use given step size for integration.
+	 * @param step
+	 */
+	public LatexPredictor(double step) {
+		tStep = step;
+	}
+	
+	/**
+	 * Display a dialog to choose settings.
+	 */
 	public boolean setup() {
 		SetupDialog dialog = new SetupDialog();
 		return dialog.wasAccepted();
@@ -361,8 +395,10 @@ public class LatexPredictor extends Predictor {
 		return ret;
 	}
 	
+	/**
+	 * Run prediction from current start point to ground level.
+	 */
 	public MapPath runPrediction() {
-		double tStep = 30.0;
 		// Create output variable
 		MapPath path = new MapPath();
 		
@@ -439,26 +475,26 @@ public class LatexPredictor extends Predictor {
 		
 		return path;
 	}
-	
-	private Point2D.Double directGeodesic(Point2D.Double start, double bearing, double range) {
-		double radDist = range / 6367500;
-		double lat1 = Math.toRadians(start.y);
-		double lon1 = Math.toRadians(start.x);
-		double lat2 = Math.asin( Math.sin(lat1)*Math.cos(radDist) + Math.cos(lat1)*Math.sin(radDist)*Math.cos(bearing) );
-		double lon2 = lon1 + Math.atan2(Math.sin(bearing)*Math.sin(radDist)*Math.cos(lat1), Math.cos(radDist)-Math.sin(lat1)*Math.sin(lat2));
-		return new Point2D.Double(Math.toDegrees(lon2), Math.toDegrees(lat2));
-	}
 
+	/**
+	 * Set if prediction begins with ascent.
+	 */
 	@Override
 	public void setAscending(boolean ascending) {
 		isAscending = ascending;
 	}
 
+	/**
+	 * Set termination altitude.
+	 */
 	@Override
 	public void setGroundLevel(double level) {
 		groundLevel = level;
 	}
 
+	/**
+	 * Set start point (including altitude and time
+	 */
 	@Override
 	public void setStart(MapPoint start) {
 		startLat = start.getLatitude();
@@ -503,16 +539,25 @@ public class LatexPredictor extends Predictor {
 		return hash;
 	}
 
+	/**
+	 * Get start point.
+	 */
 	@Override
 	public MapPoint getStart() {
-		return new MapPoint(startLat, startLon, startAlt);
+		return new MapPoint(startLat, startLon, startAlt, startTime);
 	}
 
+	/**
+	 * Get balloon type.
+	 */
 	@Override
 	public String getTypeName() {
 		return balloonName;
 	}
 
+	/**
+	 * Get balloon neck lift.
+	 */
 	@Override
 	public double getLift() {
 		return balloonLift;
@@ -538,6 +583,9 @@ public class LatexPredictor extends Predictor {
 		return clone;
 	}
 
+	/**
+	 * Set start time
+	 */
 	@Override
 	public void setStartTime(long time) {
 		startTime = time;

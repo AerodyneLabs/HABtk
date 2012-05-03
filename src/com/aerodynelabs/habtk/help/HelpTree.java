@@ -5,6 +5,11 @@ import java.io.File;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+/**
+ * A class to represent the help hierarchy
+ * @author Ethan Harstad
+ *
+ */
 @SuppressWarnings("serial")
 public class HelpTree extends JTree {
 	

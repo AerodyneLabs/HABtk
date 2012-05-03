@@ -17,12 +17,20 @@ import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
+/**
+ * A class to display a help window.
+ * @author Ethan Harstad
+ *
+ */
 public class HelpWindow {
 	
 	private static JFrame frame;
 	private JTree tree;
 	private JEditorPane view;
 	
+	/**
+	 * Show the help window if it is hidden, otherwise create it.
+	 */
 	public static void showHelp() {
 		if(frame != null) {
 			SwingUtilities.invokeLater(new Runnable() {
@@ -41,6 +49,9 @@ public class HelpWindow {
 		}
 	}
 	
+	/**
+	 * Create help window.
+	 */
 	public HelpWindow() {
 		frame = new JFrame("HABtk - Help");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -86,6 +97,12 @@ public class HelpWindow {
 		frame.setVisible(true);
 	}
 	
+	/**
+	 * Load help hierarchy.
+	 * @param top
+	 * @param dir
+	 * @return
+	 */
 	private DefaultMutableTreeNode addNodes(DefaultMutableTreeNode top, File dir) {
 		DefaultMutableTreeNode cur = new DefaultMutableTreeNode(dir);
 		if(top != null) top.add(cur);

@@ -1,5 +1,6 @@
 package com.aerodynelabs.habtk.prediction;
 
+import java.awt.geom.Point2D;
 import java.io.File;
 
 import javax.swing.JFileChooser;
@@ -21,8 +22,15 @@ import com.aerodynelabs.map.MapPoint;
 
 public abstract class Predictor implements Cloneable {
 	
+	/**
+	 * Valid predictor types
+	 */
 	private static Object[] options = {"Latex v1.0"};
 	
+	/**
+	 * Select which type of predictor.
+	 * @return
+	 */
 	private static String select() {
 		String val = (String)JOptionPane.showInputDialog(
 				null, "Chose a prediction algorithm:\n", "New Flight Type",
@@ -31,6 +39,10 @@ public abstract class Predictor implements Cloneable {
 		return val;
 	}
 	
+	/**
+	 * Create a new predictor.
+	 * @return
+	 */
 	public static Predictor create() {
 		Predictor flight = null;
 		
@@ -47,8 +59,16 @@ public abstract class Predictor implements Cloneable {
 		}
 	}
 	
+	/**
+	 * Display a dialog to setup the predictor.
+	 * @return
+	 */
 	public abstract boolean setup();
 	
+	/**
+	 * Load predictor from XML file chose by user.
+	 * @return
+	 */
 	public static Predictor load() {
 		JFileChooser chooser = new JFileChooser();
 		chooser.setCurrentDirectory(new File("flights/"));
@@ -66,6 +86,11 @@ public abstract class Predictor implements Cloneable {
 		return load(file);
 	}
 	
+	/**
+	 * Load predictor from specified XML file.
+	 * @param file
+	 * @return
+	 */
 	public static Predictor load(File file) {
 		Predictor flight = null;
 		try {
@@ -89,6 +114,10 @@ public abstract class Predictor implements Cloneable {
 		return flight;
 	}
 	
+	/**
+	 * Save predictor to XML file chose by user.
+	 * @return
+	 */
 	public boolean save() {
 		JFileChooser chooser = new JFileChooser();
 		chooser.setCurrentDirectory(new File("flights/"));
@@ -111,7 +140,11 @@ public abstract class Predictor implements Cloneable {
 		return save(file);
 	}
 	
-	
+	/**
+	 * Save predictor to given file.
+	 * @param file
+	 * @return
+	 */
 	public boolean save(File file) {
 		try {
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -130,20 +163,97 @@ public abstract class Predictor implements Cloneable {
 		return true;
 	}
 	
+	/**
+	 * Close the predictor.
+	 */
 	@Override
 	public abstract Predictor clone();
 	
+	/**
+	 * Write predictor into given XML document.
+	 * @param doc
+	 */
 	public abstract void write(Document doc);
+	
+	/**
+	 * Read predictor from given XML document.
+	 * @param doc
+	 * @return
+	 */
 	public abstract boolean read(Document doc);
+	
+	/**
+	 * Run prediction from current start point to ground level.
+	 * @return
+	 */
 	public abstract MapPath runPrediction();
+	
+	/**
+	 * Set if prediction should start with ascent.
+	 * @param ascending
+	 */
 	public abstract void setAscending(boolean ascending);
+	
+	/**
+	 * Set termination altitude.
+	 * @param level Altitude in meters above sea level.
+	 */
 	public abstract void setGroundLevel(double level);
+	
+	/**
+	 * Set start point.
+	 * @param start
+	 */
 	public abstract void setStart(MapPoint start);
+	
+	/**
+	 * Set start time (seconds).
+	 * @param time
+	 */
 	public abstract void setStartTime(long time);
+	
+	/**
+	 * Get the current start point.
+	 * @return
+	 */
 	public abstract MapPoint getStart();
+	
+	/**
+	 * Get a name representing the type of this prediction.
+	 * @return
+	 */
 	public abstract String getTypeName();
+	
+	/**
+	 * Get the lift or relevant field.
+	 * @return
+	 */
 	public abstract double getLift();
+	
+	/**
+	 * Test if this prediction equals the given object.
+	 */
 	public abstract boolean equals(Object o);
+	
+	/**
+	 * Get the hash code of this prediction.
+	 */
 	public abstract int hashCode();
+	
+	/**
+	 * Get final lat/lon from start lat/lon, bearing and distance.
+	 * @param start
+	 * @param bearing	degrees from north
+	 * @param range		meters
+	 * @return
+	 */
+	protected Point2D.Double directGeodesic(Point2D.Double start, double bearing, double range) {
+		double radDist = range / 6367500;
+		double lat1 = Math.toRadians(start.y);
+		double lon1 = Math.toRadians(start.x);
+		double lat2 = Math.asin( Math.sin(lat1)*Math.cos(radDist) + Math.cos(lat1)*Math.sin(radDist)*Math.cos(bearing) );
+		double lon2 = lon1 + Math.atan2(Math.sin(bearing)*Math.sin(radDist)*Math.cos(lat1), Math.cos(radDist)-Math.sin(lat1)*Math.sin(lat2));
+		return new Point2D.Double(Math.toDegrees(lon2), Math.toDegrees(lat2));
+	}
 
 }
