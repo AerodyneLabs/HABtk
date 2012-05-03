@@ -6,6 +6,11 @@ import javax.swing.JLabel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 
+/**
+ * A panel to display tracking information
+ * @author Ethan Harstad
+ *
+ */
 @SuppressWarnings("serial")
 public class TrackingPanel extends JPanel {
 	

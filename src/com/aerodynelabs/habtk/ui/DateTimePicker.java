@@ -22,9 +22,17 @@ import javax.swing.SpinnerNumberModel;
 
 import org.jfree.ui.DateChooserPanel;
 
+/**
+ * A class to facilitate easier selection of a date/time
+ * @author Ethan Harstad
+ *
+ */
 @SuppressWarnings("serial")
 public class DateTimePicker extends JDialog {
 	
+	/*
+	 * Type Constants
+	 */
 	public static final int DATE = 0;
 	public static final int TIME = 1;
 	public static final int DATETIME = 2;
@@ -36,10 +44,19 @@ public class DateTimePicker extends JDialog {
 //	private JSpinner second;
 	private DateChooserPanel calendarWidget;
 	
+	/**
+	 * Create a picker of the given type.
+	 * @param type
+	 */
 	public DateTimePicker(int type) {
 		this(type, new Date());
 	}
 	
+	/**
+	 * Create a picker of the given type, with the given starting value.
+	 * @param type
+	 * @param cur
+	 */
 	public DateTimePicker(int type, Date cur) {
 		super();
 		if(type == DATE) {
@@ -115,14 +132,25 @@ public class DateTimePicker extends JDialog {
 		setVisible(true);
 	}
 	
+	/**
+	 * Test if the dialog was accepted.
+	 * @return
+	 */
 	public boolean wasAccepted() {
 		return accepted;
 	}
 	
+	/**
+	 * Get the date/time from the dialog.
+	 * @return
+	 */
 	public Date getValue() {
 		return value.getTime();
 	}
 	
+	/**
+	 * Custom hour spinner
+	 */
 	class HourModel extends SpinnerNumberModel {
 		
 		public HourModel(int value) {
@@ -145,6 +173,9 @@ public class DateTimePicker extends JDialog {
 		
 	}
 	
+	/**
+	 * Custom minute spinner
+	 */
 	class MinuteModel extends SpinnerNumberModel {
 		
 		public MinuteModel(int value) {

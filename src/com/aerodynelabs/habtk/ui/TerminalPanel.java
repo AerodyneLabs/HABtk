@@ -6,6 +6,11 @@ import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+/**
+ * A panel to display a log window.
+ * @author Ethan Harstad
+ *
+ */
 @SuppressWarnings("serial")
 public class TerminalPanel extends JPanel {
 	

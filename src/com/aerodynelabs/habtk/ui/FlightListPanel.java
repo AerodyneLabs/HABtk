@@ -20,6 +20,11 @@ import com.aerodynelabs.map.MapOverlay;
 import com.aerodynelabs.map.MapPanel;
 import com.aerodynelabs.map.MapPath;
 
+/**
+ * A panel to display a series of predictions.
+ * @author Ethan Harstad
+ *
+ */
 @SuppressWarnings("serial")
 public class FlightListPanel extends JPanel {
 	
@@ -45,6 +50,9 @@ public class FlightListPanel extends JPanel {
 		new Color(255,	0,	0)
 	};
 	
+	/**
+	 * Custom date and time renderer
+	 */
 	static class DateTimeRenderer extends DefaultTableCellRenderer {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		
@@ -60,6 +68,9 @@ public class FlightListPanel extends JPanel {
 		
 	}
 	
+	/**
+	 * Custom time renderer
+	 */
 	static class ElapsedTimeRenderer extends DefaultTableCellRenderer {
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 		
@@ -75,6 +86,9 @@ public class FlightListPanel extends JPanel {
 		
 	}
 	
+	/**
+	 * Relates a predictor to a path and overlay
+	 */
 	class Flight {
 		
 		protected Predictor flight;
@@ -89,6 +103,9 @@ public class FlightListPanel extends JPanel {
 		
 	}
 	
+	/**
+	 * Custom table data model
+	 */
 	class DataModel extends AbstractTableModel {
 		
 		private String headers[] = {
@@ -171,6 +188,10 @@ public class FlightListPanel extends JPanel {
 		
 	}
 	
+	/**
+	 * Construct a flight list that displays on the given map.
+	 * @param map
+	 */
 	public FlightListPanel(MapPanel map) {
 		super();
 		setLayout(new BorderLayout());
@@ -188,6 +209,11 @@ public class FlightListPanel extends JPanel {
 		add(scroller, BorderLayout.CENTER);
 	}
 	
+	/**
+	 * Add a flight to the list.
+	 * @param flight
+	 * @param path
+	 */
 	public void addFlight(Predictor flight, MapPath path) {
 		MapOverlay overlay = new MapOverlay("Prediction " + flights.size()+1);
 		overlay.addPath("Prediction", path);

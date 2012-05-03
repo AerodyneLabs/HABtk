@@ -13,6 +13,11 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
+/**
+ * A window to provide attribution and other information.
+ * @author Ethan Harstad
+ *
+ */
 @SuppressWarnings("serial")
 public class AboutDialog extends JDialog implements ActionListener, HyperlinkListener {
 	

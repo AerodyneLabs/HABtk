@@ -26,6 +26,11 @@ import com.aerodynelabs.map.MapPanel;
 import com.aerodynelabs.map.MapPath;
 import com.aerodynelabs.map.MapPoint;
 
+/**
+ * A panel to edit prediction parameters and execute a series of predictions.
+ * @author Ethan Harstad
+ *
+ */
 @SuppressWarnings("serial")
 public class PredictionPanel extends JPanel {
 	
