@@ -14,5 +14,9 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="habtk-clean/lib/rxtx"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/laf-plugin-7.1.jar"/>
+	<classpathentry kind="lib" path="lib/laf-widget-7.1.jar"/>
+	<classpathentry kind="lib" path="lib/substance-7.1.jar"/>
+	<classpathentry kind="lib" path="lib/trident-7.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

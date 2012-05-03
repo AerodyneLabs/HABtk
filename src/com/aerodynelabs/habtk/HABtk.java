@@ -1,5 +1,6 @@
 package com.aerodynelabs.habtk;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -12,12 +13,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import org.noos.xing.mydoggy.ContentManager;
 import org.noos.xing.mydoggy.ToolWindow;
@@ -25,6 +29,7 @@ import org.noos.xing.mydoggy.ToolWindowAnchor;
 import org.noos.xing.mydoggy.ToolWindowType;
 import org.noos.xing.mydoggy.plaf.MyDoggyToolWindowManager;
 import org.noos.xing.mydoggy.plaf.ui.content.MyDoggyMultiSplitContentManagerUI;
+import org.pushingpixels.substance.api.skin.SubstanceTwilightLookAndFeel;
 
 import com.aerodynelabs.habtk.help.HelpWindow;
 import com.aerodynelabs.habtk.prediction.Predictor;
@@ -55,7 +60,7 @@ public class HABtk {
 	private static void setup() {
 		// Configure window
 		window = new JFrame("HABtk - " + VERSION);
-		window.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		window.setMinimumSize(new Dimension(800, 600));
 		window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		// Create components
@@ -149,6 +154,17 @@ public class HABtk {
 		windowManager.getToolWindow("Log").setType(ToolWindowType.SLIDING);
 		
 		window.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowStateChanged(WindowEvent e) {
+				System.out.println("State change");
+			}
+			
+			@Override
+			public void windowIconified(WindowEvent e) {
+				System.out.println("Iconified");
+			}
+			
+			@Override
 			public void windowOpened(WindowEvent e) {
 				try {
 					File workspace = new File("workspace.xml");
@@ -162,12 +178,15 @@ public class HABtk {
 				}
 			}
 			
+			@Override
 			public void windowClosing(WindowEvent e) {
 				exit();
 			}
 		});
 		
 		window.getContentPane().add(windowManager);
+		window.pack();
+		window.setExtendedState(JFrame.MAXIMIZED_BOTH);
 	}
 	
 	private static void start() {
@@ -225,9 +244,23 @@ public class HABtk {
 			setupLogger(Integer.parseInt(args[0]));
 		}
 	
+		JFrame.setDefaultLookAndFeelDecorated(true);
+		JDialog.setDefaultLookAndFeelDecorated(true);
+		
 		new HABtk();
 		try {
-			setup();
+			SwingUtilities.invokeAndWait(new Runnable() {
+				public void run() {
+					try {
+						UIManager.setLookAndFeel(new SubstanceTwilightLookAndFeel());
+					} catch (UnsupportedLookAndFeelException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					setup();
+				}
+			});
+			
 			start();
 		} catch(Exception e) {
 			debugLog.log(Level.SEVERE, "Exception", e);
