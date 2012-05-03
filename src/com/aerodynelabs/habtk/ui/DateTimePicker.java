@@ -37,6 +37,10 @@ public class DateTimePicker extends JDialog {
 	private DateChooserPanel calendarWidget;
 	
 	public DateTimePicker(int type) {
+		this(type, new Date());
+	}
+	
+	public DateTimePicker(int type, Date cur) {
 		super();
 		if(type == DATE) {
 			setTitle("Choose Date");
@@ -51,6 +55,7 @@ public class DateTimePicker extends JDialog {
 		getContentPane().add(panel);
 		
 		value = Calendar.getInstance(TimeZone.getTimeZone("GMT"), Locale.getDefault());
+		value.setTime(cur);
 		
 		// Date selection fields
 		JPanel datePanel = new JPanel();
@@ -64,11 +69,11 @@ public class DateTimePicker extends JDialog {
 		JPanel timePanel = new JPanel();
 		setLayout(new FlowLayout(FlowLayout.CENTER));
 		timePanel.add(new JLabel("Hour:"));
-		SpinnerModel hourModel = new SpinnerNumberModel(value.get(Calendar.HOUR_OF_DAY), 0, 23, 1);
+		SpinnerModel hourModel = new HourModel(value.get(Calendar.HOUR_OF_DAY));
 		hour = new JSpinner(hourModel);
 		timePanel.add(hour);
 		timePanel.add(new JLabel("Minute:"));
-		SpinnerModel minuteModel = new SpinnerNumberModel((value.get(Calendar.MINUTE)/15)*15, 0, 60, 15);
+		SpinnerModel minuteModel = new MinuteModel((value.get(Calendar.MINUTE)/15)*15);
 		minute = new JSpinner(minuteModel);
 		timePanel.add(minute);
 //		timePanel.add(new JLabel("Second:"));
@@ -116,6 +121,50 @@ public class DateTimePicker extends JDialog {
 	
 	public Date getValue() {
 		return value.getTime();
+	}
+	
+	class HourModel extends SpinnerNumberModel {
+		
+		public HourModel(int value) {
+			super(value, 0, 23, 1);
+		}
+		
+		@Override
+		public Object getNextValue() {
+			Object value = super.getNextValue();
+			if(value == null) value = super.getMinimum();
+			return value;
+		}
+		
+		@Override
+		public Object getPreviousValue() {
+			Object value = super.getPreviousValue();
+			if(value == null) value = super.getMaximum();
+			return value;
+		}
+		
+	}
+	
+	class MinuteModel extends SpinnerNumberModel {
+		
+		public MinuteModel(int value) {
+			super(value, 0, 45, 15);
+		}
+		
+		@Override
+		public Object getNextValue() {
+			Object value = super.getNextValue();
+			if(value == null) value = super.getMinimum();
+			return value;
+		}
+		
+		@Override
+		public Object getPreviousValue() {
+			Object value = super.getPreviousValue();
+			if(value == null) value = super.getMaximum();
+			return value;
+		}
+		
 	}
 
 }
