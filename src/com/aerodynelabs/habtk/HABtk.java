@@ -49,7 +49,6 @@ public class HABtk {
 	private static JFrame window;
 	private static MyDoggyToolWindowManager windowManager;
 	private static ContentManager contentManager;
-//	private static MappingPanel map;
 	
 	private static BalloonFlight flight = new BalloonFlight();
 	
@@ -139,8 +138,6 @@ public class HABtk {
 		});
 		helpMenu.add(helpAboutItem);
 		
-//		map = new MappingPanel();
-		
 		windowManager = new MyDoggyToolWindowManager();
 		contentManager = windowManager.getContentManager();
 		contentManager.setContentManagerUI(new MyDoggyMultiSplitContentManagerUI());
@@ -148,11 +145,8 @@ public class HABtk {
 		windowManager.registerToolWindow("Log", "Log", null, new TerminalPanel(), ToolWindowAnchor.BOTTOM);
 		windowManager.registerToolWindow("Tracking", "Tracking", null, new TrackingPanel(), ToolWindowAnchor.LEFT);
 		windowManager.registerToolWindow("Prediction", "Prediction", null, new PredictionPanel(windowManager), ToolWindowAnchor.LEFT);
-//		windowManager.registerToolWindow("Map", "Map", null, map, ToolWindowAnchor.RIGHT);
-//		contentManager.addContent("Map", "Map", null, map, "Map Panel");
 		for(ToolWindow win : windowManager.getToolWindows()) win.setAvailable(true);
 		windowManager.getToolWindow("Log").setType(ToolWindowType.SLIDING);
-//		windowManager.getToolWindow("Map").setActive(true);
 		
 		window.addWindowListener(new WindowAdapter() {
 			public void windowOpened(WindowEvent e) {
