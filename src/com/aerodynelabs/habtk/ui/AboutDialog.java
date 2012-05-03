@@ -27,13 +27,15 @@ public class AboutDialog extends JDialog implements ActionListener, HyperlinkLis
 			"Attribution:<br />" +
 			"Map data &copy; <a href=\"http://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a><br />" +
 			"Directions, Elevation, Guidance, and Tiles Courtesy of <a href=\"http://www.mapquest.com/\">MapQuest</a> <img src=\"http://developer.mapquest.com/content/osm/mq_logo.png\"><br />" +
-			"<br />Please e-mail bug reports and feature requests to <a href=\"mailto:support@aerodynelabs.com\">support@aerodynelabs.com</a>." +
+			"Docking framework by <a href=\"http://mydoggy.sourceforge.net/\">MyDoggy</a><br />" +
+			"Charts by <a href=\"http://www.jfree.org/jfreechart/\">JFreechart</a><br />" +
+			"<hr />Please e-mail bug reports and feature requests to <a href=\"mailto:support@aerodynelabs.com\">support@aerodynelabs.com</a>." +
 			"</body></html>";
 		
 		JEditorPane aboutPane = new JEditorPane("text/html", aboutInfo);
 		aboutPane.setEditable(false);
 		aboutPane.addHyperlinkListener(this);
-		aboutPane.setBorder(new EmptyBorder(10, 10, 10, 10));
+		aboutPane.setBorder(new EmptyBorder(0, 10, 0, 10));
 		getContentPane().add(aboutPane);
 		
 		pack();
