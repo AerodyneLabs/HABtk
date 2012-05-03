@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.io.File;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
@@ -91,7 +92,12 @@ public class LatexPredictor extends Predictor {
 			JButton bStartTime = new JButton("Calendar");
 			bStartTime.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					DateTimePicker picker = new DateTimePicker(DateTimePicker.DATETIME);
+					DateTimePicker picker;
+					try {
+						picker = new DateTimePicker(DateTimePicker.DATETIME, sdf.parse(fStartTime.getText()));
+					} catch (ParseException e1) {
+						picker = new DateTimePicker(DateTimePicker.DATETIME);
+					}
 					if(!picker.wasAccepted()) return;
 					Date date = picker.getValue();
 					if(date != null) fStartTime.setText(sdf.format(date));

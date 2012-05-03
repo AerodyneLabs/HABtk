@@ -2,6 +2,7 @@ package com.aerodynelabs.habtk.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -111,7 +112,12 @@ public class PredictionPanel extends JPanel {
 		JButton bStart = new JButton("Pick");
 		bStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				DateTimePicker picker = new DateTimePicker(DateTimePicker.DATETIME);
+				DateTimePicker picker;
+				try {
+					picker = new DateTimePicker(DateTimePicker.DATETIME, dateTimeFormat.parse(fStart.getText()));
+				} catch (ParseException e1) {
+					picker = new DateTimePicker(DateTimePicker.DATETIME);
+				}
 				if(!picker.wasAccepted()) return;
 				Date date = picker.getValue();
 				if(date != null) fStart.setText(dateTimeFormat.format(date));
@@ -134,7 +140,12 @@ public class PredictionPanel extends JPanel {
 		JButton bStop = new JButton("Pick");
 		bStop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				DateTimePicker picker = new DateTimePicker(DateTimePicker.TIME);
+				DateTimePicker picker;
+				try {
+					picker = new DateTimePicker(DateTimePicker.TIME, timeFormat.parse(fStop.getText()));
+				} catch (ParseException e1) {
+					picker = new DateTimePicker(DateTimePicker.TIME);
+				}
 				if(!picker.wasAccepted()) return;
 				Date date = picker.getValue();
 				if(date != null) fStop.setText(timeFormat.format(date));
