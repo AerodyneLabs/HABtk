@@ -2,12 +2,20 @@ package com.aerodynelabs.map;
 
 import javax.swing.JSplitPane;
 
+/**
+ * A map utilizing the default settings panel.
+ * @author Ethan Harstad
+ *
+ */
 @SuppressWarnings("serial")
 public class MappingPanel extends JSplitPane {
 	
 	private MapPanel map;
 	private MapSettingsPanel settings;
 	
+	/**
+	 * Create a default map.
+	 */
 	public MappingPanel() {
 		super(JSplitPane.VERTICAL_SPLIT);
 		super.setOneTouchExpandable(true);
@@ -17,10 +25,19 @@ public class MappingPanel extends JSplitPane {
 		super.setBottomComponent(settings);
 	}
 	
+	/**
+	 * Add the named overlay to the map.
+	 * @param name
+	 * @param overlay
+	 */
 	public void addOverlay(String name, MapOverlay overlay) {
 		map.addOverlay(name, overlay);
 	}
 	
+	/**
+	 * Add the overlay to the map.
+	 * @param overlay
+	 */
 	public void addOverlay(MapOverlay overlay) {
 		map.addOverlay(overlay);
 	}

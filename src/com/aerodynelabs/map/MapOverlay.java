@@ -11,6 +11,11 @@ import java.util.Collection;
 import java.util.Hashtable;
 import java.util.ListIterator;
 
+/**
+ * A default overlay to draw MapPaths with paths and points.
+ * @author Ethan Harstad
+ *
+ */
 public class MapOverlay {
 	
 	private String name;
@@ -19,59 +24,120 @@ public class MapOverlay {
 	private boolean drawPaths = true;
 	private Color color = Color.BLACK;
 	
+	/**
+	 * Create a name overlay.
+	 * @param name
+	 */
 	public MapOverlay(String name) {
 		this.name = name;
 		paths = new Hashtable<String, MapPath>();
 	}
 	
+	/**
+	 * Get the name of this overlay.
+	 * @return
+	 */
 	public String getName() {
 		return name;
 	}
 	
+	/**
+	 * Add the named path to this overlay.
+	 * @param name
+	 * @param path
+	 */
 	public void addPath(String name, MapPath path) {
 		paths.put(name, path);
 	}
 	
+	/**
+	 * Test if the given path name is in this overlay.
+	 * @param name
+	 * @return
+	 */
 	public boolean hasPath(String name) {
 		return paths.containsKey(name);
 	}
 	
+	/**
+	 * Get the named path.
+	 * @param name
+	 * @return
+	 */
 	public MapPath getPath(String name) {
 		return paths.get(name);
 	}
 	
+	/**
+	 * Remove the named path.
+	 * @param name
+	 */
 	public void removePath(String name) {
 		paths.remove(name);
 	}
 	
+	/**
+	 * Append the given point to the named path.
+	 * @param name
+	 * @param point
+	 */
 	public void appendPath(String name, MapPoint point) {
 		paths.get(name).add(point.lat, point.lon);
 	}
 	
+	/**
+	 * Enable the overlay.
+	 * @param enable
+	 */
 	public void setEnabled(boolean enable) {
 		enabled = enable;
 	}
 	
+	/**
+	 * Test if enabled.
+	 * @return
+	 */
 	public boolean isEnabled() {
 		return enabled;
 	}
 	
+	/**
+	 * Enable drawing of map paths;
+	 * @param draw
+	 */
 	public void setDrawPaths(boolean draw) {
 		drawPaths = draw;
 	}
 	
+	/**
+	 * Test if paths are drawn.
+	 * @return
+	 */
 	public boolean getDrawPaths() {
 		return drawPaths;
 	}
 	
+	/**
+	 * Set the color to use to draw this overlay.
+	 * @param c
+	 */
 	public void setColor(Color c) {
 		color = c;
 	}
 	
+	/**
+	 * Get the color of this overlay.
+	 * @return
+	 */
 	public Color getColor() {
 		return color;
 	}
 	
+	/**
+	 * Draw this overlay on the given map with the given graphics context.
+	 * @param map
+	 * @param g0
+	 */
 	public void drawOverlay(MapPanel map, Graphics g0) {
 		if(!enabled) return;
 		Collection<MapPath> c = paths.values();

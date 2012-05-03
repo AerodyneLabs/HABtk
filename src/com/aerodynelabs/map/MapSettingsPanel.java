@@ -22,12 +22,20 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
+/**
+ * A default settings panel for MapPanel.
+ * @author Ethan Harstad
+ *
+ */
 @SuppressWarnings("serial")
 public class MapSettingsPanel extends JPanel {
 	
 	private JTable table;
 	private MapPanel map;
 	
+	/**
+	 * Allow editing of colors
+	 */
 	class ColorEditor extends AbstractCellEditor
 						implements TableCellEditor, ActionListener {
 		
@@ -81,6 +89,9 @@ public class MapSettingsPanel extends JPanel {
 		
 	}
 	
+	/**
+	 * Allow rendering of colors
+	 */
 	class ColorRenderer extends JLabel implements TableCellRenderer {
 		
 		Border selectedBorder = BorderFactory.createMatteBorder(2,5,2,5,
@@ -106,6 +117,9 @@ public class MapSettingsPanel extends JPanel {
 		
 	}
 	
+	/**
+	 * Custom overlay data model
+	 */
 	class DataModel extends AbstractTableModel {
 
 		private String[] headers = {"Enable", "Name", "Color", "History"};
@@ -172,6 +186,10 @@ public class MapSettingsPanel extends JPanel {
 		
 	}
 	
+	/**
+	 * Create a settings panel to control the specified map.
+	 * @param map
+	 */
 	public MapSettingsPanel(MapPanel map) {
 		super();
 		super.setPreferredSize(new Dimension(600, 75));

@@ -9,6 +9,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.imageio.ImageIO;
 
+/**
+ * A class to download map images from a webserver.
+ * @author Ethan Harstad
+ *
+ */
 public class TileServer extends Thread {
 	
 	//private static final int TILE_SIZE = 256;
@@ -52,6 +57,9 @@ public class TileServer extends Thread {
 		loadResources();
 	}
 	
+	/**
+	 * Load local resources
+	 */
 	private void loadResources() {
 		try {
 			dTile = ImageIO.read(new File("resources/loadingTile.png"));
@@ -62,19 +70,39 @@ public class TileServer extends Thread {
 		}
 	}
 	
+	/**
+	 * Close the server connection
+	 */
 	public void close() {
 		alive = false;
 		queue.clear();
 	}
 	
+	/**
+	 * Get the name of a time
+	 * @param tile
+	 * @return
+	 */
 	protected static String getTileName(Tile tile) {
 		return tile.getZoom() + "/" + tile.getX() + "/" + tile.getY() + ".png";
 	}
 	
+	/**
+	 * Get the address of a time
+	 * @param tile
+	 * @return
+	 */
 	private String getTileAddress(Tile tile) {
 		return url + getTileName(tile);
 	}
 	
+	/**
+	 * Get tile image from cache or local store or server (in that order).
+	 * @param x
+	 * @param y
+	 * @param zoom
+	 * @return
+	 */
 	protected synchronized BufferedImage getTile(int x, int y, int zoom) {
 		if(zoom > maxZoom) return zTile;
 		if(
@@ -116,6 +144,9 @@ public class TileServer extends Thread {
 		return maxZoom;
 	}
 	
+	/**
+	 * Start the download manager thread
+	 */
 	public void run() {
 		while(alive) {
 			while(!queue.isEmpty()) {
@@ -137,7 +168,7 @@ public class TileServer extends Thread {
 			try {
 				synchronized(this) {
 					// System.out.println("Waiting");
-					wait(1000);
+					wait(500);
 				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();

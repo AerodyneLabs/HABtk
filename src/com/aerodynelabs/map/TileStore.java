@@ -6,6 +6,11 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+/**
+ * A class to store tiles locally on disk.
+ * @author Ethan Harstad
+ *
+ */
 public class TileStore {
 	
 	//XXX TileStore lifetime

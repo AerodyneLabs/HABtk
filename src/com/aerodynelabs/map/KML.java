@@ -16,11 +16,20 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+/**
+ * A class to represent, write, and read KML files.
+ * 
+ * @author Ethan Harstad
+ *
+ */
 public class KML {
 	
 	private Document doc;
 	private Element root;
 	
+	/**
+	 * Create a KML object.
+	 */
 	public KML() {
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -35,6 +44,10 @@ public class KML {
 		}
 	}
 	
+	/**
+	 * Add a placemark to this KML object.
+	 * @param mark
+	 */
 	public void addMark(MapPoint mark) {
 		Element placemark = doc.createElement("Placemark");
 		root.appendChild(placemark);
@@ -64,6 +77,11 @@ public class KML {
 		point.appendChild(coords);
 	}
 	
+	/**
+	 * Add a path to this KML object.
+	 * @param path
+	 * @param pathName
+	 */
 	public void addPath(List<MapPoint> path, String pathName) {
 		Element placemark = doc.createElement("Placemark");
 		root.appendChild(placemark);
@@ -100,6 +118,11 @@ public class KML {
 		lineString.appendChild(coords);
 	}
 	
+	/**
+	 * Write this KML object to a file.
+	 * @param file
+	 * @return
+	 */
 	public boolean writeFile(File file) {
 		try {
 			TransformerFactory factory = TransformerFactory.newInstance();
@@ -114,6 +137,10 @@ public class KML {
 		return true;
 	}
 	
+	/**
+	 * Read the KML file into this object.
+	 * @param file
+	 */
 	public void readFile(File file) {
 		// TODO read KML file
 	}

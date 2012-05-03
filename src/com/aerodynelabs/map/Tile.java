@@ -1,5 +1,10 @@
 package com.aerodynelabs.map;
 
+/**
+ * A class to represent a map tile.
+ * @author Ethan Harstad
+ *
+ */
 public class Tile {
 	
 	private final int x, y, zoom;
