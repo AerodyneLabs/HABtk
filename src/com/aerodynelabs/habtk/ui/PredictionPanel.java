@@ -262,7 +262,6 @@ public class PredictionPanel extends JPanel {
 						JOptionPane.showMessageDialog(null, "Prediction timeframe exceeds model timeframe.", "Weather Model Error", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
-					System.out.println(cal.getTime());
 					PredictionTask task = new PredictionTask(baseFlight, cal.getTime());
 					progress.setMaximum((++nTasks) + 1);
 					task.execute();
