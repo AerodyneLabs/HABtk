@@ -10,10 +10,13 @@ import java.util.Vector;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
+
+import org.pushingpixels.substance.api.renderers.SubstanceDefaultTableCellRenderer;
 
 import com.aerodynelabs.habtk.prediction.Predictor;
 import com.aerodynelabs.map.MapOverlay;
@@ -53,12 +56,13 @@ public class FlightListPanel extends JPanel {
 	/**
 	 * Custom date and time renderer
 	 */
-	static class DateTimeRenderer extends DefaultTableCellRenderer {
+	static class DateTimeRenderer extends SubstanceDefaultTableCellRenderer {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		
 		public DateTimeRenderer() {
 			super();
 			sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+			setHorizontalAlignment(SwingConstants.CENTER);
 		}
 		
 		@Override
@@ -71,12 +75,13 @@ public class FlightListPanel extends JPanel {
 	/**
 	 * Custom time renderer
 	 */
-	static class ElapsedTimeRenderer extends DefaultTableCellRenderer {
+	static class ElapsedTimeRenderer extends SubstanceDefaultTableCellRenderer {
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 		
 		public ElapsedTimeRenderer() {
 			super();
 			sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+			setHorizontalAlignment(SwingConstants.CENTER);
 		}
 		
 		@Override
@@ -142,8 +147,6 @@ public class FlightListPanel extends JPanel {
 				return Boolean.class;
 			case 1:
 				return Date.class;
-			case 3:
-				return Double.class;
 			case 4:
 				return Date.class;
 			}
@@ -166,7 +169,7 @@ public class FlightListPanel extends JPanel {
 			case 2:		// Balloon
 				return flight.flight.getTypeName();
 			case 3:		// Lift
-				return flight.flight.getLift();
+				return Double.toString(flight.flight.getLift()) + " kg";
 			case 4:		// Time aloft
 				return flight.path.getElapsedTime() * 1000;
 			case 5:		// Distance
@@ -200,6 +203,9 @@ public class FlightListPanel extends JPanel {
 		
 		model = new DataModel();
 		table = new JTable(model);
+		DefaultTableCellRenderer defaultRenderer = new SubstanceDefaultTableCellRenderer();
+		defaultRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+		table.setDefaultRenderer(Object.class, defaultRenderer);
 		table.getColumnModel().getColumn(1).setCellRenderer(new DateTimeRenderer());
 		table.getColumnModel().getColumn(4).setCellRenderer(new ElapsedTimeRenderer());
 		
