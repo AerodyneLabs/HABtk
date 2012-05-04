@@ -33,7 +33,6 @@ import org.noos.xing.mydoggy.plaf.ui.content.MyDoggyMultiSplitContentManagerUI;
 import org.pushingpixels.substance.api.DecorationAreaType;
 import org.pushingpixels.substance.api.SubstanceColorScheme;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
-import org.pushingpixels.substance.api.SubstanceSkin;
 import org.pushingpixels.substance.api.skin.SubstanceTwilightLookAndFeel;
 
 import com.aerodynelabs.habtk.help.HelpWindow;
@@ -99,24 +98,6 @@ public class HABtk {
 		fileMenu.add(fileLoadFlightItem);
 		
 		fileMenu.add(new JSeparator());
-		
-		JMenuItem fileSaveItem = new JMenuItem("Save Map");
-		fileSaveItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				//TODO save map action
-			}
-		});
-		fileMenu.add(fileSaveItem);
-		
-		JMenuItem filePrintItem = new JMenuItem("Print Map");
-		filePrintItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				//TODO print map action
-			}
-		});
-		fileMenu.add(filePrintItem);
-		
-		fileMenu.add(new JSeparator());
 		JMenuItem fileExitItem = new JMenuItem("Exit");
 		fileExitItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -155,6 +136,7 @@ public class HABtk {
 		contentManager = windowManager.getContentManager();
 		contentManager.setContentManagerUI(new MyDoggyMultiSplitContentManagerUI());
 		
+		// Tweak MyDoggy theme settings here
 		ResourceManager resourceManager = windowManager.getResourceManager();
 		SubstanceColorScheme s = SubstanceLookAndFeel.getCurrentSkin().getActiveColorScheme(DecorationAreaType.HEADER);
 		resourceManager.putColor("ToolWindowTitleBarUI.background.active.start", s.getBackgroundFillColor());
