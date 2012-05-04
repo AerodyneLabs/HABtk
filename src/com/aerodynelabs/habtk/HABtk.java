@@ -28,7 +28,12 @@ import org.noos.xing.mydoggy.ToolWindow;
 import org.noos.xing.mydoggy.ToolWindowAnchor;
 import org.noos.xing.mydoggy.ToolWindowType;
 import org.noos.xing.mydoggy.plaf.MyDoggyToolWindowManager;
+import org.noos.xing.mydoggy.plaf.ui.ResourceManager;
 import org.noos.xing.mydoggy.plaf.ui.content.MyDoggyMultiSplitContentManagerUI;
+import org.pushingpixels.substance.api.DecorationAreaType;
+import org.pushingpixels.substance.api.SubstanceColorScheme;
+import org.pushingpixels.substance.api.SubstanceLookAndFeel;
+import org.pushingpixels.substance.api.SubstanceSkin;
 import org.pushingpixels.substance.api.skin.SubstanceTwilightLookAndFeel;
 
 import com.aerodynelabs.habtk.help.HelpWindow;
@@ -150,9 +155,21 @@ public class HABtk {
 		contentManager = windowManager.getContentManager();
 		contentManager.setContentManagerUI(new MyDoggyMultiSplitContentManagerUI());
 		
+		ResourceManager resourceManager = windowManager.getResourceManager();
+		SubstanceColorScheme s = SubstanceLookAndFeel.getCurrentSkin().getActiveColorScheme(DecorationAreaType.HEADER);
+		resourceManager.putColor("ToolWindowTitleBarUI.background.active.start", s.getBackgroundFillColor());
+		resourceManager.putColor("ToolWindowTitleBarUI.background.active.end", s.getBackgroundFillColor());
+		resourceManager.putColor("ToolWindowTitleBarUI.id.background.active", s.getBackgroundFillColor());
+		s = SubstanceLookAndFeel.getCurrentSkin().getActiveColorScheme(DecorationAreaType.SECONDARY_TITLE_PANE);
+		resourceManager.putColor("ToolWindowRepresentativeAnchorUI.background.active.start", s.getBackgroundFillColor());
+		resourceManager.putColor("ToolWindowRepresentativeAnchorUI.background.active.end", s.getBackgroundFillColor());
+		s = SubstanceLookAndFeel.getCurrentSkin().getActiveColorScheme(DecorationAreaType.SECONDARY_TITLE_PANE_INACTIVE);
+		resourceManager.putColor("ToolWindowRepresentativeAnchorUI.background.inactive.start", s.getBackgroundFillColor());
+		resourceManager.putColor("ToolWindowRepresentativeAnchorUI.background.inactive.end", s.getBackgroundFillColor());
+		
 		windowManager.registerToolWindow("Log", "Log", null, new TerminalPanel(), ToolWindowAnchor.BOTTOM);
 		windowManager.registerToolWindow("Tracking", "Tracking", null, new TrackingPanel(), ToolWindowAnchor.LEFT);
-		windowManager.registerToolWindow("Prediction", "Prediction", null, new PredictionPanel(windowManager), ToolWindowAnchor.LEFT);
+		windowManager.registerToolWindow("Prediction", null, null, new PredictionPanel(windowManager), ToolWindowAnchor.LEFT);
 		for(ToolWindow win : windowManager.getToolWindows()) win.setAvailable(true);
 		windowManager.getToolWindow("Log").setType(ToolWindowType.SLIDING);
 		
