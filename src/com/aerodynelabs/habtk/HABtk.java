@@ -258,6 +258,7 @@ public class HABtk {
 				public void run() {
 					try {
 						UIManager.setLookAndFeel(new SubstanceTwilightLookAndFeel());
+						UIManager.put(SubstanceLookAndFeel.WINDOW_ROUNDED_CORNERS, false);
 					} catch (UnsupportedLookAndFeelException e) {
 						e.printStackTrace();
 					}
