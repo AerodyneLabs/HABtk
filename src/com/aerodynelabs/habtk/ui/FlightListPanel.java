@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
+import javax.swing.ToolTipManager;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -209,7 +210,8 @@ public class FlightListPanel extends JPanel {
 		table.getColumnModel().getColumn(1).setCellRenderer(new DateTimeRenderer());
 		table.getColumnModel().getColumn(4).setCellRenderer(new ElapsedTimeRenderer());
 		
-		
+		ToolTipManager.sharedInstance().unregisterComponent(table);
+		ToolTipManager.sharedInstance().unregisterComponent(table.getTableHeader());
 		
 		JScrollPane scroller = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		add(scroller, BorderLayout.CENTER);
