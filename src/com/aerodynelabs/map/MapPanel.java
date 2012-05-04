@@ -314,7 +314,8 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	@Override
 	public void removeNotify() {
 		super.removeNotify();
-		server.close();
+		// FIXME Disabled due to spurious use
+//		server.close();
 	}
 	
 	/**
