@@ -36,18 +36,18 @@ public class FlightListPanel extends JPanel {
 	
 	private int lastColor = 0;
 	private static final Color colors[] = {
-//		new Color(0,	0,	63),
-		new Color(0,	0,	127),
-//		new Color(0,	0,	191),
-		new Color(0,	0,	255),
-//		new Color(0,	63,	0),
-		new Color(0,	127,	0),
-//		new Color(0,	191,	0),
-		new Color(0,	255,	0),
-//		new Color(63,	0,	0),
-		new Color(127,	0,	0),
-//		new Color(191,	0,	0),
-		new Color(255,	0,	0)
+		new Color(	255,	0,	0),
+		new Color(	255,	116,	0),
+		new Color(	255,	170,	0),
+		new Color(	255,	211,	0),
+		new Color(	255,	255,	0),
+		new Color(	159,	238,	0),
+		new Color(	0,		204,	0),
+		new Color(	0,		153,	153),
+		new Color(	18,		64,		171),
+		new Color(	57,		20,		175),
+		new Color(	113,	9,		170),
+		new Color(	205,	0,		116)
 	};
 	
 	/**
