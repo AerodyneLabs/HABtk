@@ -15,6 +15,7 @@ import java.awt.image.BufferedImage;
 import java.util.Collection;
 import java.util.Hashtable;
 
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
 /**
@@ -82,6 +83,7 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		setCenter(lat, lon);
 		addMouseListener(this);
 		addMouseMotionListener(this);
+		setBorder(BorderFactory.createLoweredBevelBorder());
 	}
 	
 	/**
