@@ -74,6 +74,8 @@ public class PredictionPanel extends JPanel {
 				if(pred != null) {
 					baseFlight = pred; 
 					fFlight.setText(baseFlight.toString());
+					fStart.setText(dateTimeFormat.format(1000 * baseFlight.getStart().getTime()));
+					fStop.setText(timeFormat.format((1000 * baseFlight.getStart().getTime()) + 6*60*60*1000));
 				}
 			}
 		});
@@ -84,6 +86,8 @@ public class PredictionPanel extends JPanel {
 				if(pred != null) {
 					baseFlight = pred;
 					fFlight.setText(baseFlight.toString());
+					fStart.setText(dateTimeFormat.format(1000 * baseFlight.getStart().getTime()));
+					fStop.setText(timeFormat.format((1000 * baseFlight.getStart().getTime()) + 6*60*60*1000));
 				}
 			}
 		});
@@ -91,7 +95,11 @@ public class PredictionPanel extends JPanel {
 		bEdit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(baseFlight == null) return;
-				if(baseFlight.setup()) fFlight.setText(baseFlight.toString());
+				if(baseFlight.setup()) {
+					fFlight.setText(baseFlight.toString());
+					fStart.setText(dateTimeFormat.format(1000 * baseFlight.getStart().getTime()));
+					fStop.setText(timeFormat.format((1000 * baseFlight.getStart().getTime()) + 6*60*60*1000));
+				}
 			}
 		});
 		layout.putConstraint(SpringLayout.NORTH, lFlight, 6, SpringLayout.NORTH, this);
@@ -252,8 +260,8 @@ public class PredictionPanel extends JPanel {
 				stop.add(Calendar.DAY_OF_YEAR, nDays - 1);
 				if( cal.before(Calendar.getInstance( TimeZone.getTimeZone("GMT") )) ) cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 				
-				while(cal.before(stop)) {
-					if(cal.getTime().after(modelEnd)) {
+				while(!cal.after(stop)) {
+					if(!cal.getTime().before(modelEnd)) {
 						JOptionPane.showMessageDialog(null, "Prediction timeframe exceeds model timeframe.", "Weather Model Error", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
