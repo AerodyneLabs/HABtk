@@ -39,7 +39,7 @@ public class PredictionPanel extends JPanel {
 	private JTextField fStop;
 	private JSpinner fStep;
 	private JSpinner fDays;
-	private JButton cancel, run;
+	private JButton run;
 	private JProgressBar progress;
 	
 	private final ToolWindowManager twm;
@@ -197,21 +197,11 @@ public class PredictionPanel extends JPanel {
 		layout.putConstraint(SpringLayout.EAST, progress, -6, SpringLayout.EAST, this);
 		add(progress);
 		
-		cancel = new JButton("Cancel");
-		cancel.setEnabled(false);
-		cancel.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				// TODO cancel predictions
-				run.setEnabled(true);
-				cancel.setEnabled(false);
-			}
-		});
-		
 		run = new JButton("Run");
 		run.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// Update button states
-				cancel.setEnabled(true);
+//				cancel.setEnabled(true);
 				run.setEnabled(false);
 				
 				// Create main content if needed
@@ -280,10 +270,7 @@ public class PredictionPanel extends JPanel {
 			}
 		});
 		layout.putConstraint(SpringLayout.NORTH, run, 6, SpringLayout.SOUTH, progress);
-		layout.putConstraint(SpringLayout.NORTH, cancel, 0, SpringLayout.NORTH, run);
 		layout.putConstraint(SpringLayout.EAST, run, -6, SpringLayout.EAST, this);
-		layout.putConstraint(SpringLayout.EAST, cancel, -6, SpringLayout.WEST, run);
-		add(cancel);
 		add(run);
 	}
 	
@@ -312,7 +299,6 @@ public class PredictionPanel extends JPanel {
 				cTasks = 0;
 				nTasks = 0;
 				progress.setMaximum(nTasks + 1);
-				cancel.setEnabled(false);
 				run.setEnabled(true);
 			}
 			progress.setValue(cTasks + 1);
