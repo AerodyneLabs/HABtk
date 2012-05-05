@@ -25,6 +25,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
 import org.pushingpixels.substance.api.renderers.SubstanceDefaultTableCellRenderer;
@@ -128,12 +129,12 @@ public class FlightListPanel extends JPanel {
 		
 		private String headers[] = {
 				"Show",
-				"Launch Time",
-				"Balloon",
-				"Lift",
+				"Launch Time (UTC)",
+				"Balloon Type",
+				"Lift (kg)",
 				"Time Aloft",
-				"Distance",
-				"Altitude"
+				"Distance (km)",
+				"Altitude (km)"
 		};
 
 		@Override
@@ -182,13 +183,13 @@ public class FlightListPanel extends JPanel {
 			case 2:		// Balloon
 				return flight.flight.getTypeName();
 			case 3:		// Lift
-				return Double.toString(flight.flight.getLift()) + " kg";
+				return Double.toString(flight.flight.getLift());
 			case 4:		// Time aloft
 				return flight.path.getElapsedTime() * 1000;
 			case 5:		// Distance
-				return Double.toString(Math.floor(flight.path.getDistance()/10 + 0.5) / 100) + " km";
+				return Double.toString(Math.floor(flight.path.getDistance()/10 + 0.5) / 100);
 			case 6:		// Altitude
-				return Double.toString(Math.floor(flight.path.getMaxAlt()) / 1000) + " km";
+				return Double.toString(Math.floor(flight.path.getMaxAlt()) / 1000);
 			}
 			return null;
 		}
@@ -216,11 +217,21 @@ public class FlightListPanel extends JPanel {
 		
 		model = new DataModel();
 		table = new JTable(model);
+		JScrollPane scroller = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		add(scroller, BorderLayout.CENTER);
+		
 		DefaultTableCellRenderer defaultRenderer = new SubstanceDefaultTableCellRenderer();
 		defaultRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 		table.setDefaultRenderer(Object.class, defaultRenderer);
 		table.getColumnModel().getColumn(1).setCellRenderer(new DateTimeRenderer());
 		table.getColumnModel().getColumn(4).setCellRenderer(new ElapsedTimeRenderer());
+		
+//		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		TableCellRenderer renderer = table.getTableHeader().getDefaultRenderer();
+		for(int i = 0; i < table.getColumnCount(); i++) {
+			table.getColumnModel().getColumn(i).setPreferredWidth(
+	                (int) (renderer.getTableCellRendererComponent(table, table.getModel().getColumnName(i), false, false, 0, i).getPreferredSize().width * 1.1));
+		}
 		
 		menu = new JPopupMenu();
 		JMenuItem saveFlight = new JMenuItem("Save Flight");
@@ -274,9 +285,6 @@ public class FlightListPanel extends JPanel {
 		// Disable tooltips for performance increase
 		ToolTipManager.sharedInstance().unregisterComponent(table);
 		ToolTipManager.sharedInstance().unregisterComponent(table.getTableHeader());
-		
-		JScrollPane scroller = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		add(scroller, BorderLayout.CENTER);
 	}
 	
 	/**
