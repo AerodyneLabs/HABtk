@@ -62,10 +62,8 @@ public class RUCGFS implements AtmosphereSource {
 		
 		// Return the best model
 		if(net == null) {
-			System.out.println("Using local");
 			return local;
 		} else {
-			System.out.println("Using net");
 			return net;
 		}
 	}
