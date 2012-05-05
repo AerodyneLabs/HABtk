@@ -126,6 +126,14 @@ public class TileServer extends Thread {
 		if(image != null) {
 			//System.out.println("Found in Store");
 			cache.put(tile, image);
+			// Check if image is out of date
+			if(!OFFLINE) {
+				if(store.isOld(tile)) {
+					if(!queue.contains(tile)) {
+						queue.add(tile);
+					}
+				}
+			}
 			return image;
 		}
 		// Download
@@ -149,7 +157,15 @@ public class TileServer extends Thread {
 	 */
 	public void run() {
 		while(alive) {
-			while(!queue.isEmpty()) {
+//			try {
+//				InetAddress addr = InetAddress.getByName("www.google.com");
+//				OFFLINE = !addr.isReachable(250);
+//			} catch (Exception e1) {
+//				OFFLINE = true;
+//				e1.printStackTrace();
+//			}
+//			System.out.println(OFFLINE);
+			while(!queue.isEmpty() && !OFFLINE) {
 				Tile tile = queue.poll();
 				//System.out.println("Getting " + tile);
 				BufferedImage image = null;

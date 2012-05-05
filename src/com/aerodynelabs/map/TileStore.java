@@ -13,8 +13,7 @@ import javax.imageio.ImageIO;
  */
 public class TileStore {
 	
-	//XXX TileStore lifetime
-	//private static final long LIFETIME = 1210000000l;
+	protected static final long LIFETIME = 1210000000l;
 	
 	private File store;
 	
@@ -32,6 +31,15 @@ public class TileStore {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	protected boolean isOld(Tile tile) {
+		String name = TileServer.getTileName(tile);
+		File file = new File(store, name);
+		if(file.exists()) {
+			if(file.lastModified() > System.currentTimeMillis() - LIFETIME) return false;
+		}
+		return true;
 	}
 	
 	protected synchronized BufferedImage get(Tile tile) {
