@@ -33,6 +33,7 @@ public class AboutDialog extends JDialog implements ActionListener, HyperlinkLis
 			"Map data &copy; <a href=\"http://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a><br />" +
 			"Directions, Elevation, Guidance, and Tiles Courtesy of <a href=\"http://www.mapquest.com/\">MapQuest</a> <img src=\"http://developer.mapquest.com/content/osm/mq_logo.png\"><br />" +
 			"Docking framework by <a href=\"http://mydoggy.sourceforge.net/\">MyDoggy</a><br />" +
+			"Look and feel by <a href=\"https://github.com/kirillcool/substance\">Substance</a>/<a href=\"http://insubstantial.posterous.com/\">Insubstantial</a><br />" +
 			"Charts by <a href=\"http://www.jfree.org/jfreechart/\">JFreechart</a><br />" +
 			"<hr />Please e-mail bug reports and feature requests to <a href=\"mailto:support@aerodynelabs.com\">support@aerodynelabs.com</a>." +
 			"</body></html>";
