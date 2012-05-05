@@ -160,9 +160,12 @@ public class FlightListPanel extends JPanel {
 			case 0:
 				return Boolean.class;
 			case 1:
-				return Date.class;
 			case 4:
 				return Date.class;
+			case 3:
+			case 5:
+			case 6:
+				return Double.class;
 			}
 			return String.class;
 		}
@@ -183,13 +186,13 @@ public class FlightListPanel extends JPanel {
 			case 2:		// Balloon
 				return flight.flight.getTypeName();
 			case 3:		// Lift
-				return Double.toString(flight.flight.getLift());
+				return flight.flight.getLift();
 			case 4:		// Time aloft
 				return flight.path.getElapsedTime() * 1000;
 			case 5:		// Distance
-				return Double.toString(Math.floor(flight.path.getDistance()/10 + 0.5) / 100);
+				return Math.floor(flight.path.getDistance()/10 + 0.5) / 100;
 			case 6:		// Altitude
-				return Double.toString(Math.floor(flight.path.getMaxAlt()) / 1000);
+				return Math.floor(flight.path.getMaxAlt()) / 1000;
 			}
 			return null;
 		}
@@ -217,12 +220,14 @@ public class FlightListPanel extends JPanel {
 		
 		model = new DataModel();
 		table = new JTable(model);
+		table.setAutoCreateRowSorter(true);
 		JScrollPane scroller = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		add(scroller, BorderLayout.CENTER);
 		
 		DefaultTableCellRenderer defaultRenderer = new SubstanceDefaultTableCellRenderer();
 		defaultRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 		table.setDefaultRenderer(Object.class, defaultRenderer);
+		table.setDefaultRenderer(Double.class, defaultRenderer);
 		table.getColumnModel().getColumn(1).setCellRenderer(new DateTimeRenderer());
 		table.getColumnModel().getColumn(4).setCellRenderer(new ElapsedTimeRenderer());
 		
