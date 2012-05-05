@@ -4,12 +4,15 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 /**
  * A class to retrieve GFS soundings from http://rucsoundings.noaa.gov
@@ -21,12 +24,56 @@ public class RUCGFS implements AtmosphereSource {
 
 	@Override
 	public File getAtmosphere(int time, double lat, double lon) {
+		// Adjust fields to match model
 		int startTime = (time / 10800) * 10800;
-		double rlat = (lat / 0.5) * 0.5;
-		double rlon = (lon / 0.5) * 0.5;
+		double rlat = (int)(lat / 0.5) * 0.5;
+		double rlon = (int)(lon / 0.5) * 0.5;
+		
+		// Get the time the model was last run
+		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+		int modelRun = (cal.get(Calendar.HOUR_OF_DAY) / 12) * 12;
+		cal.set(Calendar.HOUR_OF_DAY, modelRun);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		int modelTime = (int)(cal.getTimeInMillis() / 1000);
+		
+		// Check for local copy
+		File local = null;
+		File root = new File("wind/");
+		if(root.exists()) {
+			File files[] = root.listFiles(new Filter(startTime, rlat, rlon));
+			if(files.length > 0) local = files[files.length - 1];
+		} else {
+			root.mkdir();
+		}
+		
+		// Get a new model if needed
+		boolean old = true;
+		if(local != null) {
+			String name = local.getName();
+			int s = name.lastIndexOf('_');
+			int e = name.lastIndexOf('.');
+			int t = Integer.parseInt(name.substring(s + 1, e));
+			old = modelTime > t;
+		}
+		File net = null;
+		if(old) net = download(startTime, modelTime, rlat, rlon);
+		
+		// Return the best model
+		if(net == null) {
+			System.out.println("Using local");
+			return local;
+		} else {
+			System.out.println("Using net");
+			return net;
+		}
+	}
+	
+	private File download(int time, int modelTime, double lat, double lon) {
 		String address = "http://rucsoundings.noaa.gov/get_soundings.cgi?data_source=GFS;airport=" +
-				rlat + "," + rlon + ";hydrometeors=false&startSecs=" +startTime +
-				"&endSecs=" + (startTime+1);
+				lat + "," + lon + ";hydrometeors=false&startSecs=" + time +
+				"&endSecs=" + (time+1);
 		
 		URL url;
 		InputStream is = null;
@@ -44,7 +91,7 @@ public class RUCGFS implements AtmosphereSource {
 		isr = new InputStreamReader(is);
 		BufferedReader br = new BufferedReader(isr);
 		
-		File file = new File("wind/" + (int)(rlat*10) + "_" + (int)(rlon*10) + "_" + startTime + ".gsd");
+		File file = new File("wind/gfs_" + (int)(lat*10) + "_" + (int)(lon*10) + "_" + time + "_" + modelTime + ".gsd");
 		
 		FileWriter fw;
 		try {
@@ -67,6 +114,23 @@ public class RUCGFS implements AtmosphereSource {
 		
 		writer.flush();
 		return file;
+	}
+	
+	class Filter implements FilenameFilter {
+		
+		private String filter;
+		
+		public Filter(int time, double lat, double lon) {
+			filter = "gfs_" + (int)(lat*10) + "_" + (int)(lon*10) + "_" + time + "_";
+		}
+		
+		@Override
+		public boolean accept(File dir, String name) {
+			if(!name.startsWith(filter)) return false;
+			if(!name.endsWith(".gsd")) return false;
+			return true;
+		}
+		
 	}
 
 }
