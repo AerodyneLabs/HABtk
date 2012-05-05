@@ -2,6 +2,7 @@ package com.aerodynelabs.habtk.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -26,6 +27,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
 import org.pushingpixels.substance.api.renderers.SubstanceDefaultTableCellRenderer;
@@ -105,6 +107,21 @@ public class FlightListPanel extends JPanel {
 		
 	}
 	
+	static class ColorRenderer extends SubstanceDefaultTableCellRenderer {
+		
+		public ColorRenderer() {
+			super();
+			setOpaque(true);
+		}
+		
+		public Component getTableCellRendererComponent(JTable arg0,
+				Object color, boolean isSelected, boolean hasFocus, int r, int c) {
+			setBackground((Color)color);
+			return this;
+		}
+		
+	}
+	
 	/**
 	 * Relates a predictor to a path and overlay
 	 */
@@ -128,6 +145,7 @@ public class FlightListPanel extends JPanel {
 	class DataModel extends AbstractTableModel {
 		
 		private String headers[] = {
+				" ",
 				"Show",
 				"Launch Time (UTC)",
 				"Balloon Type",
@@ -149,7 +167,7 @@ public class FlightListPanel extends JPanel {
 		
 		@Override
 		public boolean isCellEditable(int r, int c){
-			if(c == 0) return true;
+			if(c == 1) return true;
 			return false;
 		}
 		
@@ -158,13 +176,15 @@ public class FlightListPanel extends JPanel {
 		public Class getColumnClass(int c) {
 			switch(c) {
 			case 0:
-				return Boolean.class;
+				return Color.class;
 			case 1:
-			case 4:
-				return Date.class;
-			case 3:
+				return Boolean.class;
+			case 2:
 			case 5:
+				return Date.class;
+			case 4:
 			case 6:
+			case 7:
 				return Double.class;
 			}
 			return String.class;
@@ -179,19 +199,21 @@ public class FlightListPanel extends JPanel {
 		public Object getValueAt(int row, int col) {
 			Flight flight = flights.get(row);
 			switch(col) {
-			case 0:		// Enabled
+			case 0:		// Color
+				return flight.overlay.getColor();
+			case 1:		// Enabled
 				return flight.overlay.isEnabled();
-			case 1:		// Launch Time
+			case 2:		// Launch Time
 				return flight.path.getStartTime() * 1000;
-			case 2:		// Balloon
+			case 3:		// Balloon
 				return flight.flight.getTypeName();
-			case 3:		// Lift
+			case 4:		// Lift
 				return flight.flight.getLift();
-			case 4:		// Time aloft
+			case 5:		// Time aloft
 				return flight.path.getElapsedTime() * 1000;
-			case 5:		// Distance
+			case 6:		// Distance
 				return Math.floor(flight.path.getDistance()/10 + 0.5) / 100;
-			case 6:		// Altitude
+			case 7:		// Altitude
 				return Math.floor(flight.path.getMaxAlt()) / 1000;
 			}
 			return null;
@@ -200,7 +222,7 @@ public class FlightListPanel extends JPanel {
 		@Override
 		public void setValueAt(Object o, int r, int c) {
 			Flight flight = flights.get(r);
-			if(c == 0) {
+			if(c == 1) {
 				flight.overlay.setEnabled(o.equals(true));
 				map.updateNotify();
 			}
@@ -228,14 +250,22 @@ public class FlightListPanel extends JPanel {
 		defaultRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 		table.setDefaultRenderer(Object.class, defaultRenderer);
 		table.setDefaultRenderer(Double.class, defaultRenderer);
-		table.getColumnModel().getColumn(1).setCellRenderer(new DateTimeRenderer());
-		table.getColumnModel().getColumn(4).setCellRenderer(new ElapsedTimeRenderer());
+		table.setDefaultRenderer(Color.class, new ColorRenderer());
+		table.getColumnModel().getColumn(2).setCellRenderer(new DateTimeRenderer());
+		table.getColumnModel().getColumn(5).setCellRenderer(new ElapsedTimeRenderer());
 		
 //		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		TableCellRenderer renderer = table.getTableHeader().getDefaultRenderer();
 		for(int i = 0; i < table.getColumnCount(); i++) {
-			table.getColumnModel().getColumn(i).setPreferredWidth(
+			if(i == 0) {
+				TableColumn col = table.getColumnModel().getColumn(i);
+				col.setMinWidth(5);
+				col.setMaxWidth(15);
+				col.setPreferredWidth(10);
+			} else {
+				table.getColumnModel().getColumn(i).setPreferredWidth(
 	                (int) (renderer.getTableCellRendererComponent(table, table.getModel().getColumnName(i), false, false, 0, i).getPreferredSize().width * 1.1));
+			}
 		}
 		
 		menu = new JPopupMenu();
