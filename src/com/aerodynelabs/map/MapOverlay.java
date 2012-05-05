@@ -22,6 +22,7 @@ public class MapOverlay {
 	private Hashtable<String, MapPath> paths;
 	private boolean enabled = true;
 	private boolean drawPaths = true;
+	private boolean highlighted = false;
 	private Color color = Color.BLACK;
 	
 	/**
@@ -134,6 +135,22 @@ public class MapOverlay {
 	}
 	
 	/**
+	 * Set the highlighted state of the overlay.
+	 * @param state
+	 */
+	public void setHighlighted(boolean state) {
+		highlighted = state;
+	}
+	
+	/**
+	 * Get the highlighted state of the overlay.
+	 * @return
+	 */
+	public boolean getHighlighted() {
+		return highlighted;
+	}
+	
+	/**
 	 * Draw this overlay on the given map with the given graphics context.
 	 * @param map
 	 * @param g0
@@ -149,8 +166,12 @@ public class MapOverlay {
 			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
 			g.setColor(color);
-			g.setStroke(new BasicStroke(2));
-
+			if(highlighted) {
+				g.setStroke(new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+			} else {
+				g.setStroke(new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+			}
+			
 			if(drawPaths) {
 				ListIterator<MapPoint> iter = p.iterator();
 				if(!iter.hasNext()) continue;
