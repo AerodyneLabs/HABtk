@@ -301,7 +301,6 @@ public class PredictionPanel extends JPanel {
 		
 		@Override
 		public void done() {
-			list.addFlight(predictor, path);
 			++cTasks;
 			if(cTasks == nTasks) {
 				cTasks = 0;
@@ -310,6 +309,13 @@ public class PredictionPanel extends JPanel {
 				run.setEnabled(true);
 			}
 			progress.setValue(cTasks + 1);
+			
+			if(path == null) {
+				// XXX Find a better way to report errors
+				JOptionPane.showMessageDialog(null, "Problem with: " + dateTimeFormat.format(predictor.getStart().getTime() * 1000));
+				return;
+			}
+			list.addFlight(predictor, path);
 		}
 		
 	}
