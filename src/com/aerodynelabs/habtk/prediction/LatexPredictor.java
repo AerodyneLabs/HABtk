@@ -313,6 +313,10 @@ public class LatexPredictor extends Predictor {
 		startTime.appendChild(doc.createTextNode(String.valueOf(this.startTime)));
 		root.appendChild(startTime);
 		
+		Element balloon = doc.createElement("balloonName");
+		balloon.appendChild(doc.createTextNode(balloonName));
+		root.appendChild(balloon);
+		
 		Element lift = doc.createElement("balloonLift");
 		lift.appendChild(doc.createTextNode(Double.toString(this.balloonLift)));
 		root.appendChild(lift);
@@ -352,6 +356,7 @@ public class LatexPredictor extends Predictor {
 			startLon = Double.parseDouble(root.getElementsByTagName("startLon").item(0).getTextContent());
 			startAlt = Double.parseDouble(root.getElementsByTagName("startAlt").item(0).getTextContent());
 			startTime = Long.parseLong(root.getElementsByTagName("startTime").item(0).getTextContent());
+			balloonName = root.getElementsByTagName("balloonName").item(0).getTextContent();
 			balloonLift = Double.parseDouble(root.getElementsByTagName("balloonLift").item(0).getTextContent());
 			payloadMass = Double.parseDouble(root.getElementsByTagName("payloadMass").item(0).getTextContent());
 			parachuteDrag = Double.parseDouble(root.getElementsByTagName("parachuteDrag").item(0).getTextContent());

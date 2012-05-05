@@ -2,17 +2,27 @@ package com.aerodynelabs.habtk.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 import java.util.Vector;
 
+import javax.swing.JFileChooser;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.ToolTipManager;
 import javax.swing.event.TableModelEvent;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
@@ -35,8 +45,10 @@ public class FlightListPanel extends JPanel {
 	private JTable table;
 	private TableModel model;
 	private Vector<Flight> flights = new Vector<Flight>();
+	private JPopupMenu menu;
 	
 	private MapPanel map;
+	private int activeRow;
 	
 	private int lastColor = 0;
 	private static final Color colors[] = {
@@ -196,7 +208,7 @@ public class FlightListPanel extends JPanel {
 	 * Construct a flight list that displays on the given map.
 	 * @param map
 	 */
-	public FlightListPanel(MapPanel map) {
+	public FlightListPanel(final MapPanel map) {
 		super();
 		setLayout(new BorderLayout());
 		
@@ -210,6 +222,56 @@ public class FlightListPanel extends JPanel {
 		table.getColumnModel().getColumn(1).setCellRenderer(new DateTimeRenderer());
 		table.getColumnModel().getColumn(4).setCellRenderer(new ElapsedTimeRenderer());
 		
+		menu = new JPopupMenu();
+		JMenuItem saveFlight = new JMenuItem("Save Flight");
+		saveFlight.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				flights.get(activeRow).flight.save();
+			}
+		});
+		menu.add(saveFlight);
+		JMenuItem saveKml = new JMenuItem("Export KML");
+		saveKml.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser chooser = new JFileChooser();
+				chooser.setCurrentDirectory(new File("flights/"));
+				FileFilter filter = new FileNameExtensionFilter("KML Files", "kml");
+				chooser.setFileFilter(filter);
+				
+				int val = chooser.showSaveDialog(null);
+				if(val == JFileChooser.APPROVE_OPTION) {
+					File file = chooser.getSelectedFile();
+					String name = file.getName();
+					if(name.lastIndexOf('.') == -1) {
+						name += ".kml";
+						file = new File(file.getParentFile(), name);
+					}
+					flights.get(activeRow).path.exportKML(file);
+				}
+			}
+		});
+		menu.add(saveKml);
+		
+		table.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				activeRow = table.rowAtPoint(e.getPoint());
+				if(e.getButton() == MouseEvent.BUTTON3) {
+					menu.show(e.getComponent(), e.getX(), e.getY());
+					return;
+				}
+				if(e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
+					for(Flight f : flights) {
+						f.overlay.setEnabled(false);
+					}
+					flights.get(activeRow).overlay.setEnabled(true);
+					map.updateNotify();
+					table.tableChanged(new TableModelEvent(model));
+					return;
+				}
+			}
+		});
+		
+		// Disable tooltips for performance increase
 		ToolTipManager.sharedInstance().unregisterComponent(table);
 		ToolTipManager.sharedInstance().unregisterComponent(table.getTableHeader());
 		
