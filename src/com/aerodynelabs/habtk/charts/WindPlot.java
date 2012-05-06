@@ -1,21 +1,14 @@
 package com.aerodynelabs.habtk.charts;
 
-import java.awt.BorderLayout;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.geom.Rectangle2D;
 
-import javax.swing.JPanel;
-
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.CrosshairState;
-import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.PlotRenderingInfo;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.AbstractXYItemRenderer;
@@ -26,14 +19,12 @@ import org.jfree.ui.RectangleEdge;
 import com.aerodynelabs.habtk.atmosphere.AtmosphereProfile;
 
 @SuppressWarnings("serial")
-public class WindPlot extends JPanel {
+public class WindPlot extends XYPlot {
 	
 	private AtmosphereSeriesCollection data;
-	private JFreeChart chart;
 	
 	public WindPlot() {
 		super();
-		setLayout(new BorderLayout());
 		
 		data = new AtmosphereSeriesCollection(
 				AtmosphereSeriesCollection.DOMAIN_PRESSURE,
@@ -43,13 +34,9 @@ public class WindPlot extends JPanel {
 		
 		NumberAxis wAxis = new NumberAxis("");
 		
-		chart = ChartFactory.createXYLineChart("Wind", "Pressure", "Wind", data, PlotOrientation.HORIZONTAL, false, true, false);
-		chart.getXYPlot().setDomainAxis(pAxis);
-		chart.getXYPlot().setRangeAxis(wAxis);
-		chart.getXYPlot().setRenderer(new WindVectorRenderer());
-		
-		ChartPanel panel = new ChartPanel(chart);
-		add(panel, BorderLayout.CENTER);
+		setDomainAxis(pAxis);
+		setRangeAxis(wAxis);
+		setRenderer(new WindVectorRenderer());
 	}
 	
 	public void setProfile(AtmosphereProfile profile) {
