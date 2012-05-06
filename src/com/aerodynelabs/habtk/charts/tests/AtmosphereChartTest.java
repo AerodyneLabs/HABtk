@@ -18,6 +18,7 @@ import com.aerodynelabs.habtk.atmosphere.AtmosphereSource;
 import com.aerodynelabs.habtk.atmosphere.GSDParser;
 import com.aerodynelabs.habtk.atmosphere.RUCGFS;
 import com.aerodynelabs.habtk.charts.PressureAxis;
+import com.aerodynelabs.habtk.charts.SoundingChart;
 import com.aerodynelabs.habtk.charts.TemperaturePlot;
 import com.aerodynelabs.habtk.charts.WindPlot;
 
@@ -49,14 +50,9 @@ public class AtmosphereChartTest {
 //		panel.add(tChart);
 //		panel.add(wChart);
 		
-		PressureAxis domain = new PressureAxis("Pressure (mbar)");
-		CombinedDomainXYPlot plot = new CombinedDomainXYPlot(domain);
-		plot.setOrientation(PlotOrientation.HORIZONTAL);
-		plot.add(tPlot, 2);
-		plot.add(wPlot, 1);
-		JFreeChart chart = new JFreeChart("Atmosphere Sounding", new Font(null, Font.BOLD, 18), plot, false);
-		ChartPanel chartPanel = new ChartPanel(chart);
-		panel.add(chartPanel);
+		SoundingChart chart = new SoundingChart();
+		chart.setSounding(profile);
+		panel.add(chart);
 		
 		frame.pack();
 		frame.setVisible(true);
