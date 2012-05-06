@@ -1,5 +1,7 @@
 package com.aerodynelabs.habtk.charts;
 
+import java.awt.BorderLayout;
+
 import javax.swing.JPanel;
 
 import org.jfree.chart.ChartFactory;
@@ -18,6 +20,7 @@ public class TemperaturePlot extends JPanel {
 	
 	public TemperaturePlot() {
 		super();
+		setLayout(new BorderLayout());
 		
 		dataset = new AtmosphereSeriesCollection(AtmosphereSeriesCollection.DOMAIN_PRESSURE, AtmosphereSeriesCollection.RANGE_TEMPDEWPT);
 		
@@ -33,7 +36,7 @@ public class TemperaturePlot extends JPanel {
 		chart.getXYPlot().setDomainMinorGridlinesVisible(true);
 		
 		ChartPanel panel = new ChartPanel(chart);
-		add(panel);
+		add(panel, BorderLayout.CENTER);
 	}
 	
 	public void setProfile(AtmosphereProfile profile) {

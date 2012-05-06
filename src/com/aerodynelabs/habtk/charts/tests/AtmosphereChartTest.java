@@ -1,5 +1,6 @@
 package com.aerodynelabs.habtk.charts.tests;
 
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.io.File;
 
@@ -11,6 +12,7 @@ import com.aerodynelabs.habtk.atmosphere.AtmosphereSource;
 import com.aerodynelabs.habtk.atmosphere.GSDParser;
 import com.aerodynelabs.habtk.atmosphere.RUCGFS;
 import com.aerodynelabs.habtk.charts.TemperaturePlot;
+import com.aerodynelabs.habtk.charts.WindPlot;
 
 public class AtmosphereChartTest {
 	
@@ -32,7 +34,13 @@ public class AtmosphereChartTest {
 		
 		TemperaturePlot tPlot = new TemperaturePlot();
 		tPlot.setProfile(profile);
+		tPlot.setPreferredSize(new Dimension(600, 400));
 		panel.add(tPlot);
+		
+		WindPlot wPlot = new WindPlot();
+		wPlot.setProfile(profile);
+		wPlot.setPreferredSize(new Dimension(600, 400));
+		panel.add(wPlot);
 		
 		frame.pack();
 		frame.setVisible(true);
