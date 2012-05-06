@@ -1,12 +1,17 @@
 package com.aerodynelabs.habtk.charts;
 
+import java.util.Iterator;
+import java.util.List;
+
+import org.jfree.data.Range;
 import org.jfree.data.xy.AbstractXYDataset;
+import org.jfree.data.xy.XYRangeInfo;
 
 import com.aerodynelabs.habtk.atmosphere.AtmosphereProfile;
 import com.aerodynelabs.habtk.atmosphere.AtmosphereState;
 
 @SuppressWarnings("serial")
-public class AtmosphereSeriesCollection extends AbstractXYDataset {
+public class AtmosphereSeriesCollection extends AbstractXYDataset implements XYRangeInfo {
 	
 	public static final int DOMAIN_ALTITUDE = 0;
 	public static final int DOMAIN_PRESSURE = 1;
@@ -119,6 +124,61 @@ public class AtmosphereSeriesCollection extends AbstractXYDataset {
 			if(series == 1) return "Wind Direction";
 		}
 		return null;
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public Range getRangeBounds(List keys, Range xRange, boolean include) {
+		if(atmo == null) return null;
+		double min = Double.NaN;
+		double max = Double.NaN;
+		Iterator<AtmosphereState> itr = atmo.iterator();
+		if(itr.hasNext()) {
+			AtmosphereState x = itr.next();
+			min = getField(x, range, false);
+			max = getField(x, range, true);
+		}
+		while(itr.hasNext()) {
+			AtmosphereState x = itr.next();
+			// XXX Account for xRange
+//			double value;
+//			if(domain == DOMAIN_ALTITUDE) {
+//				value = x.getAltitude();
+//			} else if(domain == DOMAIN_PRESSURE) {
+//				value = x.getPressure();
+//			} else {
+//				return null;
+//			}
+//			if(value < xRange.getLowerBound() || value > xRange.getUpperBound()) continue;
+			min = Math.min(min, getField(x, range, false));
+			max = Math.max(max, getField(x, range, true));
+		}
+		
+		if(min == Double.NaN || max == Double.NaN) return null;
+		return new Range(min, max);
+	}
+	
+	private double getField(AtmosphereState x, int range, boolean max) {
+		switch(range) {
+		case RANGE_TEMP:
+			return x.getTemperature();
+		case RANGE_DEWPT:
+			return x.getDewPoint();
+		case RANGE_WIND:
+		case RANGE_WINDSPD:
+			return x.getWindSpeed();
+		case RANGE_WINDDIR:
+			return x.getWindDirection();
+		case RANGE_PRESSURE:
+			return x.getPressure();
+		case RANGE_TEMPDEWPT:
+			if(max) {
+				return x.getTemperature();
+			} else {
+				return x.getDewPoint();
+			}
+		}
+		return Double.NaN;
 	}
 
 }
