@@ -9,6 +9,7 @@ import java.awt.geom.Rectangle2D;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.CrosshairState;
+import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.PlotRenderingInfo;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.AbstractXYItemRenderer;
@@ -32,8 +33,10 @@ public class WindPlot extends XYPlot {
 		
 		PressureAxis pAxis = new PressureAxis("Pressure (mbar)");
 		
-		NumberAxis wAxis = new NumberAxis("");
+		NumberAxis wAxis = new NumberAxis("Speed (m/s)");
 		
+		setDataset(data);
+		setOrientation(PlotOrientation.HORIZONTAL);
 		setDomainAxis(pAxis);
 		setRangeAxis(wAxis);
 		setRenderer(new WindVectorRenderer());
@@ -41,6 +44,7 @@ public class WindPlot extends XYPlot {
 	
 	public void setProfile(AtmosphereProfile profile) {
 		data.setProfile(profile);
+		super.fireChangeEvent();
 	}
 	
 	public AtmosphereProfile getProfile() {

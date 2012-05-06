@@ -2,15 +2,22 @@ package com.aerodynelabs.habtk.charts.tests;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.io.File;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.CombinedDomainXYPlot;
+import org.jfree.chart.plot.PlotOrientation;
+
 import com.aerodynelabs.habtk.atmosphere.AtmosphereProfile;
 import com.aerodynelabs.habtk.atmosphere.AtmosphereSource;
 import com.aerodynelabs.habtk.atmosphere.GSDParser;
 import com.aerodynelabs.habtk.atmosphere.RUCGFS;
+import com.aerodynelabs.habtk.charts.PressureAxis;
 import com.aerodynelabs.habtk.charts.TemperaturePlot;
 import com.aerodynelabs.habtk.charts.WindPlot;
 
@@ -34,13 +41,22 @@ public class AtmosphereChartTest {
 		
 		TemperaturePlot tPlot = new TemperaturePlot();
 		tPlot.setProfile(profile);
-		tPlot.setPreferredSize(new Dimension(600, 400));
-		panel.add(tPlot);
-		
 		WindPlot wPlot = new WindPlot();
 		wPlot.setProfile(profile);
-		wPlot.setPreferredSize(new Dimension(100, 400));
-		panel.add(wPlot);
+		
+//		ChartPanel tChart = new ChartPanel(new JFreeChart(tPlot));
+//		ChartPanel wChart = new ChartPanel(new JFreeChart(wPlot));
+//		panel.add(tChart);
+//		panel.add(wChart);
+		
+		PressureAxis domain = new PressureAxis("Pressure (mbar)");
+		CombinedDomainXYPlot plot = new CombinedDomainXYPlot(domain);
+		plot.setOrientation(PlotOrientation.HORIZONTAL);
+		plot.add(tPlot, 2);
+		plot.add(wPlot, 1);
+		JFreeChart chart = new JFreeChart("Atmosphere Sounding", new Font(null, Font.BOLD, 18), plot, false);
+		ChartPanel chartPanel = new ChartPanel(chart);
+		panel.add(chartPanel);
 		
 		frame.pack();
 		frame.setVisible(true);
