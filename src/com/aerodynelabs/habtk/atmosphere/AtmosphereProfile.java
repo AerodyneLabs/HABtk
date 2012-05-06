@@ -55,6 +55,23 @@ public class AtmosphereProfile {
 	}
 	
 	/**
+	 * Get number of data points in the profile.
+	 * @return
+	 */
+	public int size() {
+		return data.size();
+	}
+	
+	/**
+	 * Get the i-th data point in the profile.
+	 * @param i
+	 * @return
+	 */
+	public AtmosphereState get(int i) {
+		return data.get(i);
+	}
+	
+	/**
 	 * Associates the given location with the atmosphere profile.
 	 * @param lat Latitude in signed degrees
 	 * @param lon Longitude in signed degrees

@@ -1,10 +1,15 @@
 package com.aerodynelabs.habtk.charts.tests;
 
 import java.awt.FlowLayout;
+import java.io.File;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import com.aerodynelabs.habtk.atmosphere.AtmosphereProfile;
+import com.aerodynelabs.habtk.atmosphere.AtmosphereSource;
+import com.aerodynelabs.habtk.atmosphere.GSDParser;
+import com.aerodynelabs.habtk.atmosphere.RUCGFS;
 import com.aerodynelabs.habtk.charts.TemperaturePlot;
 
 public class AtmosphereChartTest {
@@ -16,7 +21,17 @@ public class AtmosphereChartTest {
 		panel.setLayout(new FlowLayout());
 		frame.getContentPane().add(panel);
 		
+		int time = (int)(System.currentTimeMillis() / 1000);
+		System.out.println(time);
+		
+		AtmosphereSource source = new RUCGFS();
+		File file = source.getAtmosphere(time, 42.0, -93.5);
+		
+		GSDParser parser = new GSDParser();
+		AtmosphereProfile profile = parser.parseAtmosphere(file);
+		
 		TemperaturePlot tPlot = new TemperaturePlot();
+		tPlot.setProfile(profile);
 		panel.add(tPlot);
 		
 		frame.pack();

@@ -8,6 +8,8 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.PlotOrientation;
 
+import com.aerodynelabs.habtk.atmosphere.AtmosphereProfile;
+
 @SuppressWarnings("serial")
 public class TemperaturePlot extends JPanel {
 	
@@ -17,15 +19,15 @@ public class TemperaturePlot extends JPanel {
 	public TemperaturePlot() {
 		super();
 		
-		dataset = new AtmosphereSeriesCollection();
+		dataset = new AtmosphereSeriesCollection(AtmosphereSeriesCollection.DOMAIN_PRESSURE, AtmosphereSeriesCollection.RANGE_TEMPDEWPT);
 		
 		PressureAxis pAxis = new PressureAxis("Pressure (mbar)");
 		
 		NumberAxis tAxis = new NumberAxis("Temperature (\u00b0C)");
-		tAxis.setAutoRange(false);
 		tAxis.setRange(-60.0, 40.0);
+		tAxis.setAutoRange(true);
 		
-		chart = ChartFactory.createXYLineChart("Temperature", "Temperature (C)", "Altitude (m)", dataset, PlotOrientation.HORIZONTAL, false, true, false);
+		chart = ChartFactory.createXYLineChart("Temperature", "Temperature (C)", "Altitude (m)", dataset, PlotOrientation.HORIZONTAL, true, true, false);
 		chart.getXYPlot().setDomainAxis(pAxis);
 		chart.getXYPlot().setRangeAxis(tAxis);
 		chart.getXYPlot().setDomainMinorGridlinesVisible(true);
@@ -34,5 +36,14 @@ public class TemperaturePlot extends JPanel {
 		add(panel);
 	}
 	
+	public void setProfile(AtmosphereProfile profile) {
+		dataset.setProfile(profile);
+		chart.getXYPlot().getRangeAxis().configure();
+		chart.fireChartChanged();
+	}
+	
+	public AtmosphereProfile getProfile() {
+		return dataset.getProfile();
+	}
 
 }
