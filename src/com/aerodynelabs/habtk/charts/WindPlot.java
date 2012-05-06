@@ -3,6 +3,7 @@ package com.aerodynelabs.habtk.charts;
 import java.awt.BorderLayout;
 import java.awt.Graphics2D;
 import java.awt.Paint;
+import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.geom.Rectangle2D;
 
@@ -61,7 +62,7 @@ public class WindPlot extends JPanel {
 	
 	class WindVectorRenderer extends AbstractXYItemRenderer {
 		
-		private static final int barbLength = 10;
+		private static final int barbLength = 15;
 		private static final int fletchLength = 8;
 		
 		public WindVectorRenderer() {
@@ -81,7 +82,6 @@ public class WindPlot extends JPanel {
 						int series, int item,
 						CrosshairState crosshairState,
 						int pass) {
-			// TODO Auto-generated method stub
 			if(pass > 0) return;
 			
 			AtmosphereSeriesCollection data = (AtmosphereSeriesCollection) dataset;
@@ -90,22 +90,58 @@ public class WindPlot extends JPanel {
 			Stroke seriesStroke = getItemStroke(series, item);
 			g2.setPaint(seriesPaint);
 			g2.setStroke(seriesStroke);
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			
 			double alt = data.getXValue(series, item);
 			double spd = data.getYValue(0, item);
 			double dir = Math.toRadians(data.getYValue(1, item));
 			
 			RectangleEdge domainLocation = plot.getDomainAxisEdge();
-			RectangleEdge rangeLocation = plot.getDomainAxisEdge();
+			RectangleEdge rangeLocation = plot.getRangeAxisEdge();
 			
-			if(series == 0) {
-				double ox = rangeAxis.valueToJava2D(0.0, plotArea, rangeLocation);
+			if(series == 0) {	// Draw vector
+				// Draw barb
+				double ox = rangeAxis.valueToJava2D(0.0, plotArea, rangeLocation) + barbLength * 1.5;
 				double oy = domainAxis.valueToJava2D(alt, plotArea, domainLocation);
 				double dx = barbLength * Math.sin(dir);
 				double dy = -barbLength * Math.cos(dir);
-				
 				g2.drawLine((int)(ox + 0.5), (int)(oy + 0.5), (int)(ox + dx + 0.5), (int)(oy + dy + 0.5));
-			} else if(series == 1) {
+				// Draw fletching
+				ox = ox + dx;
+				oy = oy + dy;
+				double s = spd * 1.944;
+				while(s > 0) {
+					dx = 0;
+					dy = 0;
+					if(s > 50) {
+						dx = fletchLength * Math.sin(dir + (Math.PI/3));
+						dy = -fletchLength * Math.cos(dir + (Math.PI/3));
+						double tx = 3 * Math.sin(dir);
+						double ty = -3 * Math.cos(dir); 
+						int x[] = {(int)(ox + 0.5), (int)(ox + dx + 0.5), (int)(ox + tx + 0.5)};
+						int y[] = {(int)(oy + 0.5), (int)(oy + dy + 0.5), (int)(oy + ty + 0.5)};
+						g2.fillPolygon(x, y, 3);
+						dx = 0;
+						dy = 0;
+						s = s - 50;
+					} else if(s > 10) {
+						dx = fletchLength * Math.sin(dir + (Math.PI/3));
+						dy = -fletchLength * Math.cos(dir + (Math.PI/3));
+						s = s - 10;
+					} else if(s > 5) {
+						dx = 0.5 * fletchLength * Math.sin(dir + (Math.PI/3));
+						dy = -0.5 * fletchLength * Math.cos(dir + (Math.PI/3));
+						s = s - 5;
+					} else {
+						s = 0;
+					}
+					g2.drawLine((int)(ox + 0.5), (int)(oy + 0.5), (int)(ox + dx + 0.5), (int)(oy + dy + 0.5));
+					dx = 3 * Math.sin(dir + Math.PI);
+					dy = -3 * Math.cos(dir + Math.PI);
+					ox = ox + dx;
+					oy = oy + dy;
+				}
+			} else if(series == 1) {	// Draw line series
 				if(item == 0) return;
 				double x1 = rangeAxis.valueToJava2D(spd, plotArea, rangeLocation);
 				double y1 = domainAxis.valueToJava2D(alt, plotArea, domainLocation);

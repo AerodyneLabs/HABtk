@@ -39,7 +39,7 @@ public class AtmosphereChartTest {
 		
 		WindPlot wPlot = new WindPlot();
 		wPlot.setProfile(profile);
-		wPlot.setPreferredSize(new Dimension(600, 400));
+		wPlot.setPreferredSize(new Dimension(100, 400));
 		panel.add(wPlot);
 		
 		frame.pack();
