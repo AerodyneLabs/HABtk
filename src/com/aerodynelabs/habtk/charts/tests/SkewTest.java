@@ -1,5 +1,6 @@
 package com.aerodynelabs.habtk.charts.tests;
 
+import java.awt.BorderLayout;
 import java.io.File;
 
 import javax.swing.JFrame;
@@ -18,6 +19,7 @@ public class SkewTest {
 		JFrame frame = new JFrame("Test");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		JPanel panel = new JPanel();
+		panel.setLayout(new BorderLayout());
 		frame.getContentPane().add(panel);
 		
 		int time = (int)(System.currentTimeMillis() / 1000);
@@ -31,7 +33,7 @@ public class SkewTest {
 		
 		SoundingChart chart = new SoundingChart(SoundingChart.SKEWT);
 		chart.setSounding(profile);
-		panel.add(chart);
+		panel.add(chart, BorderLayout.CENTER);
 		
 		frame.pack();
 		frame.setVisible(true);

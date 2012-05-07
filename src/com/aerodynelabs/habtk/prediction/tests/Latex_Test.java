@@ -6,7 +6,7 @@ import java.io.File;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import com.aerodynelabs.habtk.charts.ElevationPlot;
+import com.aerodynelabs.habtk.charts.ElevationChart;
 import com.aerodynelabs.habtk.prediction.Predictor;
 import com.aerodynelabs.map.MapOverlay;
 import com.aerodynelabs.map.MapPath;
@@ -40,7 +40,7 @@ public class Latex_Test {
 		map.addOverlay(overlay);
 		panel.add(map);
 		
-		ElevationPlot profile = new ElevationPlot();
+		ElevationChart profile = new ElevationChart();
 		profile.addProfile(path);
 		panel.add(profile);
 		

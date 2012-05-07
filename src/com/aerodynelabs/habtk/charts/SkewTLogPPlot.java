@@ -65,7 +65,6 @@ public class SkewTLogPPlot extends TemperaturePlot {
 		setOrientation(PlotOrientation.HORIZONTAL);
 		setDomainAxis(pAxis);
 		setRangeAxis(tAxis);
-		setDomainMinorGridlinesVisible(true);
 		
 		createDryAdiabats();
 		createWetAdiabats();

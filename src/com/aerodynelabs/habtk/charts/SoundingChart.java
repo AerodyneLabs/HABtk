@@ -1,5 +1,6 @@
 package com.aerodynelabs.habtk.charts;
 
+import java.awt.BorderLayout;
 import java.awt.Font;
 
 import javax.swing.JPanel;
@@ -29,6 +30,7 @@ public class SoundingChart extends JPanel {
 	public SoundingChart(int type) {
 		super();
 		this.type = type;
+		setLayout(new BorderLayout());
 		
 		if(type == STANDARD) {
 			tPlot = new TemperaturePlot();
@@ -44,8 +46,9 @@ public class SoundingChart extends JPanel {
 //		wPlot.setDomainAxis(axis);
 		plot.setGap(10);
 		chart = new JFreeChart("Atmosphere Sounding", new Font(null, Font.BOLD, 18), plot, false);
-		ChartPanel chartPanel = new ChartPanel(chart);
-		add(chartPanel);
+		ChartPanel chartPanel = new ChartPanel(chart, 600, 400, 300, 200, 1920, 1200,
+				true, false, true, true, false, false);
+		add(chartPanel, BorderLayout.CENTER);
 	}
 	
 	/*public void setType(int type) {
