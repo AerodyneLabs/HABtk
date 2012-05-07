@@ -1,7 +1,6 @@
 package com.aerodynelabs.habtk.charts;
 
 // XXX Verify Skew T plot
-// XXX Add dry adiabats
 // XXX Add moist adiabats
 
 import java.awt.BasicStroke;
@@ -11,8 +10,11 @@ import java.awt.Paint;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.jfree.chart.annotations.AbstractXYAnnotation;
@@ -58,7 +60,32 @@ public class SkewTLogPPlot extends TemperaturePlot {
 		setRangeAxis(tAxis);
 		setDomainMinorGridlinesVisible(true);
 		
+		createDryAdiabats();
+		createWetAdiabats();
 		createMixingLines();
+	}
+	
+	private void createWetAdiabats() {
+		final float dash[] = {10.0f};
+		Stroke stroke = new BasicStroke(0.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
+								10.0f, dash, 0.0f);
+		Paint paint = Color.GREEN;
+		XYItemRenderer r = getRenderer();
+	}
+	
+	private void createDryAdiabats() {
+		Stroke stroke = new BasicStroke(0.5f);
+		Paint paint = Color.GREEN;
+		XYItemRenderer r = getRenderer();
+		for(double x = -40; x <= 90; x += 10) {
+			ArrayList<Point2D.Double> path = new ArrayList<Point2D.Double>();
+			for(double h = 0; h <= 20000; h += 500) {
+				double p = 105000.0 * Math.pow((1 - 2.5577 * Math.pow(10, -5) * h), 5.35588);
+				double t = x - (9.8 * (h / 1000.0));
+				path.add(new Point2D.Double(p / 100.0, t));
+			}
+			r.addAnnotation(new SkewTPathAnnotation(path, stroke, paint), Layer.BACKGROUND);
+		}
 	}
 	
 	private void createMixingLines() {
@@ -171,6 +198,55 @@ public class SkewTLogPPlot extends TemperaturePlot {
 			getRenderer().drawRangeLine(g2, this, axis, area, value, gridPaint, gridStroke);
 	}
 	
+	protected Line2D.Double transformLine(double ix1, double iy1, double ix2, double iy2,
+											XYPlot plot, Rectangle2D plotArea,
+											ValueAxis domainAxis, ValueAxis rangeAxis) {
+		PlotOrientation orientation = plot.getOrientation();
+        RectangleEdge domainEdge = Plot.resolveDomainAxisLocation(
+                plot.getDomainAxisLocation(), orientation);
+        RectangleEdge rangeEdge = Plot.resolveRangeAxisLocation(
+                plot.getRangeAxisLocation(), orientation);
+        
+        double y1 = domainAxis.valueToJava2D(ix1, plotArea, domainEdge);
+        double y2 = domainAxis.valueToJava2D(ix2, plotArea, domainEdge);
+        double x1 = rangeAxis.valueToJava2D(iy1, plotArea, rangeEdge);
+        x1 += plotArea.getMaxY() - y1;
+        double x2 = rangeAxis.valueToJava2D(iy2, plotArea, rangeEdge);
+        x2 += plotArea.getMaxY() - y2;
+        
+        return new Line2D.Double(x1, y1, x2, y2);
+	}
+	
+	class SkewTPathAnnotation extends AbstractXYAnnotation {
+		
+		ArrayList<Point2D.Double> path;
+		Stroke stroke;
+		Paint paint;
+		
+		public SkewTPathAnnotation(ArrayList<Point2D.Double> path, Stroke stroke, Paint paint) {
+			this.path = path;
+			this.stroke = stroke;
+			this.paint = paint;
+		}
+		
+		@Override
+		public void draw(Graphics2D g2, XYPlot plot, Rectangle2D dataArea,
+				ValueAxis domainAxis, ValueAxis rangeAxis, int rendererIndex, PlotRenderingInfo info) {
+			// TODO Auto-generated method stub
+			g2.setStroke(stroke);
+			g2.setPaint(paint);
+			Iterator<Point2D.Double> itr = path.iterator();
+			Point2D.Double c = null, p = null;
+			if(itr.hasNext()) c = itr.next();
+			while(itr.hasNext()) {
+				p = c;
+				c = itr.next();
+				g2.draw(transformLine(p.x, p.y, c.x, c.y, plot, dataArea, domainAxis, rangeAxis));
+			}
+		}
+		
+	}
+	
 	class SkewTLineAnnotation extends AbstractXYAnnotation {
 		
 		double x1, y1, x2, y2;
@@ -190,24 +266,10 @@ public class SkewTLogPPlot extends TemperaturePlot {
 		@Override
 		public void draw(Graphics2D g2, XYPlot plot, Rectangle2D dataArea,
 				ValueAxis domainAxis, ValueAxis rangeAxis, int rendererIndex,
-				PlotRenderingInfo info) {			
-			PlotOrientation orientation = plot.getOrientation();
-	        RectangleEdge domainEdge = Plot.resolveDomainAxisLocation(
-	                plot.getDomainAxisLocation(), orientation);
-	        RectangleEdge rangeEdge = Plot.resolveRangeAxisLocation(
-	                plot.getRangeAxisLocation(), orientation);
-	        
-	        double y1 = domainAxis.valueToJava2D(this.x1, dataArea, domainEdge);
-	        double y2 = domainAxis.valueToJava2D(this.x2, dataArea, domainEdge);
-	        double x1 = rangeAxis.valueToJava2D(this.y1, dataArea, rangeEdge);
-	        x1 += dataArea.getMaxY() - y1;
-	        double x2 = rangeAxis.valueToJava2D(this.y2, dataArea, rangeEdge);
-	        x2 += dataArea.getMaxY() - y2;
-	        
+				PlotRenderingInfo info) {
 			g2.setStroke(stroke);
 			g2.setPaint(paint);
-			Line2D.Double line = new Line2D.Double(x1, y1, x2, y2);
-			g2.draw(line);
+			g2.draw(transformLine(x1, y1, x2, y2, plot, dataArea, domainAxis, rangeAxis));
 		}
 		
 	}

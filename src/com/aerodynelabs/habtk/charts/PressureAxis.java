@@ -22,6 +22,8 @@ public class PressureAxis extends LogAxis {
 		setAutoRange(false);
 		setRange(100.0, 1050.0);
 		setMinorTickMarksVisible(true);
+		setUpperMargin(0);
+		setLowerMargin(0);
 		
 		for(int i = 100; i <= 1000; i += 100) {
 			ticks.add(new NumberTick(TickType.MAJOR, i, createTickLabel(i), TextAnchor.CENTER_RIGHT, TextAnchor.CENTER, 0.0));
