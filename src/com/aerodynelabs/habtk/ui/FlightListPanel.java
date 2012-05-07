@@ -18,6 +18,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.ToolTipManager;
@@ -30,12 +31,20 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
+import org.noos.xing.mydoggy.Content;
+import org.noos.xing.mydoggy.ContentManager;
+import org.noos.xing.mydoggy.ToolWindowManager;
 import org.pushingpixels.substance.api.renderers.SubstanceDefaultTableCellRenderer;
 
+import com.aerodynelabs.habtk.atmosphere.AtmosphereProfile;
+import com.aerodynelabs.habtk.atmosphere.GSDParser;
+import com.aerodynelabs.habtk.atmosphere.RUCGFS;
+import com.aerodynelabs.habtk.charts.SoundingChart;
 import com.aerodynelabs.habtk.prediction.Predictor;
 import com.aerodynelabs.map.MapOverlay;
 import com.aerodynelabs.map.MapPanel;
 import com.aerodynelabs.map.MapPath;
+import com.aerodynelabs.map.MapPoint;
 
 /**
  * A panel to display a series of predictions.
@@ -50,6 +59,7 @@ public class FlightListPanel extends JPanel {
 	private Vector<Flight> flights = new Vector<Flight>();
 	private JPopupMenu menu;
 	
+	private ToolWindowManager wm;
 	private MapPanel map;
 	private int activeRow;
 	
@@ -234,11 +244,12 @@ public class FlightListPanel extends JPanel {
 	 * Construct a flight list that displays on the given map.
 	 * @param map
 	 */
-	public FlightListPanel(final MapPanel map) {
+	public FlightListPanel(final MapPanel map, final ToolWindowManager twm) {
 		super();
 		setLayout(new BorderLayout());
 		
 		this.map = map;
+		this.wm = twm;
 		
 		model = new DataModel();
 		table = new JTable(model);
@@ -297,9 +308,31 @@ public class FlightListPanel extends JPanel {
 			}
 		});
 		menu.add(saveKml);
+		menu.add(new JSeparator());
+		JMenuItem viewSounding = new JMenuItem("View Sounding");
+		viewSounding.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ContentManager cm = wm.getContentManager();
+				Content content = cm.getContent("Sounding");
+				if(content == null) {
+					SoundingChart chart = new SoundingChart(SoundingChart.SKEWT);
+					content = cm.addContent("Sounding", "Sounding", null, chart, "Sounding");
+				}
+				SoundingChart chart = (SoundingChart) content.getComponent();
+				
+				MapPoint p = flights.get(activeRow).flight.getStart();
+				RUCGFS source = new RUCGFS();
+				File file = source.getAtmosphere((int)(p.getTime()), p.getLatitude(), p.getLongitude());
+				GSDParser parser = new GSDParser();
+				AtmosphereProfile profile = parser.parseAtmosphere(file);
+				chart.setSounding(profile);
+			}
+		});
+		menu.add(viewSounding);
 		
 		table.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
+				// FIXME Compensate for table sort order
 				activeRow = table.rowAtPoint(e.getPoint());
 				if(e.getButton() == MouseEvent.BUTTON3) {
 					menu.show(e.getComponent(), e.getX(), e.getY());

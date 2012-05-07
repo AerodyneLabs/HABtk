@@ -219,7 +219,7 @@ public class PredictionPanel extends JPanel {
 					twm.getContentManager().addContent("Prediction Map", "Prediction Map", null, map, "Map Panel");
 				}
 				if(list == null) {
-					list = new FlightListPanel(map);
+					list = new FlightListPanel(map, twm);
 					twm.getContentManager().addContent("Prediction List", "Prediction List", null, list, "Prediction List");
 				}
 				

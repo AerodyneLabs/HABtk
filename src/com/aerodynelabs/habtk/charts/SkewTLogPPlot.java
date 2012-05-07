@@ -1,7 +1,6 @@
 package com.aerodynelabs.habtk.charts;
 
 // XXX Verify Skew T plot
-// XXX Add moist adiabats
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -66,11 +65,12 @@ public class SkewTLogPPlot extends TemperaturePlot {
 	}
 	
 	private void createWetAdiabats() {
-		final float dash[] = {10.0f};
-		Stroke stroke = new BasicStroke(0.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
-								10.0f, dash, 0.0f);
-		Paint paint = Color.GREEN;
-		XYItemRenderer r = getRenderer();
+//		final float dash[] = {10.0f};
+//		Stroke stroke = new BasicStroke(0.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
+//								10.0f, dash, 0.0f);
+//		Paint paint = Color.GREEN;
+//		XYItemRenderer r = getRenderer();
+		// XXX Add moist adiabats
 	}
 	
 	private void createDryAdiabats() {
