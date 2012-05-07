@@ -213,7 +213,12 @@ public class SkewTLogPPlot extends TemperaturePlot {
 			
 			AtmosphereSeriesCollection data = (AtmosphereSeriesCollection) dataset;
 			
-			Paint seriesPaint = getItemPaint(series, item);
+			Paint seriesPaint = null;
+			if(series == 0) {
+				seriesPaint = Color.RED;
+			} else {
+				seriesPaint = Color.BLUE;
+			}
 			Stroke seriesStroke = getItemStroke(series, item);
 			g2.setPaint(seriesPaint);
 			g2.setStroke(seriesStroke);

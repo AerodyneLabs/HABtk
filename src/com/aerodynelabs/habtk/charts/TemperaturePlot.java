@@ -1,5 +1,7 @@
 package com.aerodynelabs.habtk.charts;
 
+import java.awt.Color;
+
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
@@ -24,7 +26,10 @@ public class TemperaturePlot extends XYPlot {
 		tAxis.setAutoRange(true);
 		
 		setDataset(dataset);
-		setRenderer(new XYLineAndShapeRenderer(true, false));
+		XYLineAndShapeRenderer r = new XYLineAndShapeRenderer(true, false);
+		r.setSeriesPaint(0, Color.RED);
+		r.setSeriesPaint(0, Color.BLUE);
+		setRenderer(r);
 		setOrientation(PlotOrientation.HORIZONTAL);
 		setDomainAxis(pAxis);
 		setRangeAxis(tAxis);

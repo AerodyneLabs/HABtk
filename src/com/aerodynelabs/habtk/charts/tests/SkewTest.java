@@ -5,14 +5,11 @@ import java.io.File;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-
 import com.aerodynelabs.habtk.atmosphere.AtmosphereProfile;
 import com.aerodynelabs.habtk.atmosphere.AtmosphereSource;
 import com.aerodynelabs.habtk.atmosphere.GSDParser;
 import com.aerodynelabs.habtk.atmosphere.RUCGFS;
-import com.aerodynelabs.habtk.charts.SkewTLogPPlot;
+import com.aerodynelabs.habtk.charts.SoundingChart;
 
 public class SkewTest {
 	
@@ -32,12 +29,10 @@ public class SkewTest {
 		GSDParser parser = new GSDParser();
 		AtmosphereProfile profile = parser.parseAtmosphere(file);
 		
-		SkewTLogPPlot plot = new SkewTLogPPlot();
-		plot.setProfile(profile);
-		JFreeChart chart = new JFreeChart(plot);
-		ChartPanel cPanel = new ChartPanel(chart);
+		SoundingChart chart = new SoundingChart(SoundingChart.SKEWT);
+		chart.setSounding(profile);
+		panel.add(chart);
 		
-		panel.add(cPanel);
 		frame.pack();
 		frame.setVisible(true);
 	}

@@ -1,5 +1,6 @@
 package com.aerodynelabs.habtk.charts;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.RenderingHints;
@@ -77,7 +78,12 @@ public class WindPlot extends XYPlot {
 			
 			AtmosphereSeriesCollection data = (AtmosphereSeriesCollection) dataset;
 			
-			Paint seriesPaint = getItemPaint(series, item);
+			Paint seriesPaint = null;
+			if(series == 0) {
+				seriesPaint = Color.RED;
+			} else {
+				seriesPaint = Color.BLUE;
+			}
 			Stroke seriesStroke = getItemStroke(series, item);
 			g2.setPaint(seriesPaint);
 			g2.setStroke(seriesStroke);

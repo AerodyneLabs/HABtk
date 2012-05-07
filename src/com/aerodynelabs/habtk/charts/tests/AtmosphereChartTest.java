@@ -30,7 +30,7 @@ public class AtmosphereChartTest {
 		GSDParser parser = new GSDParser();
 		AtmosphereProfile profile = parser.parseAtmosphere(file);
 		
-		SoundingChart chart = new SoundingChart();
+		SoundingChart chart = new SoundingChart(SoundingChart.STANDARD);
 		chart.setSounding(profile);
 		panel.add(chart);
 		
