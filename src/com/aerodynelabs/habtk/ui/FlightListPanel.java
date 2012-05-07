@@ -30,6 +30,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 import org.noos.xing.mydoggy.Content;
 import org.noos.xing.mydoggy.ContentManager;
@@ -55,7 +56,7 @@ import com.aerodynelabs.map.MapPoint;
 public class FlightListPanel extends JPanel {
 	
 	private JTable table;
-	private TableModel model;
+	private DataModel model;
 	private Vector<Flight> flights = new Vector<Flight>();
 	private JPopupMenu menu;
 	
@@ -253,7 +254,8 @@ public class FlightListPanel extends JPanel {
 		
 		model = new DataModel();
 		table = new JTable(model);
-		table.setAutoCreateRowSorter(true);
+//		table.setAutoCreateRowSorter(true);
+		table.setRowSorter(new TableRowSorter<DataModel>(model));
 		JScrollPane scroller = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		add(scroller, BorderLayout.CENTER);
 		
@@ -332,8 +334,8 @@ public class FlightListPanel extends JPanel {
 		
 		table.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
-				// FIXME Compensate for table sort order
-				activeRow = table.rowAtPoint(e.getPoint());
+				activeRow = table.getRowSorter().convertRowIndexToModel(table.rowAtPoint(e.getPoint()));
+				
 				if(e.getButton() == MouseEvent.BUTTON3) {
 					menu.show(e.getComponent(), e.getX(), e.getY());
 					return;
