@@ -2,6 +2,8 @@ package com.aerodynelabs.habtk.charts;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 import javax.swing.JPanel;
 
@@ -9,6 +11,7 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.CombinedDomainXYPlot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.title.TextTitle;
 
 import com.aerodynelabs.habtk.atmosphere.AtmosphereProfile;
 
@@ -68,6 +71,10 @@ public class SoundingChart extends JPanel {
 	public void setSounding(AtmosphereProfile sounding) {
 		wPlot.setProfile(sounding);
 		tPlot.setProfile(sounding);
+		chart.clearSubtitles();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+		chart.addSubtitle(new TextTitle(sdf.format(sounding.getTime())));
 	}
 	
 	public AtmosphereProfile getSounding() {

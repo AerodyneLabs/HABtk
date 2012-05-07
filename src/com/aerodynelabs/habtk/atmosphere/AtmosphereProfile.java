@@ -2,6 +2,7 @@ package com.aerodynelabs.habtk.atmosphere;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 
 /**
@@ -301,6 +302,10 @@ public class AtmosphereProfile {
 			ret += itr.next().toString() + "\n";
 		}
 		return ret;
+	}
+
+	public Date getTime() {
+		return new Date(startTime * 1000);
 	}
 
 }
