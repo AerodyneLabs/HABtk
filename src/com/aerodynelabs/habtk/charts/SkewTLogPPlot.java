@@ -68,54 +68,88 @@ public class SkewTLogPPlot extends TemperaturePlot {
 								10.0f, dash, 0.0f);
 		Paint paint = Color.GREEN;
 		XYItemRenderer r = getRenderer();
+		double y = 950;
+		final double rot = -Math.PI / 2;
 		// 0.1
 		r.addAnnotation(new SkewTLineAnnotation(1050, -40.9, 100, -60.8378, stroke, paint), Layer.BACKGROUND);
-		r.addAnnotation(new XYTextAnnotation("0.1", 950, -40));
+		XYTextAnnotation t01 = new XYTextAnnotation("0.1", y, -41);
+		t01.setRotationAngle(rot);
+		r.addAnnotation(t01);
 		// 0.2
 		r.addAnnotation(new SkewTLineAnnotation(1050, -34.137, 100, -55.3946, stroke, paint), Layer.BACKGROUND);
-		r.addAnnotation(new XYTextAnnotation("0.2", 950, -34));
+		XYTextAnnotation t02 = new XYTextAnnotation("0.2", y, -35);
+		t02.setRotationAngle(rot);
+		r.addAnnotation(t02);
 		// 0.4
 		r.addAnnotation(new SkewTLineAnnotation(1050, -26.8943, 100, -49.6071, stroke, paint), Layer.BACKGROUND);
-		r.addAnnotation(new XYTextAnnotation("0.4", 950, -27));
+		XYTextAnnotation t04 = new XYTextAnnotation("0.4", y, -27);
+		t04.setRotationAngle(rot);
+		r.addAnnotation(t04);
 		// 0.6
 		r.addAnnotation(new SkewTLineAnnotation(1050, -22.4151, 100, -46.0493, stroke, paint), Layer.BACKGROUND);
-		r.addAnnotation(new XYTextAnnotation("0.6", 950, -22));
+		XYTextAnnotation t06 = new XYTextAnnotation("0.6", y, -22);
+		t06.setRotationAngle(rot);
+		r.addAnnotation(t06);
 		// 1g/kg
 		r.addAnnotation(new SkewTLineAnnotation(1050, -14.4964, 100, -41.3729, stroke, paint), Layer.BACKGROUND);
-		r.addAnnotation(new XYTextAnnotation("1", 950, -14.5));
+		XYTextAnnotation t1 = new XYTextAnnotation("1.0", y, -14.0);
+		t1.setRotationAngle(rot);
+		r.addAnnotation(t1);
 		// 2g/kg
 		r.addAnnotation(new SkewTLineAnnotation(1050, -7.93414, 100, -34.6573, stroke, paint), Layer.BACKGROUND);
-		r.addAnnotation(new XYTextAnnotation("2", 950, -8));
+		XYTextAnnotation t2 = new XYTextAnnotation("2.0", y, -8);
+		t2.setRotationAngle(rot);
+		r.addAnnotation(t2);
 		// 3
 		r.addAnnotation(new SkewTLineAnnotation(1050, -2.62, 100, -30.5186, stroke, paint), Layer.BACKGROUND);
-		r.addAnnotation(new XYTextAnnotation("3", 950, -2.5));
+		XYTextAnnotation t3 = new XYTextAnnotation("3.0", y, -2.5);
+		t3.setRotationAngle(rot);
+		r.addAnnotation(t3);
 		// 4g/kg
 		r.addAnnotation(new SkewTLineAnnotation(1050, 1.2955, 100, -27.4833, stroke, paint), Layer.BACKGROUND);
-		r.addAnnotation(new XYTextAnnotation("4", 950, 1.3));
+		XYTextAnnotation t4 = new XYTextAnnotation("4.0", y, 1.3);
+		t4.setRotationAngle(rot);
+		r.addAnnotation(t4);
 		// 5
 		r.addAnnotation(new SkewTLineAnnotation(1050, 4.41855, 100, -25.0709, stroke, paint), Layer.BACKGROUND);
-		r.addAnnotation(new XYTextAnnotation("5", 950, 4.5));
+		XYTextAnnotation t5 = new XYTextAnnotation("5.0", y, 4.5);
+		t5.setRotationAngle(rot);
+		r.addAnnotation(t5);
 		// 6
 		r.addAnnotation(new SkewTLineAnnotation(1050, 7.02728, 100, -23.0616, stroke, paint), Layer.BACKGROUND);
-		r.addAnnotation(new XYTextAnnotation("6", 950, 7));
+		XYTextAnnotation t6 = new XYTextAnnotation("6.0", y, 7);
+		t6.setRotationAngle(rot);
+		r.addAnnotation(t6);
 		// 8g/kg
 		r.addAnnotation(new SkewTLineAnnotation(1050, 11.2498, 100, -19.8204, stroke, paint), Layer.BACKGROUND);
-		r.addAnnotation(new XYTextAnnotation("8", 950, 11));
+		XYTextAnnotation t8 = new XYTextAnnotation("8.0", y, 11);
+		t8.setRotationAngle(rot);
+		r.addAnnotation(t8);
 		// 10
 		r.addAnnotation(new SkewTLineAnnotation(1050, 14.6159, 100, -17.2465, stroke, paint), Layer.BACKGROUND);
-		r.addAnnotation(new XYTextAnnotation("10", 950, 14.6));
+		XYTextAnnotation t10 = new XYTextAnnotation("10", y, 14.6);
+		t10.setRotationAngle(rot);
+		r.addAnnotation(t10);
 		// 15
 		r.addAnnotation(new SkewTLineAnnotation(1050, 20.9365, 100, -12.4366, stroke, paint), Layer.BACKGROUND);
-		r.addAnnotation(new XYTextAnnotation("15", 950, 21));
+		XYTextAnnotation t15 = new XYTextAnnotation("15", y, 21);
+		t15.setRotationAngle(rot);
+		r.addAnnotation(t15);
 		// 20
 		r.addAnnotation(new SkewTLineAnnotation(1050, 25.5789, 100, -8.92309, stroke, paint), Layer.BACKGROUND);
-		r.addAnnotation(new XYTextAnnotation("20", 950, 25.6));
+		XYTextAnnotation t20 = new XYTextAnnotation("20", y, 25.6);
+		t20.setRotationAngle(rot);
+		r.addAnnotation(t20);
 		// 30
 		r.addAnnotation(new SkewTLineAnnotation(1050, 32.3335, 100, -3.83991, stroke, paint), Layer.BACKGROUND);
-		r.addAnnotation(new XYTextAnnotation("30", 950, 32.3));
+		XYTextAnnotation t30 = new XYTextAnnotation("30", y, 32.3);
+		t30.setRotationAngle(rot);
+		r.addAnnotation(t30);
 		// 40
 		r.addAnnotation(new SkewTLineAnnotation(1050, 37.2617, 100, -0.152649, stroke, paint), Layer.BACKGROUND);
-		r.addAnnotation(new XYTextAnnotation("40", 950, 37.2));
+		XYTextAnnotation t40 = new XYTextAnnotation("40", y, 37.2);
+		t40.setRotationAngle(rot);
+		r.addAnnotation(t40);
 	}
 	
 	public void setProfile(AtmosphereProfile profile) {

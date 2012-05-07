@@ -36,10 +36,13 @@ public class SoundingChart extends JPanel {
 			tPlot = new SkewTLogPPlot();
 		}
 		wPlot = new WindPlot();
-		CombinedDomainXYPlot plot = new CombinedDomainXYPlot(new PressureAxis("Pressure (mbar)"));
+		PressureAxis axis = new PressureAxis("Pressure (hPa)");
+		CombinedDomainXYPlot plot = new CombinedDomainXYPlot(axis);
 		plot.setOrientation(PlotOrientation.HORIZONTAL);
 		plot.add(tPlot, 2);
 		plot.add(wPlot, 1);
+//		wPlot.setDomainAxis(axis);
+		plot.setGap(10);
 		chart = new JFreeChart("Atmosphere Sounding", new Font(null, Font.BOLD, 18), plot, false);
 		ChartPanel chartPanel = new ChartPanel(chart);
 		add(chartPanel);
