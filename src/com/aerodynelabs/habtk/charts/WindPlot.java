@@ -1,5 +1,6 @@
 package com.aerodynelabs.habtk.charts;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Paint;
@@ -35,6 +36,9 @@ public class WindPlot extends XYPlot {
 		PressureAxis pAxis = new PressureAxis("Pressure (mbar)");
 		
 		NumberAxis wAxis = new NumberAxis("Speed (m/s)");
+		
+		setDomainGridlinePaint(Color.BLACK);
+		setDomainGridlineStroke(new BasicStroke(1.0f));
 		
 		setDataset(data);
 		setOrientation(PlotOrientation.HORIZONTAL);
