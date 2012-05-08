@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -303,6 +304,13 @@ public class PredictionPanel extends JPanel {
 		
 		@Override
 		public void done() {
+			try {
+				super.get();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
 			++cTasks;
 			if(cTasks == nTasks) {
 				cTasks = 0;

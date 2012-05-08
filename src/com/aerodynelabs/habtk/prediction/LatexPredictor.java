@@ -355,6 +355,7 @@ public class LatexPredictor extends Predictor {
 			startLat = Double.parseDouble(root.getElementsByTagName("startLat").item(0).getTextContent());
 			startLon = Double.parseDouble(root.getElementsByTagName("startLon").item(0).getTextContent());
 			startAlt = Double.parseDouble(root.getElementsByTagName("startAlt").item(0).getTextContent());
+			groundLevel = startAlt;
 			startTime = Long.parseLong(root.getElementsByTagName("startTime").item(0).getTextContent());
 			balloonName = root.getElementsByTagName("balloonName").item(0).getTextContent();
 			balloonLift = Double.parseDouble(root.getElementsByTagName("balloonLift").item(0).getTextContent());

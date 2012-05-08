@@ -196,7 +196,10 @@ public class AtmosphereProfile {
 	public AtmosphereState getAtAltitude(double alt) {
 		Iterator<AtmosphereState> itr = data.iterator();
 		AtmosphereState base = itr.next();
-		if(alt < base.h) return null;
+		if(alt < base.h) {
+			System.out.println("Below data!");
+			return null;
+		}
 		AtmosphereState next = null;
 		int i = -1;
 		while(itr.hasNext()) {	// Iterate over data points
@@ -277,6 +280,7 @@ public class AtmosphereProfile {
 		}
 		
 		// Could not extrapolate
+		System.out.println("Extrapolation Error");
 		return null;
 	}
 	
