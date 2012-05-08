@@ -31,6 +31,8 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
+import org.noos.xing.mydoggy.AggregationPosition;
+import org.noos.xing.mydoggy.MultiSplitConstraint;
 import org.noos.xing.mydoggy.Content;
 import org.noos.xing.mydoggy.ContentManager;
 import org.noos.xing.mydoggy.ToolWindowManager;
@@ -317,7 +319,14 @@ public class FlightListPanel extends JPanel {
 				Content content = cm.getContent("Sounding");
 				if(content == null) {
 					SoundingChart chart = new SoundingChart(SoundingChart.SKEWT);
-					content = cm.addContent("Sounding", "Sounding", null, chart, "Sounding");
+					Content mapAnchor = cm.getContent("Map");
+					if(mapAnchor != null) {
+						System.out.println("Cant");
+						content = cm.addContent("Sounding", "Sounding", null, chart, "Sounding", new MultiSplitConstraint(mapAnchor, AggregationPosition.RIGHT));
+					} else {
+						System.out.println("Can");
+						content = cm.addContent("Sounding", "Sounding", null, chart, "Sounding");
+					}
 				}
 				SoundingChart chart = (SoundingChart) content.getComponent();
 				

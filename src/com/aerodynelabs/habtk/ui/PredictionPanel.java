@@ -19,6 +19,8 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SpringLayout;
 import javax.swing.SwingWorker;
 
+import org.noos.xing.mydoggy.AggregationPosition;
+import org.noos.xing.mydoggy.MultiSplitConstraint;
 import org.noos.xing.mydoggy.ToolWindowManager;
 
 import com.aerodynelabs.habtk.prediction.Predictor;
@@ -216,11 +218,11 @@ public class PredictionPanel extends JPanel {
 				if(map == null) {
 					MapPoint startPoint = baseFlight.getStart();
 					map = new MapPanel(startPoint.getLatitude(), startPoint.getLongitude(), 9);
-					twm.getContentManager().addContent("Prediction Map", "Prediction Map", null, map, "Map Panel");
+					twm.getContentManager().addContent("Map", "Prediction Map", null, map, "Map Panel", new MultiSplitConstraint(AggregationPosition.RIGHT));
 				}
 				if(list == null) {
 					list = new FlightListPanel(map, twm);
-					twm.getContentManager().addContent("Prediction List", "Prediction List", null, list, "Prediction List");
+					twm.getContentManager().addContent("List", "Prediction List", null, list, "Prediction List", new MultiSplitConstraint(AggregationPosition.BOTTOM));
 				}
 				
 				// Retrieve fields
