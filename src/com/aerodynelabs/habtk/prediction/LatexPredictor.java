@@ -57,6 +57,9 @@ public class LatexPredictor extends Predictor {
 	private double parachuteArea, parachuteDrag;
 	private double balloonMass, balloonDrag, burstRad;
 	
+	private MapPoint burst;
+	private MapPoint landing;
+	
 	private static final double rhog = 0.1762;	// kg/m^3 (Helium)
 	private static final double rho = 1.276;	// kg/m^3 (Air)
 	private static final double R = 8.31432;
@@ -456,6 +459,7 @@ public class LatexPredictor extends Predictor {
 			path.add(cLat, cLon, cAlt, startTime + Math.round(eTime));
 		}
 		path.addMarker(new MapPoint(cLat, cLon, cAlt, startTime + Math.round(eTime), "Burst"));
+		burst = new MapPoint(cLat, cLon, cAlt, startTime + Math.round(eTime), "Burst");
 		// Calculate descent
 		while(cAlt > groundLevel) {
 			AtmosphereState state = atmo.getAtAltitude(cAlt);
@@ -478,8 +482,19 @@ public class LatexPredictor extends Predictor {
 			// Store
 			path.add(cLat, cLon, cAlt, startTime + Math.round(eTime));
 		}
+		landing = new MapPoint(cLat, cLon, cAlt, startTime + Math.round(eTime), "Burst");
 		
 		return path;
+	}
+	
+	@Override
+	public MapPoint getBurst() {
+		return burst;
+	}
+	
+	@Override
+	public MapPoint getLanding() {
+		return landing;
 	}
 
 	/**

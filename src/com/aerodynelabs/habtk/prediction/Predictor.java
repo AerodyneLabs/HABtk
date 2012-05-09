@@ -259,4 +259,8 @@ public abstract class Predictor implements Cloneable {
 		return new Point2D.Double(Math.toDegrees(lon2), Math.toDegrees(lat2));
 	}
 
+	public abstract MapPoint getBurst();
+	
+	public abstract MapPoint getLanding();
+	
 }
