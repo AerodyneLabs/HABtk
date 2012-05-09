@@ -15,7 +15,10 @@ public class APRSIS_PacketTest {
 				
 				System.out.println("Rcvd: " + line);
 				APRSPacket pkt = new APRSPacket(line);
-				System.out.println(pkt);
+				if(pkt.isPosition()) {
+					System.out.println("From: " + pkt.getFrom());
+					System.out.println("Position: " + pkt.getLatitude() + ", " + pkt.getLongitude() + ", " + pkt.getAltitude() + " m");
+				}
 				
 				System.out.println();
 			}

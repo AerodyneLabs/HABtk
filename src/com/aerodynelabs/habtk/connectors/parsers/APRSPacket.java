@@ -79,11 +79,71 @@ public class APRSPacket {
 				break;
 			case 0x1c:	// Current mic-e
 			case '`':	// Current mic-e
-				// TODO current mic-e
-				break;
 			case '\'':	// Old mic-e or new TM-D700
 			case 0x1d:	// Old mic-e
-				// TODO old mic-e
+				try {
+					// Parse destination field
+					// Decode latitude
+					int dLat[] = new int[6];
+					for(int i = 0; i < 6; i++) {
+						dLat[i] = decodeLat(toCall.charAt(i));
+						if(dLat[i] < 0) return;
+					}
+					latitude = dLat[0] * 10 + dLat[1];
+					latitude += ((dLat[2] * 10.0) + dLat[3] + (dLat[4] / 10.0) + (dLat[5] / 100.0)) / 60.0;
+					int NS = decodeHemisphere(toCall.charAt(3));
+					if(NS == 0) return;
+					if(NS < 0) latitude = -latitude;
+					int lonOffset = decodeHemisphere(toCall.charAt(4));
+					int WE = -decodeHemisphere(toCall.charAt(5));
+					if(lonOffset == 0 || WE == 0) return;
+					if(lonOffset < 0) {
+						lonOffset = 0;
+					} else if(lonOffset > 0) {
+						lonOffset = 100;
+					}
+
+					// Parse information field
+					longitude = decodeLonDeg(payload.charAt(1), lonOffset);
+					if(longitude == -1) return;
+					int min = decodeLonMin(payload.charAt(2));
+					if(min == -1) return;
+					int hun = decodeLonHun(payload.charAt(3));
+					if(hun == -1) return;
+					longitude += (min + (hun / 100.0)) / 60.0;
+					if(WE < 0) longitude = -longitude;
+
+					// XXX decode mic-e spd/cse
+
+					// XXX decode mic-e telemetry
+
+					symbolSymbol = payload.charAt(7);
+					symbolTable = payload.charAt(8);
+					comment = payload.substring(9);
+					char typeCode = comment.charAt(0);
+					if(typeCode == ' ' ||
+							typeCode == '>' ||
+							typeCode == ']' ||
+							typeCode == '\'' ||
+							typeCode == '`') comment = comment.substring(1);
+					// Decode altitude if possible
+					if(comment.charAt(3) == '}') {
+						int a = comment.charAt(0) - 33;
+						int b = comment.charAt(1) - 33;
+						int c = comment.charAt(2) - 33;
+						altitude = (a*91*91 + b*91 + c) - 10000;
+					} else {
+						Scanner scan = new Scanner(comment);
+						String tAlt = scan.findInLine("/A=[0-9]{6}");
+						if(tAlt != null) altitude = (int)(Integer.parseInt(tAlt.substring(3)) * 0.3048 + 0.5);
+					}
+					
+					timestamp = cal.getTimeInMillis();
+					validPos = true;
+				} catch(Exception e) {
+					validPos = false;
+				}
+				
 				break;
 			case '/':	// Position, w/ timestamp, w/o messaging
 			case '@':	// Position, w/ timestamp, w/ messaging
@@ -152,8 +212,8 @@ public class APRSPacket {
 						// Parse altitude if possible
 						scanner = new Scanner(comment);
 						String rAlt = scanner.findInLine("/A=[0-9]{6}");
-						if(scanner != null) {
-							altitude = Integer.parseInt(rAlt.substring(3));
+						if(rAlt != null) {
+							altitude = (int)(Integer.parseInt(rAlt.substring(3)) * 0.3048 + 0.5);
 						}
 
 						validPos = true;
@@ -201,6 +261,104 @@ public class APRSPacket {
 				
 				break;
 		}
+	}
+	
+	private int decodeLonHun(char c) {
+		int h = c - 28;
+		if(h >= 0 && h < 100) return h;
+		return -1;
+	}
+	
+	private int decodeLonMin(char c) {
+		int m = c - 28;
+		if(m >= 60) m = m - 60;
+		if(m >= 0 && m < 60) return m;
+		return -1;
+	}
+	
+	private int decodeLonDeg(char c, int offset) {
+		int d = c - 28;
+		d += offset;
+		if(d >= 180 && d <= 189) d = d - 80;
+		if(d >= 190 && d <= 199) d = d - 190;
+		if(d >= 0 && d < 180) return d;
+		return -1;
+	}
+	
+	private int decodeHemisphere(char c) {
+		switch(c) {
+			case '0':
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+			case '7':
+			case '8':
+			case '9':
+			case 'L':
+				return -1;
+			case 'P':
+			case 'Q':
+			case 'R':
+			case 'S':
+			case 'T':
+			case 'U':
+			case 'V':
+			case 'W':
+			case 'X':
+			case 'Y':
+			case 'Z':
+				return 1;
+		}
+		return 0;		
+	}
+	
+	private int decodeLat(char c) {
+		switch(c) {
+			case '0':
+			case 'A':
+			case 'P':
+				return 0;
+			case '1':
+			case 'B':
+			case 'Q':
+				return 1;
+			case '2':
+			case 'C':
+			case 'R':
+				return 2;
+			case '3':
+			case 'D':
+			case 'S':
+				return 3;
+			case '4':
+			case 'E':
+			case 'T':
+				return 4;
+			case '5':
+			case 'F':
+			case 'U':
+				return 5;
+			case '6':
+			case 'G':
+			case 'V':
+				return 6;
+			case '7':
+			case 'H':
+			case 'W':
+				return 7;
+			case '8':
+			case 'I':
+			case 'X':
+				return 8;
+			case '9':
+			case 'J':
+			case 'Y':
+				return 9;
+		}
+		return -1;
 	}
 	
 	public String getComment() {

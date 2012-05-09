@@ -33,7 +33,7 @@ public class APRSIS_Map_Test {
 				System.out.println(">> " + line);
 				
 				APRSPacket packet = new APRSPacket(line);
-//				if(!packet.isPosition()) continue;
+				if(!packet.isPosition()) continue;
 				if(overlay.hasPath(packet.getFrom())) {
 					System.out.println("Updating " + packet.getFrom() + " @ " + packet.getLatitude() + "," + packet.getLongitude());
 					overlay.appendPath(packet.getFrom(), new MapPoint(packet.getLatitude(), packet.getLongitude()));
