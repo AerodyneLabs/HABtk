@@ -257,7 +257,6 @@ public class SkewTLogPPlot extends TemperaturePlot {
 		@Override
 		public void draw(Graphics2D g2, XYPlot plot, Rectangle2D dataArea,
 				ValueAxis domainAxis, ValueAxis rangeAxis, int rendererIndex, PlotRenderingInfo info) {
-			// TODO Auto-generated method stub
 			g2.setStroke(stroke);
 			g2.setPaint(paint);
 			Iterator<Point2D.Double> itr = path.iterator();

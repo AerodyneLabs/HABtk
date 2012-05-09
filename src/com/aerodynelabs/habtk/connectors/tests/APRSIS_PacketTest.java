@@ -1,6 +1,7 @@
 package com.aerodynelabs.habtk.connectors.tests;
 
 import com.aerodynelabs.habtk.connectors.APRSIS;
+import com.aerodynelabs.habtk.connectors.parsers.APRSPacket;
 
 public class APRSIS_PacketTest {
 	
@@ -12,10 +13,9 @@ public class APRSIS_PacketTest {
 				String line = server.readLine();
 				if(line.startsWith("#")) continue;
 				
-				System.out.println(line);
-				System.out.println("Length: " + line.length());
-				
-				
+				System.out.println("Rcvd: " + line);
+				APRSPacket pkt = new APRSPacket(line);
+				System.out.println(pkt);
 				
 				System.out.println();
 			}
