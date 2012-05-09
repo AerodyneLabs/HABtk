@@ -20,9 +20,11 @@ public class TrackingPanel extends JPanel {
 	private JTextField burAlt;
 	private JTextField burLon;
 	private JTextField burLat;
+	private JTextField burTime;
 	private JTextField lndAlt;
 	private JTextField lndLon;
 	private JTextField lndLat;
+	private JTextField lndTime;
 	
 	public TrackingPanel() {
 		super();
@@ -84,9 +86,12 @@ public class TrackingPanel extends JPanel {
 		springLayout.putConstraint(SpringLayout.EAST, sepBurst, -6, SpringLayout.EAST, this);
 		add(sepBurst);
 		
+		JLabel lblBurTime = new JLabel("Time:");
 		JLabel lblBurLat = new JLabel("Latitude:");
 		JLabel lblBurLon = new JLabel("Longitude:");
 		JLabel lblBurAlt = new JLabel("Altitude:");
+		burTime = new JTextField();
+		burTime.setEditable(false);
 		burLat = new JTextField();
 		burLat.setEditable(false);
 		burLon = new JTextField();
@@ -95,24 +100,31 @@ public class TrackingPanel extends JPanel {
 		burAlt.setEditable(false);
 		
 		springLayout.putConstraint(SpringLayout.WEST, lblBurLon, 6, SpringLayout.WEST, lblBurst);
+		springLayout.putConstraint(SpringLayout.EAST, lblBurTime, 0, SpringLayout.EAST, lblBurLon);
 		springLayout.putConstraint(SpringLayout.EAST, lblBurLat, 0, SpringLayout.EAST, lblBurLon);
 		springLayout.putConstraint(SpringLayout.EAST, lblBurAlt, 0, SpringLayout.EAST, lblBurLon);
+		springLayout.putConstraint(SpringLayout.WEST, burTime, 6, SpringLayout.EAST, lblBurTime);
 		springLayout.putConstraint(SpringLayout.WEST, burLat, 6, SpringLayout.EAST, lblBurLat);
 		springLayout.putConstraint(SpringLayout.WEST, burLon, 6, SpringLayout.EAST, lblBurLon);
 		springLayout.putConstraint(SpringLayout.WEST, burAlt, 6, SpringLayout.EAST, lblBurAlt);
+		springLayout.putConstraint(SpringLayout.EAST, burTime, -6, SpringLayout.EAST, this);
 		springLayout.putConstraint(SpringLayout.EAST, burLat, -6, SpringLayout.EAST, this);
 		springLayout.putConstraint(SpringLayout.EAST, burLon, -6, SpringLayout.EAST, this);
 		springLayout.putConstraint(SpringLayout.EAST, burAlt, -6, SpringLayout.EAST, this);
-		springLayout.putConstraint(SpringLayout.NORTH, burLat, 6, SpringLayout.SOUTH, lblBurst);
+		springLayout.putConstraint(SpringLayout.NORTH, burTime, 6, SpringLayout.SOUTH, lblBurst);
+		springLayout.putConstraint(SpringLayout.NORTH, burLat, 6, SpringLayout.SOUTH, burTime);
 		springLayout.putConstraint(SpringLayout.NORTH, burLon, 6, SpringLayout.SOUTH, burLat);
 		springLayout.putConstraint(SpringLayout.NORTH, burAlt, 6, SpringLayout.SOUTH, burLon);
+		springLayout.putConstraint(SpringLayout.BASELINE, lblBurTime, 0, SpringLayout.BASELINE, burTime);
 		springLayout.putConstraint(SpringLayout.BASELINE, lblBurLat, 0, SpringLayout.BASELINE, burLat);
 		springLayout.putConstraint(SpringLayout.BASELINE, lblBurLon, 0, SpringLayout.BASELINE, burLon);
 		springLayout.putConstraint(SpringLayout.BASELINE, lblBurAlt, 0, SpringLayout.BASELINE, burAlt);
 		
+		add(lblBurTime);
 		add(lblBurLat);
 		add(lblBurLon);
 		add(lblBurAlt);
+		add(burTime);
 		add(burLat);
 		add(burLon);
 		add(burAlt);
@@ -128,9 +140,12 @@ public class TrackingPanel extends JPanel {
 		springLayout.putConstraint(SpringLayout.EAST, sepLanding, -6, SpringLayout.EAST, this);
 		add(sepLanding);
 		
+		JLabel lblLndTime = new JLabel("Time:");
 		JLabel lblLndLat = new JLabel("Latitude:");
 		JLabel lblLndLon = new JLabel("Longitude:");
 		JLabel lblLndAlt = new JLabel("Altitude:");
+		lndTime = new JTextField();
+		lndTime.setEditable(false);
 		lndLat = new JTextField();
 		lndLat.setEditable(false);
 		lndLon = new JTextField();
@@ -139,24 +154,31 @@ public class TrackingPanel extends JPanel {
 		lndAlt.setEditable(false);
 		
 		springLayout.putConstraint(SpringLayout.WEST, lblLndLon, 6, SpringLayout.WEST, lblLanding);
+		springLayout.putConstraint(SpringLayout.EAST, lblLndTime, 0, SpringLayout.EAST, lblLndLon);
 		springLayout.putConstraint(SpringLayout.EAST, lblLndLat, 0, SpringLayout.EAST, lblLndLon);
 		springLayout.putConstraint(SpringLayout.EAST, lblLndAlt, 0, SpringLayout.EAST, lblLndLon);
+		springLayout.putConstraint(SpringLayout.WEST, lndTime, 6, SpringLayout.EAST, lblLndLat);
 		springLayout.putConstraint(SpringLayout.WEST, lndLat, 6, SpringLayout.EAST, lblLndLat);
 		springLayout.putConstraint(SpringLayout.WEST, lndLon, 6, SpringLayout.EAST, lblLndLon);
 		springLayout.putConstraint(SpringLayout.WEST, lndAlt, 6, SpringLayout.EAST, lblLndAlt);
-		springLayout.putConstraint(SpringLayout.NORTH, lndLat, 6, SpringLayout.SOUTH, lblLanding);
+		springLayout.putConstraint(SpringLayout.NORTH, lndTime, 6, SpringLayout.SOUTH, lblLanding);
+		springLayout.putConstraint(SpringLayout.NORTH, lndLat, 6, SpringLayout.SOUTH, lndTime);
 		springLayout.putConstraint(SpringLayout.NORTH, lndLon, 6, SpringLayout.SOUTH, lndLat);
 		springLayout.putConstraint(SpringLayout.NORTH, lndAlt, 6, SpringLayout.SOUTH, lndLon);
+		springLayout.putConstraint(SpringLayout.EAST, lndTime, -6, SpringLayout.EAST, this);
 		springLayout.putConstraint(SpringLayout.EAST, lndLat, -6, SpringLayout.EAST, this);
 		springLayout.putConstraint(SpringLayout.EAST, lndLon, -6, SpringLayout.EAST, this);
 		springLayout.putConstraint(SpringLayout.EAST, lndAlt, -6, SpringLayout.EAST, this);
+		springLayout.putConstraint(SpringLayout.BASELINE, lblLndTime, 0, SpringLayout.BASELINE, lndTime);
 		springLayout.putConstraint(SpringLayout.BASELINE, lblLndLat, 0, SpringLayout.BASELINE, lndLat);
 		springLayout.putConstraint(SpringLayout.BASELINE, lblLndLon, 0, SpringLayout.BASELINE, lndLon);
 		springLayout.putConstraint(SpringLayout.BASELINE, lblLndAlt, 0, SpringLayout.BASELINE, lndAlt);
 		
+		add(lblLndTime);
 		add(lblLndLat);
 		add(lblLndLon);
 		add(lblLndAlt);
+		add(lndTime);
 		add(lndLat);
 		add(lndLon);
 		add(lndAlt);
