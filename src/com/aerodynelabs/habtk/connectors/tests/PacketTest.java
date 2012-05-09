@@ -25,13 +25,14 @@ public class PacketTest {
 			}
 			if(input == "exit") return;
 			APRSPacket packet = new APRSPacket(input);
-//			System.out.println(packet.getPayload());
+			System.out.println("Payload: " + packet.getPayload());
 			System.out.println("At: " + sdf.format(packet.getTimestamp()));
 			System.out.println("From: " + packet.getFrom());
 			System.out.println("To: " + packet.getTo());
 			System.out.println("Lat: " + packet.getLatitude());
 			System.out.println("Lon: " + packet.getLongitude());
 			System.out.println("Alt: " + packet.getAltitude());
+			System.out.println("Comment: " + packet.getComment());
 		}
 	}
 

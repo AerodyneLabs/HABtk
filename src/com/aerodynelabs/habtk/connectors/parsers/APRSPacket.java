@@ -10,6 +10,7 @@ public class APRSPacket {
 	String fromCall = "";
 	String toCall = "";
 	String payload = "";
+	String comment = "";
 	char symbolTable;
 	char symbolSymbol;
 	long timestamp;
@@ -68,13 +69,13 @@ public class APRSPacket {
 		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 		switch(payload.charAt(0)) {
 			case ':':	// Message
-				// TODO message
+				// XXX message
 				break;
 			case '>':	// Status
-				// TODO status
+				// XXX status
 				break;
 			case 'T':	// Telemetry data
-				// TODO telemetry
+				// XXX telemetry
 				break;
 			case 0x1c:	// Current mic-e
 			case '`':	// Current mic-e
@@ -125,48 +126,85 @@ public class APRSPacket {
 			case '=':	// Position, w/o timestamp, w/ messaging
 				// Timestamp
 				timestamp = cal.getTimeInMillis();
-
-				// Read position info
 				Scanner scanner = new Scanner(payload.substring(s));
-				String rLat = scanner.findInLine("[0-9.]+[NS]");
-				symbolTable = scanner.findInLine(".").charAt(0);
-				String rLon = scanner.findInLine("[0-9.]+[EW]");
-				symbolSymbol = scanner.findInLine(".").charAt(0);
-				// Parse lat
-				latitude = Integer.parseInt(rLat.substring(0, 2));
-				latitude += Double.parseDouble(rLat.substring(2, rLat.length() - 2)) / 60.0;
-				if(rLat.charAt(rLat.length() - 1) == 'S') latitude = -latitude;
-				// Parse lon
-				longitude = Integer.parseInt(rLon.substring(0, 3));
-				longitude += Double.parseDouble(rLon.substring(3, rLon.length() - 2)) / 60.0;
-				if(rLon.charAt(rLon.length() - 1) == 'W') longitude = -longitude;
 				
-				// Save remaining payload to reinit scanners
-				// Remaining fields can occur anywhere
-				String work = scanner.nextLine();
-				
-				// Parse altitude if possible
-				scanner = new Scanner(work);
-				String rAlt = scanner.findInLine("/A=[0-9]{6}");
-				if(scanner != null) {
-					altitude = Integer.parseInt(rAlt.substring(3));
+				// Read position info
+				// Test for compressed/uncompressed format
+				if(Character.isDigit(payload.charAt(1))) {	// Uncompressed position format
+					try {
+						String rLat = scanner.findInLine("[0-9.]+[NS]");
+						symbolTable = scanner.findInLine(".").charAt(0);
+						String rLon = scanner.findInLine("[0-9.]+[EW]");
+						symbolSymbol = scanner.findInLine(".").charAt(0);
+						// Parse lat
+						latitude = Integer.parseInt(rLat.substring(0, 2));
+						latitude += Double.parseDouble(rLat.substring(2, rLat.length() - 2)) / 60.0;
+						if(rLat.charAt(rLat.length() - 1) == 'S') latitude = -latitude;
+						// Parse lon
+						longitude = Integer.parseInt(rLon.substring(0, 3));
+						longitude += Double.parseDouble(rLon.substring(3, rLon.length() - 2)) / 60.0;
+						if(rLon.charAt(rLon.length() - 1) == 'W') longitude = -longitude;
+						
+						// Save remaining payload to reinit scanners
+						// Remaining fields can occur anywhere
+						comment = scanner.nextLine();
+
+						// Parse altitude if possible
+						scanner = new Scanner(comment);
+						String rAlt = scanner.findInLine("/A=[0-9]{6}");
+						if(scanner != null) {
+							altitude = Integer.parseInt(rAlt.substring(3));
+						}
+
+						validPos = true;
+					} catch(Exception e) {
+						validPos = false;
+					}
+				} else {	// Compressed position format
+					try {
+						String position = payload.substring(1, 14);
+						// Split fields
+						symbolTable = position.charAt(0);
+						symbolSymbol = position.charAt(9);
+						String cLat = position.substring(1, 5);
+						String cLon = position.substring(5, 9);
+						String cExt = position.substring(10, 12);
+						char cType = position.charAt(12);
+						// Uncompress lat/lon
+						latitude = 90.0 - ((
+								(cLat.charAt(0) - 33) * 753571 +
+								(cLat.charAt(1) - 33) * 8281 +
+								(cLat.charAt(2) - 33) * 91 +
+								(cLat.charAt(3) - 33)
+								) / 380926.0);
+						longitude = -180.0 + ((
+								(cLon.charAt(0) - 33) * 753571 +
+								(cLon.charAt(1) - 33) * 8281 +
+								(cLon.charAt(2) - 33) * 91 +
+								(cLon.charAt(3) - 33)
+								) / 190463.0);
+						if(!cExt.equals("  ")) {
+							if(((byte)cType & 0x18) == 0x10) {
+								int e = (cExt.charAt(0) - 33) * 91 + (cExt.charAt(1) - 33);
+								altitude = (int)(Math.pow(1.002, e) + 0.5);
+							}
+						}
+						comment = payload.substring(14);
+						validPos = true;
+					} catch(Exception e) {
+						validPos = false;
+					}
 				}
 				
 				// Parse extensions
-				// TODO parse aprs extensions
+				// TODO parse aprs extensions (APRS Spec p.27)
 				
 				break;
 		}
 	}
 	
-	private String toBase91() {
-		// TODO toBase91
-		return null;
-	}
-	
-	private double convertBase91() {
-		// TODO convertBase91
-		return 0.0;
+	public String getComment() {
+		return comment;
 	}
 	
 	public String getPayload() {
