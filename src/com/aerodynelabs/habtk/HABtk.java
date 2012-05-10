@@ -37,6 +37,7 @@ import org.pushingpixels.substance.api.skin.SubstanceTwilightLookAndFeel;
 
 import com.aerodynelabs.habtk.help.HelpWindow;
 import com.aerodynelabs.habtk.prediction.Predictor;
+import com.aerodynelabs.habtk.tracking.TrackingService;
 import com.aerodynelabs.habtk.ui.AboutDialog;
 import com.aerodynelabs.habtk.ui.PredictionPanel;
 import com.aerodynelabs.habtk.ui.TerminalPanel;
@@ -60,7 +61,8 @@ public class HABtk {
 	private static MyDoggyToolWindowManager windowManager;
 	private static ContentManager contentManager;
 	
-	private static BalloonFlight flight = new BalloonFlight();
+	private static BalloonFlight flight;
+	private static TrackingService trackingService;
 	
 	/**
 	 * Create GUI Components
@@ -121,8 +123,12 @@ public class HABtk {
 		JMenuItem flightConfigItem = new JMenuItem("Configure Tracking");
 		flightConfigItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// TODO config tracker
-				TrackingConfigDialog config = new TrackingConfigDialog();
+				TrackingConfigDialog config = new TrackingConfigDialog(trackingService);
+				if(config.wasAccepted()) {
+					trackingService.setPrimary(config.getPrimary());
+					trackingService.setSecondary(config.getSecondary());
+					trackingService.setRecovery(config.getRecovery());
+				}
 			}
 		});
 		flightMenu.add(flightConfigItem);
@@ -281,6 +287,8 @@ public class HABtk {
 		JDialog.setDefaultLookAndFeelDecorated(true);
 		
 		new HABtk();
+		flight = new BalloonFlight();
+		trackingService = new TrackingService();
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {

@@ -9,7 +9,7 @@ public class APRSIS_PacketTest {
 		APRSIS server = new APRSIS("midwest.aprs2.net", 14580, "NV1K", "3327");
 		server.setFilter("r/42.0/-93.6/100");
 		while(true) {
-			if(server.ready()) {
+			if(server.isReady()) {
 				String line = server.readLine();
 				if(line.startsWith("#")) continue;
 				

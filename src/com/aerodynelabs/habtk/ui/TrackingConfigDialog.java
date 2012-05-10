@@ -13,6 +13,9 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
+import com.aerodynelabs.habtk.tracking.Tracker;
+import com.aerodynelabs.habtk.tracking.TrackingService;
+
 @SuppressWarnings("serial")
 public class TrackingConfigDialog extends JDialog {
 	
@@ -22,12 +25,20 @@ public class TrackingConfigDialog extends JDialog {
 	private JTextField fSecondary;
 	private JTextField fRecovery;
 	
-	public TrackingConfigDialog() {
+	private Tracker primary;
+	private Tracker secondary;
+	private Tracker recovery;
+	
+	public TrackingConfigDialog(TrackingService tracker) {
 		setTitle("Setup Flight");
 		setModal(true);
 		SpringLayout layout = new SpringLayout();
 		setLayout(layout);
 		Container pane = getContentPane();
+		
+		primary = tracker.getPrimary();
+		secondary = tracker.getSecondary();
+		recovery = tracker.getRecovery();
 		
 		JLabel lPrimary = new JLabel("Primary Tracking");
 		layout.putConstraint(SpringLayout.NORTH, lPrimary, 6, SpringLayout.NORTH, pane);
@@ -38,9 +49,19 @@ public class TrackingConfigDialog extends JDialog {
 		layout.putConstraint(SpringLayout.WEST, sPrimary, 6, SpringLayout.EAST, lPrimary);
 		layout.putConstraint(SpringLayout.EAST, sPrimary, -6, SpringLayout.EAST, pane);
 		add(sPrimary);
-		fPrimary = new JTextField(15);
+		fPrimary = new JTextField(30);
 		fPrimary.setEditable(false);
+		if(primary != null) fPrimary.setText(primary.toString());
 		JButton bPrimary = new JButton("Configure");
+		bPrimary.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Tracker t = Tracker.create();
+				if(t != null) {
+					primary = t;
+					fPrimary.setText(t.toString());
+				}
+			}
+		});
 		layout.putConstraint(SpringLayout.NORTH, fPrimary, 6, SpringLayout.SOUTH, lPrimary);
 		layout.putConstraint(SpringLayout.NORTH, bPrimary, 0, SpringLayout.NORTH, fPrimary);
 		layout.putConstraint(SpringLayout.SOUTH, bPrimary, 0, SpringLayout.SOUTH, fPrimary);
@@ -59,9 +80,19 @@ public class TrackingConfigDialog extends JDialog {
 		layout.putConstraint(SpringLayout.WEST, sSecondary, 6, SpringLayout.EAST, lSecondary);
 		layout.putConstraint(SpringLayout.EAST, sSecondary, -6, SpringLayout.EAST, pane);
 		add(sSecondary);
-		fSecondary = new JTextField(15);
+		fSecondary = new JTextField(30);
 		fSecondary.setEditable(false);
+		if(secondary != null) fSecondary.setText(secondary.toString());
 		JButton bSecondary = new JButton("Configure");
+		bSecondary.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Tracker t = Tracker.create();
+				if(t != null) {
+					secondary = t;
+					fSecondary.setText(t.toString());
+				}
+			}
+		});
 		layout.putConstraint(SpringLayout.NORTH, fSecondary, 6, SpringLayout.SOUTH, lSecondary);
 		layout.putConstraint(SpringLayout.NORTH, bSecondary, 0, SpringLayout.NORTH, fSecondary);
 		layout.putConstraint(SpringLayout.SOUTH, bSecondary, 0, SpringLayout.SOUTH, fSecondary);
@@ -81,9 +112,19 @@ public class TrackingConfigDialog extends JDialog {
 		layout.putConstraint(SpringLayout.WEST, sRecovery, 6, SpringLayout.EAST, lRecovery);
 		layout.putConstraint(SpringLayout.EAST, sRecovery, -6, SpringLayout.EAST, pane);
 		add(sRecovery);
-		fRecovery = new JTextField(15);
+		fRecovery = new JTextField(30);
 		fRecovery.setEditable(false);
+		if(recovery != null) fRecovery.setText(recovery.toString());
 		JButton bRecovery = new JButton("Configure");
+		bRecovery.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Tracker t = Tracker.create();
+				if(t != null) {
+					recovery = t;
+					fRecovery.setText(t.toString());
+				}
+			}
+		});
 		layout.putConstraint(SpringLayout.NORTH, fRecovery, 6, SpringLayout.SOUTH, lRecovery);
 		layout.putConstraint(SpringLayout.NORTH, bRecovery, 0, SpringLayout.NORTH, fRecovery);
 		layout.putConstraint(SpringLayout.SOUTH, bRecovery, 0, SpringLayout.SOUTH, fRecovery);
@@ -130,6 +171,18 @@ public class TrackingConfigDialog extends JDialog {
 	
 	public boolean wasAccepted() {
 		return accepted;
+	}
+	
+	public Tracker getPrimary() {
+		return primary;
+	}
+	
+	public Tracker getSecondary() {
+		return secondary;
+	}
+	
+	public Tracker getRecovery() {
+		return recovery;
 	}
 
 }

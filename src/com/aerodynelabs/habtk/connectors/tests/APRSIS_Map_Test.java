@@ -26,7 +26,7 @@ public class APRSIS_Map_Test {
 		map.addOverlay(overlay);
 		
 		while(true) {
-			if(server.ready()) {
+			if(server.isReady()) {
 				String line = server.readLine();
 				
 				if(line.startsWith("#")) continue;

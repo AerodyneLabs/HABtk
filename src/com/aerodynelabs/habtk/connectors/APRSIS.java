@@ -9,7 +9,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
-public class APRSIS {
+public class APRSIS implements APRSSource {
 	
 	private Socket socket;
 	public BufferedReader in;
@@ -75,7 +75,13 @@ public class APRSIS {
 		valid = false;
 	}
 	
-	public boolean ready() {
+	@Override
+	public boolean isValid() {
+		return valid;
+	}
+	
+	@Override
+	public boolean isReady() {
 		try {
 			return in.ready();
 		} catch (IOException e) {
