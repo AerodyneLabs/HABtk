@@ -2,6 +2,8 @@ package com.aerodynelabs.habtk.tracking;
 
 import javax.swing.JOptionPane;
 
+import com.aerodynelabs.map.MapPoint;
+
 public abstract class Tracker {
 	
 	private static Object[] options = {
@@ -33,5 +35,7 @@ public abstract class Tracker {
 	
 	public abstract boolean setup();
 	public abstract String toString();
+	public abstract boolean isReady();
+	public abstract MapPoint getPacket();
 
 }

@@ -137,6 +137,7 @@ public class HABtk {
 		flightStartItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// TODO start tracker
+				trackingService.setEnabled(true);
 			}
 		});
 		flightMenu.add(flightStartItem);

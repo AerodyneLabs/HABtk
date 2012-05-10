@@ -16,6 +16,8 @@ import javax.swing.SpringLayout;
 
 import com.aerodynelabs.habtk.connectors.APRSIS;
 import com.aerodynelabs.habtk.connectors.APRSSource;
+import com.aerodynelabs.habtk.connectors.parsers.APRSPacket;
+import com.aerodynelabs.map.MapPoint;
 
 public class APRSTracker extends Tracker {
 	
@@ -74,6 +76,7 @@ public class APRSTracker extends Tracker {
 							} else {
 								APRSIS server = new APRSIS("noam.aprs2.net", 14580, serverCall, serverPass);
 								if(server.isValid()) {
+									server.setFilter("r/42.0/-93.6/100");
 									aprsis = server;
 									source = aprsis;
 									fName.setText(callsign + ": " + server.toString());
@@ -116,7 +119,7 @@ public class APRSTracker extends Tracker {
 			ok.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					try {
-						// TODO
+						// XXX validate callsign
 						boolean validCall = true;
 						accepted = (validCall || source.isValid());
 					} catch(Exception e1) {
@@ -166,6 +169,24 @@ public class APRSTracker extends Tracker {
 	@Override
 	public String toString() {
 		return callsign + ": " + source.toString();
+	}
+	
+	@Override
+	public boolean isReady() {
+		return source.isReady();
+	}
+	
+	@Override
+	public MapPoint getPacket() {
+		MapPoint position = null;
+		if(source.isReady() == true) {
+			String line = source.readLine();
+			APRSPacket pkt = new APRSPacket(line);
+			if(pkt.isPosition() == true) {
+				position = new MapPoint(pkt.getLatitude(), pkt.getLongitude(), pkt.getAltitude(), pkt.getTimestamp() / 1000, pkt.getFrom());
+			}
+		}
+		return position;
 	}
 
 }

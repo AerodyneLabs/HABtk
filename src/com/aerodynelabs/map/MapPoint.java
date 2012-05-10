@@ -127,7 +127,7 @@ public class MapPoint {
 	 */
 	@Override
 	public String toString() {
-		return lat + ", " + lon + ", " + alt + ", " + time;
+		return name + ": " + lat + ", " + lon + ", " + alt + ", " + time;
 	}
 
 }

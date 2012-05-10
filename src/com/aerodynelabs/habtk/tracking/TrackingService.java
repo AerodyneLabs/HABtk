@@ -1,5 +1,7 @@
 package com.aerodynelabs.habtk.tracking;
 
+import com.aerodynelabs.map.MapPoint;
+
 public class TrackingService implements Runnable {
 	
 	// Status variables
@@ -58,14 +60,26 @@ public class TrackingService implements Runnable {
 	public Tracker getRecovery() {
 		return recovery;
 	}
+	
+	private void notifyListeners(MapPoint pkt) {
+		System.out.println(pkt);
+	}
 
 	@Override
 	public void run() {
 		while(stop != true) {
 			// TODO
-			
-			if(enabled) {
-				
+			while(primary != null && primary.isReady()) {
+				MapPoint pkt = primary.getPacket();
+				if(pkt != null && enabled == true) notifyListeners(pkt);
+			}
+			while(secondary != null && secondary.isReady()) {
+				MapPoint pkt = secondary.getPacket();
+				if(pkt != null && enabled == true) notifyListeners(pkt);
+			}
+			while(recovery != null && recovery.isReady()) {
+				MapPoint pkt = recovery.getPacket();
+				if(pkt != null && enabled == true) notifyListeners(pkt);
 			}
 			try {
 				Thread.sleep(500);
