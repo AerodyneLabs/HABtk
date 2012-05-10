@@ -40,6 +40,7 @@ import com.aerodynelabs.habtk.prediction.Predictor;
 import com.aerodynelabs.habtk.ui.AboutDialog;
 import com.aerodynelabs.habtk.ui.PredictionPanel;
 import com.aerodynelabs.habtk.ui.TerminalPanel;
+import com.aerodynelabs.habtk.ui.TrackingConfigDialog;
 import com.aerodynelabs.habtk.ui.TrackingPanel;
 
 /**
@@ -73,8 +74,10 @@ public class HABtk {
 		// Create components
 		JMenuBar menuBar = new JMenuBar();
 		JMenu fileMenu = new JMenu("File");
+		JMenu flightMenu = new JMenu("Tracking");
 		JMenu helpMenu = new JMenu("Help");
 		menuBar.add(fileMenu);
+		menuBar.add(flightMenu);
 		menuBar.add(helpMenu);
 		window.setJMenuBar(menuBar);
 		
@@ -97,6 +100,14 @@ public class HABtk {
 		});
 		fileMenu.add(fileLoadFlightItem);
 		
+		JMenuItem fileSaveFlightItem = new JMenuItem("Save Flight");
+		fileSaveFlightItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// TODO save flight
+			}
+		});
+		fileMenu.add(fileSaveFlightItem);
+		
 		fileMenu.add(new JSeparator());
 		JMenuItem fileExitItem = new JMenuItem("Exit");
 		fileExitItem.addActionListener(new ActionListener() {
@@ -106,6 +117,23 @@ public class HABtk {
 			}
 		});
 		fileMenu.add(fileExitItem);
+		
+		JMenuItem flightConfigItem = new JMenuItem("Configure Tracking");
+		flightConfigItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// TODO config tracker
+				TrackingConfigDialog config = new TrackingConfigDialog();
+			}
+		});
+		flightMenu.add(flightConfigItem);
+		
+		JMenuItem flightStartItem = new JMenuItem("Start Tracking");
+		flightStartItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// TODO start tracker
+			}
+		});
+		flightMenu.add(flightStartItem);
 		
 		JMenuItem helpHelpItem = new JMenuItem("Help Contents");
 		helpHelpItem.addActionListener(new ActionListener() {
