@@ -34,7 +34,7 @@ public abstract class Predictor implements Cloneable {
 	 */
 	private static String select() {
 		String val = (String)JOptionPane.showInputDialog(
-				null, "Chose a prediction algorithm:\n", "New Flight Type",
+				null, "Choose a prediction algorithm:\n", "New Flight Type",
 				JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 		
 		return val;
