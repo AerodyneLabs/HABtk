@@ -25,6 +25,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import org.noos.xing.mydoggy.Content;
 import org.noos.xing.mydoggy.ContentManager;
 import org.noos.xing.mydoggy.ToolWindow;
 import org.noos.xing.mydoggy.ToolWindowAnchor;
@@ -39,19 +40,23 @@ import org.pushingpixels.substance.api.skin.SubstanceTwilightLookAndFeel;
 
 import com.aerodynelabs.habtk.help.HelpWindow;
 import com.aerodynelabs.habtk.prediction.Predictor;
+import com.aerodynelabs.habtk.tracking.PositionEvent;
+import com.aerodynelabs.habtk.tracking.PositionListener;
 import com.aerodynelabs.habtk.tracking.TrackingService;
 import com.aerodynelabs.habtk.ui.AboutDialog;
 import com.aerodynelabs.habtk.ui.PredictionPanel;
 import com.aerodynelabs.habtk.ui.TerminalPanel;
 import com.aerodynelabs.habtk.ui.TrackingConfigDialog;
 import com.aerodynelabs.habtk.ui.TrackingPanel;
+import com.aerodynelabs.map.MapPanel;
+import com.aerodynelabs.map.MapPath;
 
 /**
  * The main class of HABtk
  * @author eharstad
  * 
  */
-public class HABtk {
+public class HABtk implements PositionListener {
 	
 	private static final String VERSION = "0.01 Alpha";
 	
@@ -59,10 +64,13 @@ public class HABtk {
 	private static FileHandler logFile;
 	private static SimpleFormatter logFormatter;
 	
+	private static HABtk habtk;
 	private static JFrame window;
 	private static MyDoggyToolWindowManager windowManager;
 	private static ContentManager contentManager;
 	private static JCheckBoxMenuItem flightTrackItem;
+	private static TrackingPanel trackingPanel;
+	private static MapPanel trackingMap;
 	
 	private static boolean tracking = false;
 	private static BalloonFlight flight;
@@ -146,8 +154,23 @@ public class HABtk {
 			public void actionPerformed(ActionEvent e) {
 				if(flightTrackItem.getState() == true) {
 					if(trackingService.getPrimary() == null) {
-						JOptionPane.showMessageDialog(window, "Primary tracker is not configured.\nDisabling tracking service.");
+						JOptionPane.showMessageDialog(window, "Primary tracker is not configured.\nDisabling tracking service.", "Configuration Error", JOptionPane.ERROR_MESSAGE, null);
 						flightTrackItem.setState(false);
+						return;
+					}
+					if(flight.getPredictor() == null) {
+						JOptionPane.showMessageDialog(window, "Flight is not defined, cannot run predictions.", "Undefined Flight", JOptionPane.WARNING_MESSAGE, null);
+						flightTrackItem.setState(false);
+						return;
+					}
+					Content mapContent = contentManager.getContent("Tracking Map");
+					if(mapContent == null) {
+						contentManager.removeAllContents();
+						trackingMap = new MapPanel(
+								flight.getPredictor().getStart().getLatitude(),
+								flight.getPredictor().getStart().getLongitude(), 8);
+						contentManager.addContent("Tracking Map", "Tracking Map",
+								null, trackingMap);
 					}
 				}
 				tracking = flightTrackItem.getState();
@@ -197,8 +220,12 @@ public class HABtk {
 		resourceManager.putColor("ToolWindowRepresentativeAnchorUI.background.inactive.start", s.getBackgroundFillColor());
 		resourceManager.putColor("ToolWindowRepresentativeAnchorUI.background.inactive.end", s.getBackgroundFillColor());
 		
+		trackingPanel = new TrackingPanel();
+		trackingService.addListener(trackingPanel);
+		trackingService.addListener(habtk);
+		
 		windowManager.registerToolWindow("Log", "Log", null, new TerminalPanel(), ToolWindowAnchor.BOTTOM);
-		windowManager.registerToolWindow("Tracking", "Tracking", null, new TrackingPanel(), ToolWindowAnchor.LEFT);
+		windowManager.registerToolWindow("Tracking", "Tracking", null, trackingPanel, ToolWindowAnchor.LEFT);
 		windowManager.registerToolWindow("Prediction", null, null, new PredictionPanel(windowManager), ToolWindowAnchor.LEFT);
 		for(ToolWindow win : windowManager.getToolWindows()) win.setAvailable(true);
 		windowManager.getToolWindow("Log").setType(ToolWindowType.SLIDING);
@@ -206,12 +233,10 @@ public class HABtk {
 		window.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowStateChanged(WindowEvent e) {
-				System.out.println("State change");
 			}
 			
 			@Override
 			public void windowIconified(WindowEvent e) {
-				System.out.println("Iconified");
 			}
 			
 			@Override
@@ -300,7 +325,7 @@ public class HABtk {
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		JDialog.setDefaultLookAndFeelDecorated(true);
 		
-		new HABtk();
+		habtk = new HABtk();
 		flight = new BalloonFlight();
 		trackingService = new TrackingService();
 		try {
@@ -319,6 +344,21 @@ public class HABtk {
 			});
 		} catch(Exception e) {
 			debugLog.log(Level.SEVERE, "Exception", e);
+		}
+	}
+
+	@Override
+	public void positionUpdateEvent(PositionEvent e) {
+		switch(e.getSource()) {
+			case PositionEvent.PRIMARY:
+				Predictor pred = flight.getPredictor().clone();
+				pred.setStart(e.getPosition());
+				MapPath prediction = pred.runPrediction();
+				trackingPanel.positionUpdateEvent(
+						new PositionEvent(PositionEvent.BURST, pred.getBurst()));
+				trackingPanel.positionUpdateEvent(
+						new PositionEvent(PositionEvent.LANDING, pred.getLanding()));
+				break;
 		}
 	}
 

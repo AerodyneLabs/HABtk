@@ -16,7 +16,7 @@ public class APRSPacket {
 	long timestamp;
 	double latitude;
 	double longitude;
-	int altitude;
+	double altitude;
 	boolean validPos = false;
 	
 	public static final int SSID_DOT = 0;
@@ -135,7 +135,7 @@ public class APRSPacket {
 					} else {
 						Scanner scan = new Scanner(comment);
 						String tAlt = scan.findInLine("/A=[0-9]{6}");
-						if(tAlt != null) altitude = (int)(Integer.parseInt(tAlt.substring(3)) * 0.3048 + 0.5);
+						if(tAlt != null) altitude = Integer.parseInt(tAlt.substring(3)) * 0.3048;
 					}
 					
 					timestamp = cal.getTimeInMillis();
@@ -213,7 +213,7 @@ public class APRSPacket {
 						scanner = new Scanner(comment);
 						String rAlt = scanner.findInLine("/A=[0-9]{6}");
 						if(rAlt != null) {
-							altitude = (int)(Integer.parseInt(rAlt.substring(3)) * 0.3048 + 0.5);
+							altitude = Integer.parseInt(rAlt.substring(3)) * 0.3048;
 						}
 
 						validPos = true;
@@ -250,6 +250,7 @@ public class APRSPacket {
 							}
 						}
 						comment = payload.substring(14);
+						// TODO Compressed altitude
 						validPos = true;
 					} catch(Exception e) {
 						validPos = false;
@@ -393,7 +394,7 @@ public class APRSPacket {
 		return longitude;
 	}
 	
-	public int getAltitude() {
+	public double getAltitude() {
 		return altitude;
 	}
 	

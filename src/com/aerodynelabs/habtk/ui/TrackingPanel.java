@@ -1,10 +1,16 @@
 package com.aerodynelabs.habtk.ui;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 import javax.swing.JLabel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
+
+import com.aerodynelabs.habtk.tracking.PositionEvent;
+import com.aerodynelabs.habtk.tracking.PositionListener;
 
 /**
  * A panel to display tracking information
@@ -12,7 +18,7 @@ import javax.swing.JTextField;
  *
  */
 @SuppressWarnings("serial")
-public class TrackingPanel extends JPanel {
+public class TrackingPanel extends JPanel implements PositionListener {
 	
 	private JTextField curAlt;
 	private JTextField curLon;
@@ -184,4 +190,34 @@ public class TrackingPanel extends JPanel {
 		add(lndAlt);
 		
 	}
+
+	@Override
+	public void positionUpdateEvent(PositionEvent e) {
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+		switch(e.getSource()) {
+			case PositionEvent.PRIMARY:
+				curLat.setText(Double.toString(e.getPosition().getLatitude()));
+				curLon.setText(Double.toString(e.getPosition().getLongitude()));
+				curAlt.setText(Double.toString(e.getPosition().getAltitude()));
+				break;
+			case PositionEvent.SECONDARY:
+				break;
+			case PositionEvent.RECOVERY:
+				break;
+			case PositionEvent.BURST:
+				burLat.setText(Double.toString(e.getPosition().getLatitude()));
+				burLon.setText(Double.toString(e.getPosition().getLongitude()));
+				burAlt.setText(Double.toString(e.getPosition().getAltitude()));
+				burTime.setText(sdf.format(new Date(e.getPosition().getTime() * 1000)));
+				break;
+			case PositionEvent.LANDING:
+				lndLat.setText(Double.toString(e.getPosition().getLatitude()));
+				lndLon.setText(Double.toString(e.getPosition().getLongitude()));
+				lndAlt.setText(Double.toString(e.getPosition().getAltitude()));
+				lndTime.setText(sdf.format(new Date(e.getPosition().getTime() * 1000)));
+				break;
+		}
+		
+	}
+	
 }

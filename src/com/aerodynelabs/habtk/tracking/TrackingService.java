@@ -2,6 +2,8 @@ package com.aerodynelabs.habtk.tracking;
 
 import java.util.Vector;
 
+import javax.swing.SwingUtilities;
+
 import com.aerodynelabs.map.MapPoint;
 
 public class TrackingService implements Runnable {
@@ -18,7 +20,8 @@ public class TrackingService implements Runnable {
 	private Vector<PositionListener> listeners;
 	
 	public TrackingService() {
-		new Thread(this).start();
+		listeners = new Vector<PositionListener>();
+		new Thread(this, "Tracking Service").start();
 	}
 	
 	public boolean isEnabled() {
@@ -33,7 +36,7 @@ public class TrackingService implements Runnable {
 		stop = true;
 	}
 	
-	public void addListener(PositionListener listener) {
+	public void addListener(final PositionListener listener) {
 		listeners.add(listener);
 	}
 	
@@ -74,7 +77,6 @@ public class TrackingService implements Runnable {
 	}
 	
 	private void notifyListeners(int source, MapPoint pkt) {
-		System.out.println(pkt);
 		for(PositionListener listener : listeners) {
 			listener.positionUpdateEvent(new PositionEvent(source, pkt));
 		}
