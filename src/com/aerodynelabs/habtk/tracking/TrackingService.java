@@ -1,5 +1,7 @@
 package com.aerodynelabs.habtk.tracking;
 
+import java.util.Vector;
+
 import com.aerodynelabs.map.MapPoint;
 
 public class TrackingService implements Runnable {
@@ -12,6 +14,8 @@ public class TrackingService implements Runnable {
 	private Tracker primary = null;
 	private Tracker secondary = null;
 	private Tracker recovery = null;
+	
+	private Vector<PositionListener> listeners;
 	
 	public TrackingService() {
 		new Thread(this).start();
@@ -29,13 +33,12 @@ public class TrackingService implements Runnable {
 		stop = true;
 	}
 	
-	public void addListener() {
-		// TODO addListener
+	public void addListener(PositionListener listener) {
+		listeners.add(listener);
 	}
 	
-	public boolean removeListener() {
-		// TODO removeListener
-		return false;
+	public boolean removeListener(PositionListener listener) {
+		return listeners.remove(listener);
 	}
 	
 	public void setMapNearby(boolean x) {
@@ -70,25 +73,27 @@ public class TrackingService implements Runnable {
 		return nearby;
 	}
 	
-	private void notifyListeners(MapPoint pkt) {
+	private void notifyListeners(int source, MapPoint pkt) {
 		System.out.println(pkt);
+		for(PositionListener listener : listeners) {
+			listener.positionUpdateEvent(new PositionEvent(source, pkt));
+		}
 	}
 
 	@Override
 	public void run() {
 		while(stop != true) {
-			// TODO
 			while(primary != null && primary.isReady()) {
 				MapPoint pkt = primary.getPacket();
-				if(pkt != null && enabled == true) notifyListeners(pkt);
+				if(pkt != null && enabled == true) notifyListeners(PositionEvent.PRIMARY, pkt);
 			}
 			while(secondary != null && secondary.isReady()) {
 				MapPoint pkt = secondary.getPacket();
-				if(pkt != null && enabled == true) notifyListeners(pkt);
+				if(pkt != null && enabled == true) notifyListeners(PositionEvent.SECONDARY, pkt);
 			}
 			while(recovery != null && recovery.isReady()) {
 				MapPoint pkt = recovery.getPacket();
-				if(pkt != null && enabled == true) notifyListeners(pkt);
+				if(pkt != null && enabled == true) notifyListeners(PositionEvent.RECOVERY, pkt);
 			}
 			try {
 				Thread.sleep(500);

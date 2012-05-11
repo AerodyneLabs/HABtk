@@ -190,7 +190,7 @@ public class PredictionPanel extends JPanel {
 		add(fStep);
 		
 		JLabel lDays = new JLabel("Days out:");
-		fDays = new JSpinner(new SpinnerNumberModel(3, 1, 5, 1));
+		fDays = new JSpinner(new SpinnerNumberModel(3, 1, 7, 1));
 		layout.putConstraint(SpringLayout.NORTH, fDays, 6, SpringLayout.SOUTH, fStop);
 		layout.putConstraint(SpringLayout.BASELINE, lDays, 0, SpringLayout.BASELINE, fDays);
 		layout.putConstraint(SpringLayout.WEST, lDays, 6, SpringLayout.EAST, fStep);
