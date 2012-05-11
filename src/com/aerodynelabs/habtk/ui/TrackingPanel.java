@@ -1,13 +1,17 @@
 package com.aerodynelabs.habtk.ui;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 import javax.swing.JLabel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import javax.swing.Timer;
 
 import com.aerodynelabs.habtk.tracking.PositionEvent;
 import com.aerodynelabs.habtk.tracking.PositionListener;
@@ -18,11 +22,12 @@ import com.aerodynelabs.habtk.tracking.PositionListener;
  *
  */
 @SuppressWarnings("serial")
-public class TrackingPanel extends JPanel implements PositionListener {
+public class TrackingPanel extends JPanel implements PositionListener, ActionListener {
 	
 	private JTextField curAlt;
 	private JTextField curLon;
 	private JTextField curLat;
+	private JTextField curTime;
 	private JTextField burAlt;
 	private JTextField burLon;
 	private JTextField burLat;
@@ -31,6 +36,9 @@ public class TrackingPanel extends JPanel implements PositionListener {
 	private JTextField lndLon;
 	private JTextField lndLat;
 	private JTextField lndTime;
+	
+	private Date time, cTime, bTime, lTime;
+	private Timer timer;
 	
 	public TrackingPanel() {
 		super();
@@ -51,35 +59,45 @@ public class TrackingPanel extends JPanel implements PositionListener {
 		JLabel lblCurLat = new JLabel("Latitude:");
 		JLabel lblCurLon = new JLabel("Longitude:");
 		JLabel lblCurAlt = new JLabel("Altitude:");
+		JLabel lblCurTime = new JLabel("Time:");
 		curAlt = new JTextField();
 		curAlt.setEditable(false);
 		curLon = new JTextField();
 		curLon.setEditable(false);
 		curLat = new JTextField();
 		curLat.setEditable(false);
+		curTime = new JTextField();
+		curTime.setEditable(false);
 		
 		springLayout.putConstraint(SpringLayout.WEST, lblCurLon, 6, SpringLayout.WEST, lblCurrent);
 		springLayout.putConstraint(SpringLayout.EAST, lblCurLat, 0, SpringLayout.EAST, lblCurLon);
 		springLayout.putConstraint(SpringLayout.EAST, lblCurAlt, 0, SpringLayout.EAST, lblCurLon);
+		springLayout.putConstraint(SpringLayout.EAST, lblCurTime, 0, SpringLayout.EAST, lblCurLon);
 		springLayout.putConstraint(SpringLayout.BASELINE, lblCurLat, 0, SpringLayout.BASELINE, curLat);
 		springLayout.putConstraint(SpringLayout.BASELINE, lblCurLon, 0, SpringLayout.BASELINE, curLon);
 		springLayout.putConstraint(SpringLayout.BASELINE, lblCurAlt, 0, SpringLayout.BASELINE, curAlt);
-		springLayout.putConstraint(SpringLayout.NORTH, curLat, 6, SpringLayout.SOUTH, lblCurrent);
+		springLayout.putConstraint(SpringLayout.BASELINE, lblCurTime, 0, SpringLayout.BASELINE, curTime);
+		springLayout.putConstraint(SpringLayout.NORTH, curLat, 6, SpringLayout.SOUTH, curTime);
 		springLayout.putConstraint(SpringLayout.NORTH, curLon, 6, SpringLayout.SOUTH, curLat);
 		springLayout.putConstraint(SpringLayout.NORTH, curAlt, 6, SpringLayout.SOUTH, curLon);
+		springLayout.putConstraint(SpringLayout.NORTH, curTime, 6, SpringLayout.SOUTH, lblCurrent);
 		springLayout.putConstraint(SpringLayout.WEST, curLat, 6, SpringLayout.EAST, lblCurLat);
 		springLayout.putConstraint(SpringLayout.WEST, curLon, 6, SpringLayout.EAST, lblCurLon);
 		springLayout.putConstraint(SpringLayout.WEST, curAlt, 6, SpringLayout.EAST, lblCurAlt);
+		springLayout.putConstraint(SpringLayout.WEST, curTime, 6, SpringLayout.EAST, lblCurTime);
 		springLayout.putConstraint(SpringLayout.EAST, curLat, -6, SpringLayout.EAST, this);
 		springLayout.putConstraint(SpringLayout.EAST, curLon, -6, SpringLayout.EAST, this);
 		springLayout.putConstraint(SpringLayout.EAST, curAlt, -6, SpringLayout.EAST, this);
+		springLayout.putConstraint(SpringLayout.EAST, curTime, -6, SpringLayout.EAST, this);
 		
 		add(lblCurLat);
 		add(lblCurLon);
 		add(lblCurAlt);
+		add(lblCurTime);
 		add(curLat);
 		add(curLon);
 		add(curAlt);
+		add(curTime);
 		
 		// Burst Values
 		JLabel lblBurst = new JLabel("Burst");
@@ -189,16 +207,19 @@ public class TrackingPanel extends JPanel implements PositionListener {
 		add(lndLon);
 		add(lndAlt);
 		
+		timer = new Timer(1000, this);
+		timer.start();
 	}
 
 	@Override
 	public void positionUpdateEvent(PositionEvent e) {
-		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 		switch(e.getSource()) {
 			case PositionEvent.PRIMARY:
 				curLat.setText(Double.toString(e.getPosition().getLatitude()));
 				curLon.setText(Double.toString(e.getPosition().getLongitude()));
 				curAlt.setText(Double.toString(e.getPosition().getAltitude()));
+				cTime = new Date(e.getPosition().getTime() * 1000);
+				updateTimes();
 				break;
 			case PositionEvent.SECONDARY:
 				break;
@@ -208,16 +229,49 @@ public class TrackingPanel extends JPanel implements PositionListener {
 				burLat.setText(Double.toString(e.getPosition().getLatitude()));
 				burLon.setText(Double.toString(e.getPosition().getLongitude()));
 				burAlt.setText(Double.toString(e.getPosition().getAltitude()));
-				burTime.setText(sdf.format(new Date(e.getPosition().getTime() * 1000)));
+				bTime = new Date(e.getPosition().getTime() * 1000);
+				updateTimes();
 				break;
 			case PositionEvent.LANDING:
 				lndLat.setText(Double.toString(e.getPosition().getLatitude()));
 				lndLon.setText(Double.toString(e.getPosition().getLongitude()));
 				lndAlt.setText(Double.toString(e.getPosition().getAltitude()));
-				lndTime.setText(sdf.format(new Date(e.getPosition().getTime() * 1000)));
+				lTime = new Date(e.getPosition().getTime() * 1000);
+				updateTimes();
 				break;
 		}
 		
+	}
+	
+	private void updateTimes() {
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+		String prefix;
+		Date tMinus;
+		time = new Date();
+		
+		if(cTime != null) {
+			tMinus = new Date(time.getTime() - cTime.getTime());
+			prefix = tMinus.getTime() < 0 ? "T-" : "T+";
+			curTime.setText(prefix + sdf.format(tMinus) + " (" + sdf.format(cTime) + ")");
+		}
+		
+		if(bTime != null) {
+			tMinus = new Date(bTime.getTime() - time.getTime());
+			prefix = tMinus.getTime() < 0 ? "T+" : "T-";
+			burTime.setText(prefix + sdf.format(tMinus) + " (" + sdf.format(bTime) + ")");
+		}
+		
+		if(lTime != null) {
+			tMinus = new Date(lTime.getTime() - time.getTime());
+			prefix = tMinus.getTime() < 0 ? "T+" : "T-";
+			lndTime.setText(prefix + sdf.format(tMinus) + " (" + sdf.format(lTime) + ")");
+		}
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		updateTimes();
 	}
 	
 }
