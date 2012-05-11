@@ -54,7 +54,11 @@ public class TrackingConfigDialog extends JDialog {
 		add(sPrimary);
 		fPrimary = new JTextField(30);
 		fPrimary.setEditable(false);
-		if(primary != null) fPrimary.setText(primary.toString());
+		if(primary != null) {
+			fPrimary.setText(primary.toString());
+		} else {
+			fPrimary.setText("Not Configured");
+		}
 		JButton bPrimary = new JButton("Configure");
 		bPrimary.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -68,9 +72,9 @@ public class TrackingConfigDialog extends JDialog {
 		layout.putConstraint(SpringLayout.NORTH, fPrimary, 6, SpringLayout.SOUTH, lPrimary);
 		layout.putConstraint(SpringLayout.NORTH, bPrimary, 0, SpringLayout.NORTH, fPrimary);
 		layout.putConstraint(SpringLayout.SOUTH, bPrimary, 0, SpringLayout.SOUTH, fPrimary);
-		layout.putConstraint(SpringLayout.WEST, fPrimary, 6, SpringLayout.WEST, pane);
-		layout.putConstraint(SpringLayout.WEST, bPrimary, 6, SpringLayout.EAST, fPrimary);
-		layout.putConstraint(SpringLayout.EAST, pane, 6, SpringLayout.EAST, bPrimary);
+		layout.putConstraint(SpringLayout.WEST, bPrimary, 6, SpringLayout.WEST, pane);
+		layout.putConstraint(SpringLayout.WEST, fPrimary, 6, SpringLayout.EAST, bPrimary);
+		layout.putConstraint(SpringLayout.EAST, pane, 6, SpringLayout.EAST, fPrimary);
 		add(fPrimary);
 		add(bPrimary);
 		
@@ -85,7 +89,11 @@ public class TrackingConfigDialog extends JDialog {
 		add(sSecondary);
 		fSecondary = new JTextField(30);
 		fSecondary.setEditable(false);
-		if(secondary != null) fSecondary.setText(secondary.toString());
+		if(secondary != null) {
+			fSecondary.setText(secondary.toString());
+		} else {
+			fSecondary.setText("Not Configured");
+		}
 		JButton bSecondary = new JButton("Configure");
 		bSecondary.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -99,10 +107,9 @@ public class TrackingConfigDialog extends JDialog {
 		layout.putConstraint(SpringLayout.NORTH, fSecondary, 6, SpringLayout.SOUTH, lSecondary);
 		layout.putConstraint(SpringLayout.NORTH, bSecondary, 0, SpringLayout.NORTH, fSecondary);
 		layout.putConstraint(SpringLayout.SOUTH, bSecondary, 0, SpringLayout.SOUTH, fSecondary);
-		layout.putConstraint(SpringLayout.EAST, fSecondary, 0, SpringLayout.EAST, fPrimary);
-		layout.putConstraint(SpringLayout.WEST, fSecondary, 6, SpringLayout.WEST, pane);
-		layout.putConstraint(SpringLayout.WEST, bSecondary, 6, SpringLayout.EAST, fSecondary);
-		layout.putConstraint(SpringLayout.EAST, bSecondary, -6, SpringLayout.EAST, pane);
+		layout.putConstraint(SpringLayout.WEST, bSecondary, 6, SpringLayout.WEST, pane);
+		layout.putConstraint(SpringLayout.WEST, fSecondary, 6, SpringLayout.EAST, bSecondary);
+		layout.putConstraint(SpringLayout.EAST, fSecondary, -6, SpringLayout.EAST, pane);
 		add(fSecondary);
 		add(bSecondary);
 		
@@ -117,7 +124,11 @@ public class TrackingConfigDialog extends JDialog {
 		add(sRecovery);
 		fRecovery = new JTextField(30);
 		fRecovery.setEditable(false);
-		if(recovery != null) fRecovery.setText(recovery.toString());
+		if(recovery != null) {
+			fRecovery.setText(recovery.toString());
+		} else {
+			fRecovery.setText("Not Configured");
+		}
 		JButton bRecovery = new JButton("Configure");
 		bRecovery.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -131,10 +142,9 @@ public class TrackingConfigDialog extends JDialog {
 		layout.putConstraint(SpringLayout.NORTH, fRecovery, 6, SpringLayout.SOUTH, lRecovery);
 		layout.putConstraint(SpringLayout.NORTH, bRecovery, 0, SpringLayout.NORTH, fRecovery);
 		layout.putConstraint(SpringLayout.SOUTH, bRecovery, 0, SpringLayout.SOUTH, fRecovery);
-		layout.putConstraint(SpringLayout.EAST, fRecovery, 0, SpringLayout.EAST, fPrimary);
-		layout.putConstraint(SpringLayout.WEST, fRecovery, 6, SpringLayout.WEST, pane);
-		layout.putConstraint(SpringLayout.WEST, bRecovery, 6, SpringLayout.EAST, fRecovery);
-		layout.putConstraint(SpringLayout.EAST, bRecovery, -6, SpringLayout.EAST, pane);
+		layout.putConstraint(SpringLayout.WEST, bRecovery, 6, SpringLayout.WEST, pane);
+		layout.putConstraint(SpringLayout.WEST, fRecovery, 6, SpringLayout.EAST, bRecovery);
+		layout.putConstraint(SpringLayout.EAST, fRecovery, -6, SpringLayout.EAST, pane);
 		add(fRecovery);
 		add(bRecovery);
 		
