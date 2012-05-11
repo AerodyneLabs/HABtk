@@ -15,6 +15,7 @@ import javax.swing.Timer;
 
 import com.aerodynelabs.habtk.tracking.PositionEvent;
 import com.aerodynelabs.habtk.tracking.PositionListener;
+import com.aerodynelabs.map.MapPoint;
 
 /**
  * A panel to display tracking information
@@ -28,6 +29,8 @@ public class TrackingPanel extends JPanel implements PositionListener, ActionLis
 	private JTextField curLon;
 	private JTextField curLat;
 	private JTextField curTime;
+	private JTextField curSpd;
+	private JTextField curAR;
 	private JTextField burAlt;
 	private JTextField burLon;
 	private JTextField burLat;
@@ -38,6 +41,7 @@ public class TrackingPanel extends JPanel implements PositionListener, ActionLis
 	private JTextField lndTime;
 	
 	private Date time, cTime, bTime, lTime;
+	private MapPoint prevPoint;
 	private Timer timer;
 	
 	public TrackingPanel() {
@@ -60,6 +64,8 @@ public class TrackingPanel extends JPanel implements PositionListener, ActionLis
 		JLabel lblCurLon = new JLabel("Longitude:");
 		JLabel lblCurAlt = new JLabel("Altitude:");
 		JLabel lblCurTime = new JLabel("Time:");
+		JLabel lblCurSpd = new JLabel("Speed:");
+		JLabel lblCurAR = new JLabel("Ascent Rate:");
 		curAlt = new JTextField();
 		curAlt.setEditable(false);
 		curLon = new JTextField();
@@ -68,40 +74,58 @@ public class TrackingPanel extends JPanel implements PositionListener, ActionLis
 		curLat.setEditable(false);
 		curTime = new JTextField();
 		curTime.setEditable(false);
+		curSpd = new JTextField();
+		curSpd.setEditable(false);
+		curAR = new JTextField();
+		curAR.setEditable(false);
 		
 		springLayout.putConstraint(SpringLayout.WEST, lblCurLon, 6, SpringLayout.WEST, lblCurrent);
 		springLayout.putConstraint(SpringLayout.EAST, lblCurLat, 0, SpringLayout.EAST, lblCurLon);
 		springLayout.putConstraint(SpringLayout.EAST, lblCurAlt, 0, SpringLayout.EAST, lblCurLon);
 		springLayout.putConstraint(SpringLayout.EAST, lblCurTime, 0, SpringLayout.EAST, lblCurLon);
+		springLayout.putConstraint(SpringLayout.EAST, lblCurSpd, 0, SpringLayout.EAST, lblCurLon);
+		springLayout.putConstraint(SpringLayout.EAST, lblCurAR, 0, SpringLayout.EAST, lblCurLon);
 		springLayout.putConstraint(SpringLayout.BASELINE, lblCurLat, 0, SpringLayout.BASELINE, curLat);
 		springLayout.putConstraint(SpringLayout.BASELINE, lblCurLon, 0, SpringLayout.BASELINE, curLon);
 		springLayout.putConstraint(SpringLayout.BASELINE, lblCurAlt, 0, SpringLayout.BASELINE, curAlt);
 		springLayout.putConstraint(SpringLayout.BASELINE, lblCurTime, 0, SpringLayout.BASELINE, curTime);
+		springLayout.putConstraint(SpringLayout.BASELINE, lblCurSpd, 0, SpringLayout.BASELINE, curSpd);
+		springLayout.putConstraint(SpringLayout.BASELINE, lblCurAR, 0, SpringLayout.BASELINE, curAR);
 		springLayout.putConstraint(SpringLayout.NORTH, curLat, 6, SpringLayout.SOUTH, curTime);
 		springLayout.putConstraint(SpringLayout.NORTH, curLon, 6, SpringLayout.SOUTH, curLat);
 		springLayout.putConstraint(SpringLayout.NORTH, curAlt, 6, SpringLayout.SOUTH, curLon);
 		springLayout.putConstraint(SpringLayout.NORTH, curTime, 6, SpringLayout.SOUTH, lblCurrent);
+		springLayout.putConstraint(SpringLayout.NORTH, curSpd, 6, SpringLayout.SOUTH, curAlt);
+		springLayout.putConstraint(SpringLayout.NORTH, curAR, 6, SpringLayout.SOUTH, curSpd);
 		springLayout.putConstraint(SpringLayout.WEST, curLat, 6, SpringLayout.EAST, lblCurLat);
 		springLayout.putConstraint(SpringLayout.WEST, curLon, 6, SpringLayout.EAST, lblCurLon);
 		springLayout.putConstraint(SpringLayout.WEST, curAlt, 6, SpringLayout.EAST, lblCurAlt);
 		springLayout.putConstraint(SpringLayout.WEST, curTime, 6, SpringLayout.EAST, lblCurTime);
+		springLayout.putConstraint(SpringLayout.WEST, curSpd, 6, SpringLayout.EAST, lblCurSpd);
+		springLayout.putConstraint(SpringLayout.WEST, curAR, 6, SpringLayout.EAST, lblCurAR);
 		springLayout.putConstraint(SpringLayout.EAST, curLat, -6, SpringLayout.EAST, this);
 		springLayout.putConstraint(SpringLayout.EAST, curLon, -6, SpringLayout.EAST, this);
 		springLayout.putConstraint(SpringLayout.EAST, curAlt, -6, SpringLayout.EAST, this);
 		springLayout.putConstraint(SpringLayout.EAST, curTime, -6, SpringLayout.EAST, this);
+		springLayout.putConstraint(SpringLayout.EAST, curSpd, -6, SpringLayout.EAST, this);
+		springLayout.putConstraint(SpringLayout.EAST, curAR, -6, SpringLayout.EAST, this);
 		
 		add(lblCurLat);
 		add(lblCurLon);
 		add(lblCurAlt);
 		add(lblCurTime);
+		add(lblCurSpd);
+		add(lblCurAR);
 		add(curLat);
 		add(curLon);
 		add(curAlt);
 		add(curTime);
+		add(curSpd);
+		add(curAR);
 		
 		// Burst Values
 		JLabel lblBurst = new JLabel("Burst");
-		springLayout.putConstraint(SpringLayout.NORTH, lblBurst, 6, SpringLayout.SOUTH, curAlt);
+		springLayout.putConstraint(SpringLayout.NORTH, lblBurst, 6, SpringLayout.SOUTH, curAR);
 		springLayout.putConstraint(SpringLayout.WEST, lblBurst, 10, SpringLayout.WEST, this);
 		add(lblBurst);
 		JSeparator sepBurst = new JSeparator();
@@ -220,6 +244,34 @@ public class TrackingPanel extends JPanel implements PositionListener, ActionLis
 				curAlt.setText(Double.toString(e.getPosition().getAltitude()));
 				cTime = new Date(e.getPosition().getTime() * 1000);
 				updateTimes();
+				
+				// Compute derived fields
+				MapPoint p = e.getPosition();
+				if(prevPoint != null) {
+					// Ascent rate
+					long dt = p.getTime() - prevPoint.getTime();
+					double dz = p.getAltitude() - prevPoint.getAltitude();
+					double ar = dz / dt;
+					double ars = Math.round(ar * 10.0) / 10.0;
+					double arm = Math.round((ar * 60.0) * 10.0) / 10.0;
+					curAR.setText(ars + " m/s (" + arm + "m/min)");
+					
+					// Speed
+					double R = 6371008.7714;
+					double dLat = Math.toRadians(p.getLatitude() - prevPoint.getLatitude());
+					double dLon = Math.toRadians(p.getLongitude() - prevPoint.getLongitude());
+					double lat1 = Math.toRadians(prevPoint.getLatitude());
+					double lat2 = Math.toRadians(p.getLatitude());
+					double a = Math.sin(dLat / 2.0) * Math.sin(dLat / 2.0) + Math.sin(dLon / 2.0) * Math.sin(dLon / 2.0) * Math.cos(lat1) * Math.cos(lat2);
+					double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+					double d = R * c;
+					double spd = d / dt;
+					double spds = Math.round(spd * 10.0) / 10.0;
+					double spdh = Math.round(spd * 60 * 60 * 10) / 10000;
+					curSpd.setText(spds + " m/s (" + spdh + " km/h)");
+				}
+				prevPoint = p;
+				
 				break;
 			case PositionEvent.SECONDARY:
 				break;
