@@ -44,13 +44,14 @@ import com.aerodynelabs.habtk.tracking.PositionEvent;
 import com.aerodynelabs.habtk.tracking.PositionListener;
 import com.aerodynelabs.habtk.tracking.TrackingService;
 import com.aerodynelabs.habtk.ui.AboutDialog;
+import com.aerodynelabs.habtk.ui.MessageDialog;
 import com.aerodynelabs.habtk.ui.PredictionPanel;
 import com.aerodynelabs.habtk.ui.TerminalPanel;
 import com.aerodynelabs.habtk.ui.TrackingConfigDialog;
 import com.aerodynelabs.habtk.ui.TrackingPanel;
 import com.aerodynelabs.map.MapOverlay;
-import com.aerodynelabs.map.MapPanel;
 import com.aerodynelabs.map.MapPath;
+import com.aerodynelabs.map.MapPoint;
 import com.aerodynelabs.map.MappingPanel;
 
 /**
@@ -77,6 +78,8 @@ public class HABtk implements PositionListener {
 	private static boolean tracking = false;
 	private static BalloonFlight flight;
 	private static TrackingService trackingService;
+	private static MapPoint prevPoint = null;
+	private static int descendingPkts = 0;
 	
 	/**
 	 * Create GUI Components
@@ -360,14 +363,37 @@ public class HABtk implements PositionListener {
 	public void positionUpdateEvent(PositionEvent e) {
 		switch(e.getSource()) {
 			case PositionEvent.PRIMARY:
-				flight.getTrack().add(e.getPosition());
+				MapPoint point = e.getPosition();
+				flight.getTrack().add(point);
+				
+				boolean ascending = true;
+				if(prevPoint != null) {
+					if(point.getAltitude() < prevPoint.getAltitude()) {
+						ascending = false;
+						descendingPkts++;
+						if(descendingPkts == 5) {
+							SwingUtilities.invokeLater(new Runnable() {
+								public void run() {
+									new MessageDialog(window, "Burst", "Balloon is descending.", 15000);
+								}
+							});
+						}
+					} else {
+						descendingPkts = 0;
+					}
+				}
+				prevPoint = point;
+				
 				Predictor pred = flight.getPredictor().clone();
 				pred.setStart(e.getPosition());
+				pred.setAscending(ascending);
 				MapPath prediction = pred.runPrediction();
+				
 				flight.updatePrediction(prediction);
 				MapOverlay predOverlay = new MapOverlay("Prediction");
 				predOverlay.addPath("Prediction", prediction);
 				trackingMap.addOverlay("Prediction", predOverlay);
+				
 				trackingPanel.positionUpdateEvent(
 						new PositionEvent(PositionEvent.BURST, pred.getBurst()));
 				trackingPanel.positionUpdateEvent(
