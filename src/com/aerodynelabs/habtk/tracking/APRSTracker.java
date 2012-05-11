@@ -66,7 +66,23 @@ public class APRSTracker extends Tracker {
 				public void actionPerformed(ActionEvent e) {
 					callsign = fCallsign.getText();
 					if(fConnector.getSelectedItem().equals("APRS-IS")) {
-						if(aprsis == null) { // Connection has not been created
+						boolean reconfig = false;
+						if(aprsis != null) {	// Connection already exists
+							// TODO
+							int n = JOptionPane.showConfirmDialog(null,
+									"APRS-IS is already configured.\n" +
+									"Would you like to reconfigure?",
+									"APRS-IS Configuration",
+									JOptionPane.YES_NO_OPTION);
+							if(n == JOptionPane.YES_OPTION) {
+								reconfig = true;
+							} else {
+								source = aprsis;
+								aprsis.addFilter("f/" + callsign + "/100");
+								aprsis.addFilter("b/" + callsign);
+							}
+						}
+						if(aprsis == null || reconfig == true) { // Connection has not been created
 							String serverCall = (String)JOptionPane.showInputDialog("APRS-IS Callsign:");
 							String serverPass = null;
 							if(serverCall != null) serverPass = (String)JOptionPane.showInputDialog("APRS-IS Passcode:");
@@ -74,22 +90,22 @@ public class APRSTracker extends Tracker {
 								accepted = false;
 								return;
 							} else {
-								APRSIS server = new APRSIS("noam.aprs2.net", 14580, serverCall, serverPass);
+								APRSIS server = new APRSIS("midwest.aprs2.net", 14580, serverCall, serverPass);
 								if(server.isValid()) {
-									server.setFilter("r/42.0/-93.6/100");
+									server.addFilter("f/" + callsign + "/100");
+									server.addFilter("b/" + callsign);
 									aprsis = server;
 									source = aprsis;
-									fName.setText(callsign + ": " + server.toString());
+//									fName.setText(callsign + ": " + server.toString());
 								} else {
 									accepted = false;
 									return;
 								}
 							}
-						} else {	// Connection already exists
-							// TODO
 						}
 					}
 					// Add more connector types here
+					fName.setText(callsign + ": " + source.toString());
 				}
 			});
 			layout.putConstraint(SpringLayout.NORTH, fConnector, 6, SpringLayout.SOUTH, fCallsign);
@@ -183,7 +199,8 @@ public class APRSTracker extends Tracker {
 			String line = source.readLine();
 			APRSPacket pkt = new APRSPacket(line);
 			if(pkt.isPosition() == true) {
-				position = new MapPoint(pkt.getLatitude(), pkt.getLongitude(), pkt.getAltitude(), pkt.getTimestamp() / 1000, pkt.getFrom());
+				if(pkt.getFrom().equalsIgnoreCase(callsign))
+					position = new MapPoint(pkt.getLatitude(), pkt.getLongitude(), pkt.getAltitude(), pkt.getTimestamp() / 1000, pkt.getFrom());
 			}
 		}
 		return position;

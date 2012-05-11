@@ -13,11 +13,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -60,7 +62,9 @@ public class HABtk {
 	private static JFrame window;
 	private static MyDoggyToolWindowManager windowManager;
 	private static ContentManager contentManager;
+	private static JCheckBoxMenuItem flightTrackItem;
 	
+	private static boolean tracking = false;
 	private static BalloonFlight flight;
 	private static TrackingService trackingService;
 	
@@ -72,6 +76,11 @@ public class HABtk {
 		window = new JFrame("HABtk - " + VERSION);
 		window.setMinimumSize(new Dimension(800, 600));
 		window.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		
+		
+		windowManager = new MyDoggyToolWindowManager();
+		contentManager = windowManager.getContentManager();
+		contentManager.setContentManagerUI(new MyDoggyMultiSplitContentManagerUI());
 		
 		// Create components
 		JMenuBar menuBar = new JMenuBar();
@@ -87,8 +96,7 @@ public class HABtk {
 		fileNewFlightItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Predictor flightPredictor = Predictor.create();
-				if(flightPredictor != null) flightPredictor.save();
-				flight.setPredictor(flightPredictor);
+				if(flightPredictor != null) flight.setPredictor(flightPredictor);
 			}
 		});
 		fileMenu.add(fileNewFlightItem);
@@ -105,7 +113,7 @@ public class HABtk {
 		JMenuItem fileSaveFlightItem = new JMenuItem("Save Flight");
 		fileSaveFlightItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// TODO save flight
+				if(flight.getPredictor() != null) flight.getPredictor().save();
 			}
 		});
 		fileMenu.add(fileSaveFlightItem);
@@ -133,14 +141,23 @@ public class HABtk {
 		});
 		flightMenu.add(flightConfigItem);
 		
-		JMenuItem flightStartItem = new JMenuItem("Start Tracking");
-		flightStartItem.addActionListener(new ActionListener() {
+		flightTrackItem = new JCheckBoxMenuItem("Enable Tracking");
+		flightTrackItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// TODO start tracker
-				trackingService.setEnabled(true);
+				if(flightTrackItem.getState() == true) {
+					if(trackingService.getPrimary() == null) {
+						JOptionPane.showMessageDialog(window, "Primary tracker is not configured.\nDisabling tracking service.");
+						flightTrackItem.setState(false);
+					}
+				}
+				tracking = flightTrackItem.getState();
+				trackingService.setEnabled(tracking);
+				if(tracking == true) {
+					
+				}
 			}
 		});
-		flightMenu.add(flightStartItem);
+		flightMenu.add(flightTrackItem);
 		
 		JMenuItem helpHelpItem = new JMenuItem("Help Contents");
 		helpHelpItem.addActionListener(new ActionListener() {
@@ -166,10 +183,6 @@ public class HABtk {
 			}
 		});
 		helpMenu.add(helpAboutItem);
-		
-		windowManager = new MyDoggyToolWindowManager();
-		contentManager = windowManager.getContentManager();
-		contentManager.setContentManagerUI(new MyDoggyMultiSplitContentManagerUI());
 		
 		// Tweak MyDoggy theme settings here
 		ResourceManager resourceManager = windowManager.getResourceManager();

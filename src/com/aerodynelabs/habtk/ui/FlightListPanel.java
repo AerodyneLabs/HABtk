@@ -321,10 +321,8 @@ public class FlightListPanel extends JPanel {
 					SoundingChart chart = new SoundingChart(SoundingChart.SKEWT);
 					Content mapAnchor = cm.getContent("Map");
 					if(mapAnchor != null) {
-						System.out.println("Cant");
 						content = cm.addContent("Sounding", "Sounding", null, chart, "Sounding", new MultiSplitConstraint(mapAnchor, AggregationPosition.RIGHT));
 					} else {
-						System.out.println("Can");
 						content = cm.addContent("Sounding", "Sounding", null, chart, "Sounding");
 					}
 				}

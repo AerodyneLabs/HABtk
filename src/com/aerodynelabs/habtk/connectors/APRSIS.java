@@ -21,6 +21,8 @@ public class APRSIS implements APRSSource {
 	private String callsign;
 	private String code;
 	
+	private String filter = "";
+	
 	public APRSIS(String callsign, String code) {
 		this("http://rotate.aprs2.net", 14580, callsign, code);
 	}
@@ -105,7 +107,17 @@ public class APRSIS implements APRSSource {
 	}
 	
 	public void setFilter(String filter) {
-		write("#filter " + filter);
+		this.filter = filter;
+		write("#filter " + this.filter);
+	}
+	
+	public void addFilter(String filter) {
+		this.filter += " " + filter;
+		write("#filter " + this.filter);
+	}
+	
+	public String getFilter() {
+		return filter;
 	}
 	
 	public boolean write(String msg) {

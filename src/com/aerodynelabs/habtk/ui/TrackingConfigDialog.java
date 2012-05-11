@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JSeparator;
@@ -24,10 +25,12 @@ public class TrackingConfigDialog extends JDialog {
 	private JTextField fPrimary;
 	private JTextField fSecondary;
 	private JTextField fRecovery;
+	private JCheckBox fNearby;
 	
 	private Tracker primary;
 	private Tracker secondary;
 	private Tracker recovery;
+	private boolean nearby;
 	
 	public TrackingConfigDialog(TrackingService tracker) {
 		setTitle("Setup Flight");
@@ -135,6 +138,12 @@ public class TrackingConfigDialog extends JDialog {
 		add(fRecovery);
 		add(bRecovery);
 		
+		fNearby = new JCheckBox("Map Nearby Objects");
+		fNearby.setEnabled(false);
+		layout.putConstraint(SpringLayout.NORTH, fNearby, 6, SpringLayout.SOUTH, fRecovery);
+		layout.putConstraint(SpringLayout.WEST, fNearby, 6, SpringLayout.WEST, pane);
+		add(fNearby);
+		
 		JButton cancel = new JButton("Cancel");
 		cancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -146,7 +155,7 @@ public class TrackingConfigDialog extends JDialog {
 		ok.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					// TODO
+					nearby = fNearby.isSelected();
 					accepted = true;
 				} catch(Exception e1) {
 					e1.printStackTrace();
@@ -155,7 +164,7 @@ public class TrackingConfigDialog extends JDialog {
 				dispose();
 			}
 		});
-		layout.putConstraint(SpringLayout.NORTH, ok, 6, SpringLayout.SOUTH, fRecovery);
+		layout.putConstraint(SpringLayout.NORTH, ok, 6, SpringLayout.SOUTH, fNearby);
 		layout.putConstraint(SpringLayout.SOUTH, pane, 6, SpringLayout.SOUTH, ok);
 		layout.putConstraint(SpringLayout.NORTH, cancel, 0, SpringLayout.NORTH, ok);
 		layout.putConstraint(SpringLayout.EAST, ok, -6, SpringLayout.EAST, pane);
@@ -183,6 +192,10 @@ public class TrackingConfigDialog extends JDialog {
 	
 	public Tracker getRecovery() {
 		return recovery;
+	}
+	
+	public boolean isMapNearbyEnabled() {
+		return nearby;
 	}
 
 }

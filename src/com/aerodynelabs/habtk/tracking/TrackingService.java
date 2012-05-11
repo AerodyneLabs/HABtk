@@ -7,6 +7,7 @@ public class TrackingService implements Runnable {
 	// Status variables
 	private boolean stop = false;
 	private boolean enabled = false;
+	private boolean nearby = false;
 	
 	private Tracker primary = null;
 	private Tracker secondary = null;
@@ -37,6 +38,10 @@ public class TrackingService implements Runnable {
 		return false;
 	}
 	
+	public void setMapNearby(boolean x) {
+		nearby = x;
+	}
+	
 	public void setPrimary(Tracker t) {
 		primary = t;
 	}
@@ -59,6 +64,10 @@ public class TrackingService implements Runnable {
 	
 	public Tracker getRecovery() {
 		return recovery;
+	}
+	
+	public boolean getMapNearby() {
+		return nearby;
 	}
 	
 	private void notifyListeners(MapPoint pkt) {
