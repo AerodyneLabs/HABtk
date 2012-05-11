@@ -25,6 +25,14 @@ public class MappingPanel extends JSplitPane {
 		super.setBottomComponent(settings);
 	}
 	
+	public void setCenter(double lat, double lon) {
+		map.setCenter(lat, lon);
+	}
+	
+	public MapOverlay getOverlay(String name) {
+		return map.getOverylay(name);
+	}
+	
 	/**
 	 * Add the named overlay to the map.
 	 * @param name

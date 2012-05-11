@@ -396,5 +396,9 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 	public void updateNotify() {
 		repaint();
 	}
+	
+	public MapOverlay getOverylay(String name) {
+		return overlays.get(name);
+	}
 
 }

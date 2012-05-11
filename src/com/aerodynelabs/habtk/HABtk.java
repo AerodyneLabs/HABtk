@@ -48,8 +48,10 @@ import com.aerodynelabs.habtk.ui.PredictionPanel;
 import com.aerodynelabs.habtk.ui.TerminalPanel;
 import com.aerodynelabs.habtk.ui.TrackingConfigDialog;
 import com.aerodynelabs.habtk.ui.TrackingPanel;
+import com.aerodynelabs.map.MapOverlay;
 import com.aerodynelabs.map.MapPanel;
 import com.aerodynelabs.map.MapPath;
+import com.aerodynelabs.map.MappingPanel;
 
 /**
  * The main class of HABtk
@@ -70,7 +72,7 @@ public class HABtk implements PositionListener {
 	private static ContentManager contentManager;
 	private static JCheckBoxMenuItem flightTrackItem;
 	private static TrackingPanel trackingPanel;
-	private static MapPanel trackingMap;
+	private static MappingPanel trackingMap;
 	
 	private static boolean tracking = false;
 	private static BalloonFlight flight;
@@ -166,9 +168,16 @@ public class HABtk implements PositionListener {
 					Content mapContent = contentManager.getContent("Tracking Map");
 					if(mapContent == null) {
 						contentManager.removeAllContents();
-						trackingMap = new MapPanel(
+						trackingMap = new MappingPanel();
+						trackingMap.setCenter(
 								flight.getPredictor().getStart().getLatitude(),
-								flight.getPredictor().getStart().getLongitude(), 8);
+								flight.getPredictor().getStart().getLongitude());
+						MapOverlay trackOverlay = new MapOverlay("Track");
+						trackOverlay.addPath("Track", flight.getTrack());
+						trackingMap.addOverlay(trackOverlay);
+						MapOverlay predOverlay = new MapOverlay("Prediction");
+						predOverlay.addPath("Prediction", flight.getLatestPrediction());
+						trackingMap.addOverlay(predOverlay);
 						contentManager.addContent("Tracking Map", "Tracking Map",
 								null, trackingMap);
 					}
@@ -351,9 +360,14 @@ public class HABtk implements PositionListener {
 	public void positionUpdateEvent(PositionEvent e) {
 		switch(e.getSource()) {
 			case PositionEvent.PRIMARY:
+				flight.getTrack().add(e.getPosition());
 				Predictor pred = flight.getPredictor().clone();
 				pred.setStart(e.getPosition());
 				MapPath prediction = pred.runPrediction();
+				flight.updatePrediction(prediction);
+				MapOverlay predOverlay = new MapOverlay("Prediction");
+				predOverlay.addPath("Prediction", prediction);
+				trackingMap.addOverlay("Prediction", predOverlay);
 				trackingPanel.positionUpdateEvent(
 						new PositionEvent(PositionEvent.BURST, pred.getBurst()));
 				trackingPanel.positionUpdateEvent(

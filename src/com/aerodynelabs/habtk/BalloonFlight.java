@@ -19,6 +19,8 @@ public class BalloonFlight {
 	private Vector<MapPath> predictions;
 	
 	public BalloonFlight() {
+		track = new MapPath("Track");
+		latestPred = new MapPath("Prediction");
 	}
 	
 	/**
