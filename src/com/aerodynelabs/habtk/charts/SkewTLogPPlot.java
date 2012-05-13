@@ -1,7 +1,5 @@
 package com.aerodynelabs.habtk.charts;
 
-// XXX Verify Skew T plot
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -114,7 +112,6 @@ public class SkewTLogPPlot extends TemperaturePlot {
 	}
 	
 	private void createMixingLines() {
-		// XXX Verify mixing lines
 		final float dash[] = {10.0f, 10.0f};
 		Stroke stroke = new BasicStroke(0.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
 								10.0f, dash, 0.0f);

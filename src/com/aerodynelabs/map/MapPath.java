@@ -175,6 +175,15 @@ public class MapPath {
 	 */
 	public void add(MapPoint point) {
 		updateBounds(point.getLatitude(), point.getLongitude());
+		if(point.getAltitude() > 0) {
+			double alt = point.getAltitude();
+			if(alt > maxAlt) maxAlt = alt;
+		}
+		if(point.getTime() > 0) {
+			long time = point.getTime();
+			if(time < startTime || startTime == 0) startTime = time;
+			if(time > endTime) endTime = time;
+		}
 		path.add(point);
 	}
 	

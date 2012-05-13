@@ -70,7 +70,6 @@ public class ElevationTimeSeriesCollection extends AbstractXYDataset implements 
 			}
 		}
 		if(min == Long.MAX_VALUE) return new Range(new Date().getTime(), new Date().getTime());
-		System.out.println(min + " - " + max);
 		return new Range(min, max);
 	}
 	
