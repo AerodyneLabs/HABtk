@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -51,9 +52,12 @@ public class MapPath {
 	 * Create a path from the given sequence of points.
 	 * @param path
 	 */
-	public MapPath(List<MapPoint> path) {
+	public MapPath(List<MapPoint> in) {
 		this();
-		this.path.addAll(path);
+		Iterator<MapPoint> itr = in.iterator();
+		while(itr.hasNext()) {
+			add(itr.next());
+		}
 	}
 	
 	/**
@@ -228,8 +232,11 @@ public class MapPath {
 	 * Append the sequence of points to the end of this path.
 	 * @param path
 	 */
-	public void addAll(List<MapPoint> path) {
-		this.path.addAll(path);
+	public void addAll(List<MapPoint> in) {
+		Iterator<MapPoint> itr = in.iterator();
+		while(itr.hasNext()) {
+			add(itr.next());
+		}
 	}
 	
 	/**

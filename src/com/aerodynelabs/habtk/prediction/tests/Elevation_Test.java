@@ -18,6 +18,12 @@ public class Elevation_Test {
 		double elev = ElevationService.getElevation(42, -93.635);
 		System.out.println("Elevation: " + elev);
 		
+//		MapPath test = new MapPath("Test");
+//		test.add(39.740112,-104.984856);
+//		test.add(39.799438,-105.72361);
+//		test.add(39.6403,-106.373596);
+//		System.out.println(ElevationService.encodePath(test.getPath()));
+		
 		Predictor flight = Predictor.create();
 		System.out.println(flight);
 		if(flight == null) System.exit(0);
@@ -38,7 +44,7 @@ public class Elevation_Test {
 		panel.add(map);
 		
 		ElevationChart profile = new ElevationChart();
-		profile.addProfile(path);
+//		profile.addProfile(path);
 		profile.addProfile(out);
 		panel.add(profile);
 		
