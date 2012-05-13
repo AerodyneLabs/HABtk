@@ -68,7 +68,6 @@ public class APRSTracker extends Tracker {
 					if(fConnector.getSelectedItem().equals("APRS-IS")) {
 						boolean reconfig = false;
 						if(aprsis != null) {	// Connection already exists
-							// TODO
 							int n = JOptionPane.showConfirmDialog(null,
 									"APRS-IS is already configured.\n" +
 									"Would you like to reconfigure?",

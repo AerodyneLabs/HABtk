@@ -1,5 +1,5 @@
 package com.aerodynelabs.habtk.ui;
-// FIXME Handle stop time after midnight
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
@@ -258,6 +258,7 @@ public class PredictionPanel extends JPanel {
 				dayEnd.setTime(endOfDay);
 				dayEnd.set(Calendar.YEAR, cal.get(Calendar.YEAR));
 				dayEnd.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR));
+				if(dayEnd.before(start)) dayEnd.add(Calendar.DAY_OF_YEAR, 1);
 				Calendar stop = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
 				stop.setTime(dayEnd.getTime());
 				stop.add(Calendar.DAY_OF_YEAR, nDays - 1);

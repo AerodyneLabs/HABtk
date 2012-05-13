@@ -249,8 +249,8 @@ public class APRSPacket {
 								altitude = (int)(Math.pow(1.002, e) + 0.5);
 							}
 						}
+						
 						comment = payload.substring(14);
-						// TODO Compressed altitude
 						validPos = true;
 					} catch(Exception e) {
 						validPos = false;
