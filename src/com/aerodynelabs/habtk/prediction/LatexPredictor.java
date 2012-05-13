@@ -51,7 +51,7 @@ public class LatexPredictor extends Predictor {
 	private double startLat, startLon, startAlt;
 	private double groundLevel;
 	private boolean isAscending = true;
-	private double tStep = 60;
+	private double tStep = 15;
 	
 	private double payloadMass, balloonLift;
 	private double parachuteArea, parachuteDrag;

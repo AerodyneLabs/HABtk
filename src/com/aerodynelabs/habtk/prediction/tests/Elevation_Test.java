@@ -44,9 +44,11 @@ public class Elevation_Test {
 		panel.add(map);
 		
 		ElevationChart profile = new ElevationChart();
-//		profile.addProfile(path);
+		profile.addProfile(path);
 		profile.addProfile(out);
 		panel.add(profile);
+		
+		System.out.println(out.getPath().size() + " / " + path.getPath().size());
 		
 		frame.pack();
 		frame.setVisible(true);

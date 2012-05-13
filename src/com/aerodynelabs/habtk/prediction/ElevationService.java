@@ -16,13 +16,27 @@ import com.aerodynelabs.map.MapPoint;
 public class ElevationService {
 	
 	private static final String baseUrl = "http://open.mapquestapi.com/elevation/v1/getElevationProfile?";
+	private static final int SPLIT = 25;
 	
 	public static MapPath getElevationProfile(MapPath in) {
-		MapPath out = null;
+		MapPath out = new MapPath("Elevation");
 		
-		LinkedList<MapPoint> sub = getSubProfile(in.getPath());
-		out = new MapPath("Elevation");
-		out.addAll(sub);
+		int i = 0;
+		while(i < in.getPath().size() - SPLIT) {
+			LinkedList<MapPoint> sub = getSubProfile(in.getPath().subList(i, i + SPLIT));
+			if(sub != null) {
+				out.addAll(sub);
+			} else {
+				return null;
+			}
+			i += SPLIT;
+		}
+		LinkedList<MapPoint> sub = getSubProfile(in.getPath().subList(i, in.getPath().size()));
+		if(sub != null) {
+			out.addAll(sub);
+		} else {
+			return null;
+		}
 		
 		return out;
 	}
@@ -82,7 +96,7 @@ public class ElevationService {
 			if(itr.hasNext()) query += ",";
 		}
 //		query += encodePath(in);
-		System.out.println(baseUrl + query);
+//		System.out.println(baseUrl + query);
 		URL url;
 		BufferedReader reader;
 		String line;
