@@ -317,6 +317,7 @@ public class HABtk implements PositionListener {
 					setup();
 					
 					window.setVisible(true);
+					debugLog.log(Level.INFO, "Application Started");
 				}
 			});
 		} catch(Exception e) {

@@ -5,6 +5,7 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.aerodynelabs.habtk.logging.TrackingFormatter;
 import com.aerodynelabs.map.MapPoint;
 
 public class TrackingService implements Runnable {
