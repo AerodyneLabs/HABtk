@@ -55,7 +55,7 @@ import com.aerodynelabs.map.MappingPanel;
 
 /**
  * The main class of HABtk
- * @author eharstad
+ * @author Ethan Harstad
  * 
  */
 public class HABtk implements PositionListener {
