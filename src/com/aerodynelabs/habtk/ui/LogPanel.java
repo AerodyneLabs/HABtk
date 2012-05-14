@@ -1,6 +1,7 @@
 package com.aerodynelabs.habtk.ui;
 
 import java.awt.BorderLayout;
+import java.util.logging.Logger;
 
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
@@ -22,6 +23,9 @@ public class LogPanel extends JPanel {
 	
 	private JTabbedPane tabPane;
 	private JEditorPane debugConsole;
+	private JEditorPane primaryConsole;
+	private JEditorPane secondaryConsole;
+	private JEditorPane recoveryConsole;
 	
 	public LogPanel() {
 		super();
