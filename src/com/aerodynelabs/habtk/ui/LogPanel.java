@@ -15,8 +15,13 @@ import javax.swing.JTabbedPane;
 @SuppressWarnings("serial")
 public class LogPanel extends JPanel {
 	
-	JTabbedPane tabPane;
-	JEditorPane debugConsole;
+	public static final int TYPE_DEBUG = 0;
+	public static final int TYPE_PRIMARY = 1;
+	public static final int TYPE_SECONDARY = 2;
+	public static final int TYPE_RECOVERY = 3;
+	
+	private JTabbedPane tabPane;
+	private JEditorPane debugConsole;
 	
 	public LogPanel() {
 		super();
@@ -31,6 +36,10 @@ public class LogPanel extends JPanel {
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		tabPane.addTab("Debug Log", debugPane);
+	}
+	
+	public void appendRecord(int type, String record) {
+		
 	}
 
 }
