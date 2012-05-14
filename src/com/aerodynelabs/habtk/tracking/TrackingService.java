@@ -2,8 +2,6 @@ package com.aerodynelabs.habtk.tracking;
 
 import java.util.Vector;
 
-import javax.swing.SwingUtilities;
-
 import com.aerodynelabs.map.MapPoint;
 
 public class TrackingService implements Runnable {

@@ -8,10 +8,8 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JDialog;
@@ -39,6 +37,7 @@ import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 import org.pushingpixels.substance.api.skin.SubstanceTwilightLookAndFeel;
 
 import com.aerodynelabs.habtk.help.HelpWindow;
+import com.aerodynelabs.habtk.logging.DebugLog;
 import com.aerodynelabs.habtk.prediction.Predictor;
 import com.aerodynelabs.habtk.tracking.PositionEvent;
 import com.aerodynelabs.habtk.tracking.PositionListener;
@@ -64,8 +63,6 @@ public class HABtk implements PositionListener {
 	private static final String VERSION = "0.01 Alpha";
 	
 	private static final Logger debugLog = Logger.getLogger("Debug");
-	private static FileHandler logFile;
-	private static SimpleFormatter logFormatter;
 	
 	private static HABtk habtk;
 	private static JFrame window;
@@ -290,38 +287,6 @@ public class HABtk implements PositionListener {
 		window.dispose();
 		System.exit(0);
 	}
-	
-	/**
-	 * Create a global logger
-	 * @param level Severity threshold
-	 */
-	private static void setupLogger(int level) {
-		switch(level) {
-			case 0:
-				debugLog.setLevel(Level.ALL);
-				break;
-			case 1:
-				debugLog.setLevel(Level.SEVERE);
-				break;
-			case 2:
-				debugLog.setLevel(Level.WARNING);
-				break;
-			case 3:
-				debugLog.setLevel(Level.INFO);
-				break;
-			default:
-				debugLog.setLevel(Level.OFF);
-		}
-		
-		try {
-			logFile = new FileHandler("log.txt");
-		} catch(Exception e) {
-			debugLog.log(Level.SEVERE, "Exception", e);
-		}
-		logFormatter = new SimpleFormatter();
-		logFile.setFormatter(logFormatter);
-		debugLog.addHandler(logFile);
-	}
 
 	/**
 	 * Main method
@@ -329,9 +294,9 @@ public class HABtk implements PositionListener {
 	 */
 	public static void main(String[] args) {
 		if(args.length == 0) {
-			setupLogger(9);
+			DebugLog.setupLogger(9);
 		} else {
-			setupLogger(Integer.parseInt(args[0]));
+			DebugLog.setupLogger(Integer.parseInt(args[0]));
 		}
 	
 		JFrame.setDefaultLookAndFeelDecorated(true);
