@@ -45,7 +45,7 @@ import com.aerodynelabs.habtk.tracking.TrackingService;
 import com.aerodynelabs.habtk.ui.AboutDialog;
 import com.aerodynelabs.habtk.ui.MessageDialog;
 import com.aerodynelabs.habtk.ui.PredictionPanel;
-import com.aerodynelabs.habtk.ui.TerminalPanel;
+import com.aerodynelabs.habtk.ui.LogPanel;
 import com.aerodynelabs.habtk.ui.TrackingConfigDialog;
 import com.aerodynelabs.habtk.ui.TrackingPanel;
 import com.aerodynelabs.map.MapOverlay;
@@ -233,7 +233,7 @@ public class HABtk implements PositionListener {
 		trackingService.addListener(trackingPanel);
 		trackingService.addListener(habtk);
 		
-		windowManager.registerToolWindow("Log", "Log", null, new TerminalPanel(), ToolWindowAnchor.BOTTOM);
+		windowManager.registerToolWindow("Log", "Log", null, new LogPanel(), ToolWindowAnchor.BOTTOM);
 		windowManager.registerToolWindow("Tracking", "Tracking", null, trackingPanel, ToolWindowAnchor.LEFT);
 		windowManager.registerToolWindow("Prediction", null, null, new PredictionPanel(windowManager), ToolWindowAnchor.LEFT);
 		for(ToolWindow win : windowManager.getToolWindows()) win.setAvailable(true);
