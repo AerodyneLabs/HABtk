@@ -6,9 +6,10 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-public class AGWPE {
+public class AGWPE implements APRSSource {
 	
 	class AGWFrame {
+		static final int headerLength = 36; 
 		byte port;
 		byte kind;
 		byte pid = 0x00;
@@ -58,6 +59,24 @@ public class AGWPE {
 	
 	public void registerCallsign(String call) {
 		//TODO registerCallsign
+	}
+
+	@Override
+	public boolean isValid() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isReady() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public String readLine() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

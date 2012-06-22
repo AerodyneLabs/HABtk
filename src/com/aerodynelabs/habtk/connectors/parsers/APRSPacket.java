@@ -127,15 +127,17 @@ public class APRSPacket {
 							typeCode == '\'' ||
 							typeCode == '`') comment = comment.substring(1);
 					// Decode altitude if possible
-					if(comment.charAt(3) == '}') {
-						int a = comment.charAt(0) - 33;
-						int b = comment.charAt(1) - 33;
-						int c = comment.charAt(2) - 33;
-						altitude = (a*91*91 + b*91 + c) - 10000;
-					} else {
-						Scanner scan = new Scanner(comment);
-						String tAlt = scan.findInLine("/A=[0-9]{6}");
-						if(tAlt != null) altitude = Integer.parseInt(tAlt.substring(3)) * 0.3048;
+					if(comment.length() >= 4) {
+						if(comment.charAt(3) == '}') {
+							int a = comment.charAt(0) - 33;
+							int b = comment.charAt(1) - 33;
+							int c = comment.charAt(2) - 33;
+							altitude = (a*91*91 + b*91 + c) - 10000;
+						} else {
+							Scanner scan = new Scanner(comment);
+							String tAlt = scan.findInLine("/A=[0-9]{6}");
+							if(tAlt != null) altitude = Integer.parseInt(tAlt.substring(3)) * 0.3048;
+						}
 					}
 					
 					timestamp = cal.getTimeInMillis();
