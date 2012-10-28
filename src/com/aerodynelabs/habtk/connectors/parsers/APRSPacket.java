@@ -192,7 +192,7 @@ public class APRSPacket {
 				
 				// Read position info
 				// Test for compressed/uncompressed format
-				if(Character.isDigit(payload.charAt(1))) {	// Uncompressed position format
+				if(Character.isDigit(payload.charAt(s))) {	// Uncompressed position format
 					try {
 						String rLat = scanner.findInLine("[0-9.]+[NS]");
 						symbolTable = scanner.findInLine(".").charAt(0);
@@ -224,7 +224,8 @@ public class APRSPacket {
 					}
 				} else {	// Compressed position format
 					try {
-						String position = payload.substring(1, 14);
+						//String position = payload.substring(1, 14);
+						String position = payload.substring(s);
 						// Split fields
 						symbolTable = position.charAt(0);
 						symbolSymbol = position.charAt(9);
@@ -249,6 +250,12 @@ public class APRSPacket {
 							if(((byte)cType & 0x18) == 0x10) {
 								int e = (cExt.charAt(0) - 33) * 91 + (cExt.charAt(1) - 33);
 								altitude = (int)(Math.pow(1.002, e) + 0.5);
+							} else {
+								scanner = new Scanner(pkt);
+								String rAlt = scanner.findInLine("/A=[0-9]{6}");
+								if(rAlt != null) {
+									altitude = Integer.parseInt(rAlt.substring(3)) * 0.3048;
+								}
 							}
 						}
 						

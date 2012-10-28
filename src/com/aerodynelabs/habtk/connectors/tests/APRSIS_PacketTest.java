@@ -6,8 +6,9 @@ import com.aerodynelabs.habtk.connectors.parsers.APRSPacket;
 public class APRSIS_PacketTest {
 	
 	public static void main(String args[]) {
-		APRSIS server = new APRSIS("midwest.aprs2.net", 14580, "NV1K", "3327");
-		server.setFilter("r/42.0/-93.6/100");
+		APRSIS server = new APRSIS("midwest.aprs2.net", 14580, "NV1K-1", "3327");
+		//server.setFilter("r/42.0/-93.6/100");
+		server.setFilter("b/W0ISU-11");
 		while(true) {
 			if(server.isReady()) {
 				String line = server.readLine();
