@@ -36,7 +36,7 @@ import org.noos.xing.mydoggy.MultiSplitConstraint;
 import org.noos.xing.mydoggy.Content;
 import org.noos.xing.mydoggy.ContentManager;
 import org.noos.xing.mydoggy.ToolWindowManager;
-import org.pushingpixels.substance.api.renderers.SubstanceDefaultTableCellRenderer;
+//import org.pushingpixels.substance.api.renderers.SubstanceDefaultTableCellRenderer;
 
 import com.aerodynelabs.habtk.atmosphere.AtmosphereProfile;
 import com.aerodynelabs.habtk.atmosphere.GSDParser;
@@ -84,7 +84,8 @@ public class FlightListPanel extends JPanel {
 	/**
 	 * Custom date and time renderer
 	 */
-	static class DateTimeRenderer extends SubstanceDefaultTableCellRenderer {
+	//static class DateTimeRenderer extends SubstanceDefaultTableCellRenderer {
+	static class DateTimeRenderer extends DefaultTableCellRenderer {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		
 		public DateTimeRenderer() {
@@ -103,7 +104,8 @@ public class FlightListPanel extends JPanel {
 	/**
 	 * Custom time renderer
 	 */
-	static class ElapsedTimeRenderer extends SubstanceDefaultTableCellRenderer {
+	//static class ElapsedTimeRenderer extends SubstanceDefaultTableCellRenderer {
+	static class ElapsedTimeRenderer extends DefaultTableCellRenderer {
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 		
 		public ElapsedTimeRenderer() {
@@ -119,7 +121,8 @@ public class FlightListPanel extends JPanel {
 		
 	}
 	
-	static class ColorRenderer extends SubstanceDefaultTableCellRenderer {
+	//static class ColorRenderer extends SubstanceDefaultTableCellRenderer {
+	static class ColorRenderer extends DefaultTableCellRenderer {
 		
 		public ColorRenderer() {
 			super();
@@ -260,7 +263,8 @@ public class FlightListPanel extends JPanel {
 		JScrollPane scroller = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		add(scroller, BorderLayout.CENTER);
 		
-		DefaultTableCellRenderer defaultRenderer = new SubstanceDefaultTableCellRenderer();
+		//DefaultTableCellRenderer defaultRenderer = new SubstanceDefaultTableCellRenderer();
+		DefaultTableCellRenderer defaultRenderer = new DefaultTableCellRenderer();
 		defaultRenderer.setHorizontalAlignment(SwingConstants.CENTER);
 		table.setDefaultRenderer(Object.class, defaultRenderer);
 		table.setDefaultRenderer(Double.class, defaultRenderer);

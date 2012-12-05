@@ -31,10 +31,10 @@ import org.noos.xing.mydoggy.ToolWindowType;
 import org.noos.xing.mydoggy.plaf.MyDoggyToolWindowManager;
 import org.noos.xing.mydoggy.plaf.ui.ResourceManager;
 import org.noos.xing.mydoggy.plaf.ui.content.MyDoggyMultiSplitContentManagerUI;
-import org.pushingpixels.substance.api.DecorationAreaType;
-import org.pushingpixels.substance.api.SubstanceColorScheme;
-import org.pushingpixels.substance.api.SubstanceLookAndFeel;
-import org.pushingpixels.substance.api.skin.SubstanceTwilightLookAndFeel;
+//import org.pushingpixels.substance.api.DecorationAreaType;
+//import org.pushingpixels.substance.api.SubstanceColorScheme;
+//import org.pushingpixels.substance.api.SubstanceLookAndFeel;
+//import org.pushingpixels.substance.api.skin.SubstanceTwilightLookAndFeel;
 
 import com.aerodynelabs.habtk.help.HelpWindow;
 import com.aerodynelabs.habtk.logging.DebugLog;
@@ -218,16 +218,16 @@ public class HABtk implements PositionListener {
 		
 		// Tweak MyDoggy theme settings here
 		ResourceManager resourceManager = windowManager.getResourceManager();
-		SubstanceColorScheme s = SubstanceLookAndFeel.getCurrentSkin().getActiveColorScheme(DecorationAreaType.HEADER);
-		resourceManager.putColor("ToolWindowTitleBarUI.background.active.start", s.getBackgroundFillColor());
-		resourceManager.putColor("ToolWindowTitleBarUI.background.active.end", s.getBackgroundFillColor());
-		resourceManager.putColor("ToolWindowTitleBarUI.id.background.active", s.getBackgroundFillColor());
-		s = SubstanceLookAndFeel.getCurrentSkin().getActiveColorScheme(DecorationAreaType.SECONDARY_TITLE_PANE);
-		resourceManager.putColor("ToolWindowRepresentativeAnchorUI.background.active.start", s.getBackgroundFillColor());
-		resourceManager.putColor("ToolWindowRepresentativeAnchorUI.background.active.end", s.getBackgroundFillColor());
-		s = SubstanceLookAndFeel.getCurrentSkin().getActiveColorScheme(DecorationAreaType.SECONDARY_TITLE_PANE_INACTIVE);
-		resourceManager.putColor("ToolWindowRepresentativeAnchorUI.background.inactive.start", s.getBackgroundFillColor());
-		resourceManager.putColor("ToolWindowRepresentativeAnchorUI.background.inactive.end", s.getBackgroundFillColor());
+		//SubstanceColorScheme s = SubstanceLookAndFeel.getCurrentSkin().getActiveColorScheme(DecorationAreaType.HEADER);
+		//resourceManager.putColor("ToolWindowTitleBarUI.background.active.start", s.getBackgroundFillColor());
+		//resourceManager.putColor("ToolWindowTitleBarUI.background.active.end", s.getBackgroundFillColor());
+		//resourceManager.putColor("ToolWindowTitleBarUI.id.background.active", s.getBackgroundFillColor());
+		//s = SubstanceLookAndFeel.getCurrentSkin().getActiveColorScheme(DecorationAreaType.SECONDARY_TITLE_PANE);
+		//resourceManager.putColor("ToolWindowRepresentativeAnchorUI.background.active.start", s.getBackgroundFillColor());
+		//resourceManager.putColor("ToolWindowRepresentativeAnchorUI.background.active.end", s.getBackgroundFillColor());
+		//s = SubstanceLookAndFeel.getCurrentSkin().getActiveColorScheme(DecorationAreaType.SECONDARY_TITLE_PANE_INACTIVE);
+		//resourceManager.putColor("ToolWindowRepresentativeAnchorUI.background.inactive.start", s.getBackgroundFillColor());
+		//resourceManager.putColor("ToolWindowRepresentativeAnchorUI.background.inactive.end", s.getBackgroundFillColor());
 		
 		trackingPanel = new TrackingPanel();
 		trackingService.addListener(trackingPanel);
@@ -308,12 +308,12 @@ public class HABtk implements PositionListener {
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
-					try {
-						UIManager.setLookAndFeel(new SubstanceTwilightLookAndFeel());
-						UIManager.put(SubstanceLookAndFeel.WINDOW_ROUNDED_CORNERS, false);
-					} catch (UnsupportedLookAndFeelException e) {
-						e.printStackTrace();
-					}
+					//try {
+						//UIManager.setLookAndFeel(new SubstanceTwilightLookAndFeel());
+						//UIManager.put(SubstanceLookAndFeel.WINDOW_ROUNDED_CORNERS, false);
+					//} catch (UnsupportedLookAndFeelException e) {
+						//e.printStackTrace();
+					//}
 					setup();
 					
 					window.setVisible(true);

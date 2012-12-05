@@ -5,7 +5,6 @@
 	<classpathentry kind="lib" path="lib/mydoggy-api-1.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/mydoggy-plaf-1.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/mydoggy-res-1.5.0.jar"/>
-	<classpathentry kind="lib" path="lib/TableLayout-20050920.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="lib/jcommon-1.0.17.jar"/>
 	<classpathentry kind="lib" path="lib/jfreechart-1.0.14.jar"/>
@@ -16,7 +15,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/laf-plugin-7.1.jar"/>
 	<classpathentry kind="lib" path="lib/laf-widget-7.1.jar"/>
-	<classpathentry kind="lib" path="lib/substance-7.1.jar"/>
-	<classpathentry kind="lib" path="lib/trident-7.1.jar"/>
+	<classpathentry kind="lib" path="lib/TableLayout-20050920.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
