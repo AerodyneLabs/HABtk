@@ -10,3 +10,4 @@ workspace.xml
 export
 flights
 log.txt
+*Test.java
