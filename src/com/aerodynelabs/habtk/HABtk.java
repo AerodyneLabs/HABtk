@@ -20,8 +20,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 import org.noos.xing.mydoggy.Content;
 import org.noos.xing.mydoggy.ContentManager;
@@ -29,7 +27,6 @@ import org.noos.xing.mydoggy.ToolWindow;
 import org.noos.xing.mydoggy.ToolWindowAnchor;
 import org.noos.xing.mydoggy.ToolWindowType;
 import org.noos.xing.mydoggy.plaf.MyDoggyToolWindowManager;
-import org.noos.xing.mydoggy.plaf.ui.ResourceManager;
 import org.noos.xing.mydoggy.plaf.ui.content.MyDoggyMultiSplitContentManagerUI;
 //import org.pushingpixels.substance.api.DecorationAreaType;
 //import org.pushingpixels.substance.api.SubstanceColorScheme;
@@ -215,19 +212,6 @@ public class HABtk implements PositionListener {
 			}
 		});
 		helpMenu.add(helpAboutItem);
-		
-		// Tweak MyDoggy theme settings here
-		ResourceManager resourceManager = windowManager.getResourceManager();
-		//SubstanceColorScheme s = SubstanceLookAndFeel.getCurrentSkin().getActiveColorScheme(DecorationAreaType.HEADER);
-		//resourceManager.putColor("ToolWindowTitleBarUI.background.active.start", s.getBackgroundFillColor());
-		//resourceManager.putColor("ToolWindowTitleBarUI.background.active.end", s.getBackgroundFillColor());
-		//resourceManager.putColor("ToolWindowTitleBarUI.id.background.active", s.getBackgroundFillColor());
-		//s = SubstanceLookAndFeel.getCurrentSkin().getActiveColorScheme(DecorationAreaType.SECONDARY_TITLE_PANE);
-		//resourceManager.putColor("ToolWindowRepresentativeAnchorUI.background.active.start", s.getBackgroundFillColor());
-		//resourceManager.putColor("ToolWindowRepresentativeAnchorUI.background.active.end", s.getBackgroundFillColor());
-		//s = SubstanceLookAndFeel.getCurrentSkin().getActiveColorScheme(DecorationAreaType.SECONDARY_TITLE_PANE_INACTIVE);
-		//resourceManager.putColor("ToolWindowRepresentativeAnchorUI.background.inactive.start", s.getBackgroundFillColor());
-		//resourceManager.putColor("ToolWindowRepresentativeAnchorUI.background.inactive.end", s.getBackgroundFillColor());
 		
 		trackingPanel = new TrackingPanel();
 		trackingService.addListener(trackingPanel);
