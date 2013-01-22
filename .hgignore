@@ -1,0 +1,13 @@
+syntax: glob
+bin/
+docs/
+*~
+*.swp
+*.lck
+tiles
+wind
+workspace.xml
+export
+flights
+log.txt
+*Test.java
