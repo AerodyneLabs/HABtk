@@ -1,5 +1,6 @@
 package com.aerodynelabs.habtk.tracking;
 
+import java.io.File;
 import java.util.Vector;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
@@ -28,7 +29,8 @@ public class TrackingService implements Runnable {
 	
 	public TrackingService() {
 		listeners = new Vector<PositionListener>();
-		
+		File logStore = new File("flights/current");
+		logStore.mkdirs();
 		try {
 			FileHandler primaryFile = new FileHandler("flights/current/primary.log");
 			primaryFile.setFormatter(new TrackingFormatter());
