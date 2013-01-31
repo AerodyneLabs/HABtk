@@ -12,10 +12,10 @@ pygments: true
 title : Ethan Harstad
 tagline: Science!
 author :
-  name : Ethan Harstad
+  name : AeroDyne Labs
   email : ethanharstad@gmail.com
-  github : ethanharstad
-  twitter : nv1k
+  github : AerodyneLabs
+  twitter : AeroDyneLabs
 
 # The production_url is only used when full-domain names are needed
 # such as sitemap.txt 

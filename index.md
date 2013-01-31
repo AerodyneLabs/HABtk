@@ -1,10 +1,10 @@
 ---
 layout: page
-title: Ravings of a Mad Engineer
-tagline: High altitude ballooning, robotics, UAS, communications
+title: HABtk
+tagline: High Altitude Ballooning toolkit
 ---
 
-I have just recently started moving stuff to GitHub, expect more content here soon.
+We have just recently started moving cont to GitHub, expect more content here soon.
 
 ## Recent Posts
 
