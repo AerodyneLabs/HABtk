@@ -166,3 +166,5 @@ pip-log.txt
 workspace.xml
 /flights/*
 log.txt
+wind
+tiles
