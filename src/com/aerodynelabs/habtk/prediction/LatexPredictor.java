@@ -89,7 +89,7 @@ public class LatexPredictor extends Predictor {
 		boolean accepted = false;
 		JTextField fStartLat, fStartLon, fStartAlt, fStartTime;
 		JTextField fMass, fLift, fArea, fDrag;
-		JComboBox fBalloon;
+		JComboBox<String> fBalloon;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		
 		public SetupDialog() {
@@ -169,7 +169,7 @@ public class LatexPredictor extends Predictor {
 			layout.putConstraint(SpringLayout.EAST, fStartAlt, -6, SpringLayout.EAST, pane);
 			
 			JLabel lBalloon = new JLabel("Balloon:");
-			fBalloon = new JComboBox(balloons);
+			fBalloon = new JComboBox<>(balloons);
 			if(balloonName != null) {
 				fBalloon.setSelectedItem(balloonName);
 			}

@@ -37,7 +37,7 @@ public class APRSTracker extends Tracker {
 		boolean accepted = false;
 		
 		JTextField fCallsign;
-		JComboBox fConnector;
+		JComboBox<String> fConnector;
 		JTextField fName;
 		
 		public SetupDialog() {
@@ -58,7 +58,7 @@ public class APRSTracker extends Tracker {
 			add(fCallsign);
 			
 			JLabel lConnector = new JLabel("Connector:");
-			fConnector = new JComboBox(options);
+			fConnector = new JComboBox<>(options);
 			fName = new JTextField(30);
 			fName.setEditable(false);
 			JButton bConnector = new JButton("Configure");
