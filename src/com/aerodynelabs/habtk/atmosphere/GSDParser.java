@@ -25,22 +25,17 @@ public class GSDParser implements AtmosphereParser {
 	 */
 	@Override
 	public AtmosphereProfile parseAtmosphere(File file) {
-		AtmosphereProfile profile = new AtmosphereProfile();
-		
-		BufferedReader reader;
-		try {
-			reader = new BufferedReader(new FileReader(file));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return null;
-		}
-		
 		String line;
 		Double conversion = 0.514444444;
 		int hour, day, year;
 		String month;
 		double lat, lon;
-		try {
+		AtmosphereProfile profile = new AtmosphereProfile();
+		
+		try(
+			FileReader fr = new FileReader(file);
+			BufferedReader reader = new BufferedReader(fr);
+		) {
 			while((line = reader.readLine()) != null) {
 				if(line.equals("")) break;
 				Scanner s = new Scanner(line);
@@ -59,7 +54,7 @@ public class GSDParser implements AtmosphereParser {
 						month = s.next();
 						year = s.nextInt();
 					} catch(Exception e1) {
-						continue;
+						break;
 					}
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-dd-MMM HH z");
 					try {
@@ -68,9 +63,9 @@ public class GSDParser implements AtmosphereParser {
 						cal.setTime(date);						
 						profile.startTime = (int)(cal.getTimeInMillis() / 1000);
 					} catch (ParseException e1) {
-						return null;
+						break;
 					}
-					continue;
+					break;
 				}
 				switch(type) {
 				case 1:
@@ -81,11 +76,11 @@ public class GSDParser implements AtmosphereParser {
 						lat = s.nextDouble();
 						lon = s.nextDouble();
 					} catch(Exception e) {
-						continue;
+						break;
 					}
 					profile.lat = lat;
 					profile.lon = lon;
-					continue;
+					break;
 				case 3:
 					// Wind speed units
 					s.next();
@@ -97,9 +92,9 @@ public class GSDParser implements AtmosphereParser {
 						conversion = 1.0;
 					} else {
 						System.err.println("Unsupported wind speed unit!");
-						return null;
+						break;
 					}
-					continue;
+					break;
 				case 4:
 				case 5:
 				case 9:
@@ -118,16 +113,20 @@ public class GSDParser implements AtmosphereParser {
 							dp == 99999 ||
 							dir == 99999 ||
 							spd == 99999
-							) continue;
+							) break;
 						profile.addData(h, p * 10.0, t / 10.0, dp / 10.0, dir, spd * conversion);
 					} catch(Exception e) {
-						continue;
+						break;
 					}
-					continue;
+					break;
 				default:
-					continue;
+					break;
 				}
+				s.close();
 			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return null;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

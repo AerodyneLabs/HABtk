@@ -62,7 +62,9 @@ public class APRSIS implements APRSSource {
 			for(int i = 0; i < 5; i++) {
 				while(!in.ready());	// Wait for response
 				Scanner test = new Scanner(in.readLine());
-				if(test.findInLine("logresp") != null) {
+				String response = test.findInLine("logresp");
+				test.close();
+				if(response != null) {
 					if(test.findInLine("unverified") != null) {
 						valid = false;
 					} else {

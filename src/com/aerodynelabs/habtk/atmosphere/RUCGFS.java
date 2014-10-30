@@ -91,26 +91,36 @@ public class RUCGFS implements AtmosphereSource {
 		
 		File file = new File("wind/gfs_" + (int)(lat*10) + "_" + (int)(lon*10) + "_" + time + "_" + modelTime + ".gsd");
 		
-		FileWriter fw;
+		FileWriter fw = null;
 		try {
 			fw = new FileWriter(file);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 			return null;
 		}
-		PrintWriter writer = new PrintWriter(new BufferedWriter(fw));
 		
 		String line = null;
-		try {
+		try(
+			BufferedWriter bw = new BufferedWriter(fw);
+			PrintWriter writer = new PrintWriter(bw);
+		) {
 			while((line = br.readLine()) != null) {
 				writer.println(line);
 			}
+			writer.flush();
 		} catch(Exception e) {
 			e.printStackTrace();
 			return null;
+		} finally {
+			if(fw != null) {
+				try {
+					fw.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		
-		writer.flush();
 		return file;
 	}
 	

@@ -136,6 +136,7 @@ public class APRSPacket {
 						} else {
 							Scanner scan = new Scanner(comment);
 							String tAlt = scan.findInLine("/A=[0-9]{6}");
+							scan.close();
 							if(tAlt != null) altitude = Integer.parseInt(tAlt.substring(3)) * 0.3048;
 						}
 					}

@@ -318,19 +318,20 @@ public class MapPath {
 	 * @return
 	 */
 	public boolean export(File file) {
-		PrintWriter out;
-		try {
-			out = new PrintWriter(new BufferedWriter(new FileWriter(file)));
+		try(
+			FileWriter fw = new FileWriter(file);
+			BufferedWriter bw = new BufferedWriter(fw);
+			PrintWriter out = new PrintWriter(bw);
+		) {
+			ListIterator<MapPoint> itr = path.listIterator();
+			while(itr.hasNext()) {
+				out.println(itr.next());
+			}
+			out.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
 		}
-		
-		ListIterator<MapPoint> itr = path.listIterator();
-		while(itr.hasNext()) {
-			out.println(itr.next());
-		}
-		out.flush();
 		
 		return true;
 	}

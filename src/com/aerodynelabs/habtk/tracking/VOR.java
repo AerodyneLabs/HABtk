@@ -27,8 +27,10 @@ public class VOR {
 	
 	public void initDatabase(String filename) {
 		File file = new File(filename);
-		try {
-			BufferedReader reader = new BufferedReader(new FileReader(file));
+		try(
+			FileReader fr = new FileReader(file);
+			BufferedReader reader = new BufferedReader(fr);
+		) {
 			String line;
 			while((line = reader.readLine()) != null) {
 				Scanner scanner = new Scanner(line);
@@ -36,6 +38,7 @@ public class VOR {
 				double lat = scanner.nextDouble();
 				double lon = scanner.nextDouble();
 				database.add(new Station(name, lat, lon));
+				scanner.close();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

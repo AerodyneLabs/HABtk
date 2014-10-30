@@ -58,8 +58,10 @@ public class ElevationService {
 			reader.close();
 			Scanner scanner = new Scanner(result);
 			String field = scanner.findInLine("\"height\":[0-9.]+");
+			scanner.close();
 			scanner = new Scanner(field);
 			String alt = scanner.findInLine("[0-9.]+");
+			scanner.close();
 			elev = Double.parseDouble(alt);
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -113,16 +115,16 @@ public class ElevationService {
 			e.printStackTrace();
 		}
 		
-		try {
+		try(Scanner scanner = new Scanner(result)) {
 			out = new LinkedList<MapPoint>();
 			itr = in.iterator();
-			Scanner scanner = new Scanner(result);
 			while(itr.hasNext()) {
 				MapPoint p = itr.next();
 				double elev;
 				String field = scanner.findInLine("\"height\":[0-9.]+");
 				Scanner s = new Scanner(field);
 				String alt = s.findInLine("[0-9.]+");
+				s.close();
 				elev = Double.parseDouble(alt);
 				out.add(new MapPoint(p.getLatitude(), p.getLongitude(), elev, p.getTime()));
 			}
