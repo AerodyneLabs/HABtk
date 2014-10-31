@@ -9,6 +9,7 @@ public class PositionEvent {
 	public final static int RECOVERY = 2;
 	public final static int BURST = 3;
 	public final static int LANDING = 4;
+	public final static int LOCATION = 5;
 	
 	private int source;
 	private MapPoint position;
