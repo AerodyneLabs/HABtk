@@ -31,6 +31,7 @@ public class TrackingPanel extends JPanel implements PositionListener, ActionLis
 	private JTextField curTime;
 	private JTextField curSpd;
 	private JTextField curAR;
+	private JTextField curAzEl;
 	private JTextField burAlt;
 	private JTextField burLon;
 	private JTextField burLat;
@@ -70,6 +71,7 @@ public class TrackingPanel extends JPanel implements PositionListener, ActionLis
 		JLabel lblCurSpd = new JLabel("Speed:");
 		JLabel lblCurAR = new JLabel("Ascent Rate:");
 		JLabel lblCurVOR = new JLabel("VOR:");
+		JLabel lblCurAzEl = new JLabel("Az/El:");
 		curAlt = new JTextField();
 		curAlt.setEditable(false);
 		curLon = new JTextField();
@@ -84,6 +86,8 @@ public class TrackingPanel extends JPanel implements PositionListener, ActionLis
 		curAR.setEditable(false);
 		curVOR = new JTextField();
 		curVOR.setEditable(false);
+		curAzEl = new JTextField();
+		curAzEl.setEditable(false);
 		
 		springLayout.putConstraint(SpringLayout.WEST, lblCurLon, 6, SpringLayout.WEST, lblCurrent);
 		springLayout.putConstraint(SpringLayout.EAST, lblCurLat, 0, SpringLayout.EAST, lblCurLon);
@@ -91,35 +95,40 @@ public class TrackingPanel extends JPanel implements PositionListener, ActionLis
 		springLayout.putConstraint(SpringLayout.EAST, lblCurTime, 0, SpringLayout.EAST, lblCurLon);
 		springLayout.putConstraint(SpringLayout.EAST, lblCurSpd, 0, SpringLayout.EAST, lblCurLon);
 		springLayout.putConstraint(SpringLayout.EAST, lblCurAR, 0, SpringLayout.EAST, lblCurLon);
+		springLayout.putConstraint(SpringLayout.EAST, lblCurVOR, 0, SpringLayout.EAST, lblCurLon);
+		springLayout.putConstraint(SpringLayout.EAST, lblCurAzEl, 0, SpringLayout.EAST, lblCurLon);
 		springLayout.putConstraint(SpringLayout.BASELINE, lblCurLat, 0, SpringLayout.BASELINE, curLat);
 		springLayout.putConstraint(SpringLayout.BASELINE, lblCurLon, 0, SpringLayout.BASELINE, curLon);
 		springLayout.putConstraint(SpringLayout.BASELINE, lblCurAlt, 0, SpringLayout.BASELINE, curAlt);
 		springLayout.putConstraint(SpringLayout.BASELINE, lblCurTime, 0, SpringLayout.BASELINE, curTime);
 		springLayout.putConstraint(SpringLayout.BASELINE, lblCurSpd, 0, SpringLayout.BASELINE, curSpd);
 		springLayout.putConstraint(SpringLayout.BASELINE, lblCurAR, 0, SpringLayout.BASELINE, curAR);
+		springLayout.putConstraint(SpringLayout.BASELINE, lblCurVOR, 0, SpringLayout.BASELINE, curVOR);
+		springLayout.putConstraint(SpringLayout.BASELINE, lblCurAzEl, 0, SpringLayout.BASELINE, curAzEl);
 		springLayout.putConstraint(SpringLayout.NORTH, curLat, 6, SpringLayout.SOUTH, curTime);
 		springLayout.putConstraint(SpringLayout.NORTH, curLon, 6, SpringLayout.SOUTH, curLat);
 		springLayout.putConstraint(SpringLayout.NORTH, curAlt, 6, SpringLayout.SOUTH, curLon);
 		springLayout.putConstraint(SpringLayout.NORTH, curTime, 6, SpringLayout.SOUTH, lblCurrent);
 		springLayout.putConstraint(SpringLayout.NORTH, curSpd, 6, SpringLayout.SOUTH, curAlt);
 		springLayout.putConstraint(SpringLayout.NORTH, curAR, 6, SpringLayout.SOUTH, curSpd);
+		springLayout.putConstraint(SpringLayout.NORTH, curVOR, 6, SpringLayout.SOUTH, curAR);
+		springLayout.putConstraint(SpringLayout.NORTH, curAzEl, 6, SpringLayout.SOUTH, curVOR);
 		springLayout.putConstraint(SpringLayout.WEST, curLat, 6, SpringLayout.EAST, lblCurLat);
 		springLayout.putConstraint(SpringLayout.WEST, curLon, 6, SpringLayout.EAST, lblCurLon);
 		springLayout.putConstraint(SpringLayout.WEST, curAlt, 6, SpringLayout.EAST, lblCurAlt);
 		springLayout.putConstraint(SpringLayout.WEST, curTime, 6, SpringLayout.EAST, lblCurTime);
 		springLayout.putConstraint(SpringLayout.WEST, curSpd, 6, SpringLayout.EAST, lblCurSpd);
 		springLayout.putConstraint(SpringLayout.WEST, curAR, 6, SpringLayout.EAST, lblCurAR);
+		springLayout.putConstraint(SpringLayout.WEST, curVOR, 6, SpringLayout.EAST, lblCurVOR);
+		springLayout.putConstraint(SpringLayout.WEST, curAzEl, 6, SpringLayout.EAST, lblCurAzEl);
 		springLayout.putConstraint(SpringLayout.EAST, curLat, -6, SpringLayout.EAST, this);
 		springLayout.putConstraint(SpringLayout.EAST, curLon, -6, SpringLayout.EAST, this);
 		springLayout.putConstraint(SpringLayout.EAST, curAlt, -6, SpringLayout.EAST, this);
 		springLayout.putConstraint(SpringLayout.EAST, curTime, -6, SpringLayout.EAST, this);
 		springLayout.putConstraint(SpringLayout.EAST, curSpd, -6, SpringLayout.EAST, this);
 		springLayout.putConstraint(SpringLayout.EAST, curAR, -6, SpringLayout.EAST, this);
-		springLayout.putConstraint(SpringLayout.NORTH, curVOR, 6, SpringLayout.SOUTH, curAR);
-		springLayout.putConstraint(SpringLayout.BASELINE, lblCurVOR, 0, SpringLayout.BASELINE, curVOR);
-		springLayout.putConstraint(SpringLayout.EAST, lblCurVOR, 0, SpringLayout.EAST, lblCurLon);
-		springLayout.putConstraint(SpringLayout.WEST, curVOR, 6, SpringLayout.EAST, lblCurVOR);
 		springLayout.putConstraint(SpringLayout.EAST, curVOR, -6, SpringLayout.EAST, this);
+		springLayout.putConstraint(SpringLayout.EAST, curAzEl, -6, SpringLayout.EAST, this);
 		
 		add(lblCurLat);
 		add(lblCurLon);
@@ -128,6 +137,7 @@ public class TrackingPanel extends JPanel implements PositionListener, ActionLis
 		add(lblCurSpd);
 		add(lblCurAR);
 		add(lblCurVOR);
+		add(lblCurAzEl);
 		add(curLat);
 		add(curLon);
 		add(curAlt);
@@ -135,10 +145,11 @@ public class TrackingPanel extends JPanel implements PositionListener, ActionLis
 		add(curSpd);
 		add(curAR);
 		add(curVOR);
+		add(curAzEl);
 		
 		// Burst Values
 		JLabel lblBurst = new JLabel("Burst");
-		springLayout.putConstraint(SpringLayout.NORTH, lblBurst, 6, SpringLayout.SOUTH, curVOR);
+		springLayout.putConstraint(SpringLayout.NORTH, lblBurst, 6, SpringLayout.SOUTH, curAzEl);
 		springLayout.putConstraint(SpringLayout.WEST, lblBurst, 10, SpringLayout.WEST, this);
 		add(lblBurst);
 		JSeparator sepBurst = new JSeparator();
@@ -272,8 +283,8 @@ public class TrackingPanel extends JPanel implements PositionListener, ActionLis
 	public void positionUpdateEvent(PositionEvent e) {
 		switch(e.getSource()) {
 			case PositionEvent.PRIMARY:
-				//curLat.setText(Double.toString(e.getPosition().getLatitude()));
-				curLat.setText(formatPosition(e.getPosition().getLatitude(), e.getPosition().getLongitude()));
+				curLat.setText(Double.toString(e.getPosition().getLatitude()));
+				//curLat.setText(formatPosition(e.getPosition().getLatitude(), e.getPosition().getLongitude()));
 				curLon.setText(Double.toString(e.getPosition().getLongitude()));
 				curAlt.setText(Double.toString(e.getPosition().getAltitude()));
 				cTime = new Date(e.getPosition().getTime() * 1000);
@@ -331,6 +342,10 @@ public class TrackingPanel extends JPanel implements PositionListener, ActionLis
 	
 	private String formatPosition(double lat, double lon) {
 		return String.format("%+#.4f, %+#.4f", lat, lon);
+	}
+	
+	private String formatAzEl(double az, double el) {
+		return String.format("%06.2f, %5.2f", az, el);
 	}
 	
 	private void updateTimes() {
