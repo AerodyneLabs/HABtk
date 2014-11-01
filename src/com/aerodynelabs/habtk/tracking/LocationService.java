@@ -10,8 +10,10 @@ public class LocationService implements Runnable {
 	
 	private static final Logger debugLog = Logger.getLogger("Debug");
 	
+	private boolean enabled = false;
 	private boolean run = true;
 	private MapPoint staticLocation;
+	private MapPoint curLocation;
 	
 	private Vector<PositionListener> listeners;
 	
@@ -42,6 +44,14 @@ public class LocationService implements Runnable {
 		notifyListeners(loc);
 	}
 	
+	public boolean isEnabled() {
+		return enabled;
+	}
+	
+	public void setEnabled(boolean state) {
+		enabled = state;
+	}
+	
 	private void notifyListeners(MapPoint location) {
 		for(PositionListener listener : listeners) {
 			listener.positionUpdateEvent(new PositionEvent(PositionEvent.LOCATION, location));
@@ -59,6 +69,14 @@ public class LocationService implements Runnable {
 				e.printStackTrace();
 				debugLog.log(Level.SEVERE, "Exception", e);
 			}
+		}
+	}
+
+	public MapPoint getLocation() {
+		if(enabled) {
+			return curLocation;
+		} else {
+			return staticLocation;
 		}
 	}
 

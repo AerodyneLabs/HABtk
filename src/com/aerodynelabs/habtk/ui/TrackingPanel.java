@@ -2,6 +2,7 @@ package com.aerodynelabs.habtk.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Point2D;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
@@ -13,6 +14,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.Timer;
 
+import com.aerodynelabs.habtk.tracking.LocationService;
 import com.aerodynelabs.habtk.tracking.PositionEvent;
 import com.aerodynelabs.habtk.tracking.PositionListener;
 import com.aerodynelabs.map.MapPoint;
@@ -48,10 +50,15 @@ public class TrackingPanel extends JPanel implements PositionListener, ActionLis
 	private MapPoint prevPoint;
 	private Timer timer;
 	
-	public TrackingPanel() {
+	private LocationService locationService;
+	
+	public TrackingPanel(LocationService locService) {
 		super();
 		SpringLayout springLayout = new SpringLayout();
 		setLayout(springLayout);
+		
+		locationService = locService;
+		locationService.addListener(this);
 		
 		// Curent Values
 		JLabel lblCurrent = new JLabel("Current");
@@ -314,6 +321,10 @@ public class TrackingPanel extends JPanel implements PositionListener, ActionLis
 					double spds = Math.round(spd * 10.0) / 10.0;
 					double spdh = Math.round(spd * 60 * 60 * 10) / 10000;
 					curSpd.setText(spds + " m/s (" + spdh + " km/h)");
+					
+					// Azimuth/Elevation
+					Point2D.Double res = computeAzEl(locationService.getLocation(), p);
+					curAzEl.setText(formatAzEl(res.getX(), res.getY()));
 				}
 				prevPoint = p;
 				
@@ -346,6 +357,25 @@ public class TrackingPanel extends JPanel implements PositionListener, ActionLis
 	
 	private String formatAzEl(double az, double el) {
 		return String.format("%06.2f, %5.2f", az, el);
+	}
+	
+	private Point2D.Double computeAzEl(MapPoint base, MapPoint target) {
+		double lat1 = Math.toRadians(base.getLatitude());
+		double lat2 = Math.toRadians(target.getLatitude());
+		double dLat = lat2 - lat1;
+		double dLon = Math.toRadians(target.getLongitude() - base.getLongitude());
+		
+		double sdLat = Math.sin(dLat);
+		double sdLon = Math.sin(dLon / 2.0);
+		double a = Math.pow(sdLat, 2.0) + (Math.cos(lat1) * Math.cos(lat2) * Math.pow(sdLon, 2.0));
+		double c = 2.0 * Math.atan2(Math.sqrt(a), Math.sqrt(1.0 - a));
+		double dist = c * 6367500;
+		double el = Math.toDegrees(Math.atan2(target.getAltitude() - base.getAltitude(), dist));
+		
+		double y = Math.sin(dLon) * Math.cos(lat2);
+		double x = (Math.cos(lat1) * Math.sin(lat2)) - (Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon));
+		double az = (Math.toDegrees(Math.atan2(y, x)) + 360.0) % 360.0;
+		return new Point2D.Double(az, el);
 	}
 	
 	private void updateTimes() {
