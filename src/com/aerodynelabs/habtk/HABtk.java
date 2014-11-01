@@ -33,13 +33,16 @@ import org.noos.xing.mydoggy.plaf.ui.content.MyDoggyMultiSplitContentManagerUI;
 //import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 //import org.pushingpixels.substance.api.skin.SubstanceTwilightLookAndFeel;
 
+
 import com.aerodynelabs.habtk.help.HelpWindow;
 import com.aerodynelabs.habtk.logging.DebugLog;
 import com.aerodynelabs.habtk.prediction.Predictor;
+import com.aerodynelabs.habtk.tracking.LocationService;
 import com.aerodynelabs.habtk.tracking.PositionEvent;
 import com.aerodynelabs.habtk.tracking.PositionListener;
 import com.aerodynelabs.habtk.tracking.TrackingService;
 import com.aerodynelabs.habtk.ui.AboutDialog;
+import com.aerodynelabs.habtk.ui.LocationConfigDialog;
 import com.aerodynelabs.habtk.ui.MessageDialog;
 import com.aerodynelabs.habtk.ui.PredictionPanel;
 import com.aerodynelabs.habtk.ui.LogPanel;
@@ -66,12 +69,14 @@ public class HABtk implements PositionListener {
 	private static MyDoggyToolWindowManager windowManager;
 	private static ContentManager contentManager;
 	private static JCheckBoxMenuItem flightTrackItem;
+	private static JCheckBoxMenuItem locationTrackItem;
 	private static TrackingPanel trackingPanel;
 	private static MappingPanel trackingMap;
 	
 	private static boolean tracking = false;
 	private static BalloonFlight flight;
 	private static TrackingService trackingService;
+	private static LocationService locationService;
 	private static MapPoint prevPoint = null;
 	private static int descendingPkts = 0;
 	
@@ -188,6 +193,26 @@ public class HABtk implements PositionListener {
 		});
 		flightMenu.add(flightTrackItem);
 		
+		flightMenu.add(new JSeparator());
+		JMenuItem locationConfigItem = new JMenuItem("Configure Location");
+		locationConfigItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				LocationConfigDialog config = new LocationConfigDialog(locationService);
+				if(config.wasAccepted()) {
+					// TODO Configure location
+				}
+			}
+		});
+		flightMenu.add(locationConfigItem);
+		
+		locationTrackItem = new JCheckBoxMenuItem("Enable GPS Location");
+		locationTrackItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// TODO Enable location tracking handler
+			}
+		});
+		flightMenu.add(locationTrackItem);
+		
 		JMenuItem helpHelpItem = new JMenuItem("Help Contents");
 		helpHelpItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -213,7 +238,7 @@ public class HABtk implements PositionListener {
 		});
 		helpMenu.add(helpAboutItem);
 		
-		trackingPanel = new TrackingPanel();
+		trackingPanel = new TrackingPanel(locationService);
 		trackingService.addListener(trackingPanel);
 		trackingService.addListener(habtk);
 		
@@ -289,6 +314,7 @@ public class HABtk implements PositionListener {
 		habtk = new HABtk();
 		flight = new BalloonFlight();
 		trackingService = new TrackingService();
+		locationService = new LocationService();
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {
