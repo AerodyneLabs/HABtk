@@ -37,6 +37,7 @@ public class GSDParser implements AtmosphereParser {
 			BufferedReader reader = new BufferedReader(fr);
 		) {
 			while((line = reader.readLine()) != null) {
+				System.out.println(line);
 				if(line.equals("")) break;
 				Scanner s = new Scanner(line);
 				String token = s.next();
@@ -54,7 +55,7 @@ public class GSDParser implements AtmosphereParser {
 						month = s.next();
 						year = s.nextInt();
 					} catch(Exception e1) {
-						break;
+						continue;
 					}
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-dd-MMM HH z");
 					try {
@@ -63,9 +64,10 @@ public class GSDParser implements AtmosphereParser {
 						cal.setTime(date);						
 						profile.startTime = (int)(cal.getTimeInMillis() / 1000);
 					} catch (ParseException e1) {
+						e1.printStackTrace();
 						break;
 					}
-					break;
+					continue;
 				}
 				switch(type) {
 				case 1:
